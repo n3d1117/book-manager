@@ -20,6 +20,20 @@
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
         <coveralls.version>4.3.0</coveralls.version>
+        <pitest.version>1.5.2</pitest.version>
+        <sonar.version>3.7.0.1746</sonar.version>
+
+        <!-- SonarCloud Properties -->
+        <sonar.projectKey>n3d1117_book-manager</sonar.projectKey>
+        <sonar.organization>n3d1117-github</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <!-- Make SonarQube track integration tests too -->
+        <sonar.junit.reportPaths>
+            ${project.build.directory}/surefire-reports,
+            ${project.build.directory}/failsafe-reports
+        </sonar.junit.reportPaths>
+
     </properties>
 
     <!-- Dependencies -->
@@ -61,6 +75,26 @@
                     <version>${coveralls.version}</version>
                 </plugin>
 
+                <!-- PIT Mutation Testing Plugin -->
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest.version}</version>
+                    <configuration>
+                        <mutators>
+                            <mutator>DEFAULTS</mutator>
+                        </mutators>
+                        <mutationThreshold>98</mutationThreshold>
+                    </configuration>
+                </plugin>
+
+                <!-- Sonar Plugin -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonar.version}</version>
+                </plugin>
+
             </plugins>
         </pluginManagement>
     </build>
@@ -76,6 +110,27 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- PIT Mutation Testing Profile -->
+        <profile>
+            <id>mutation-testing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>mutationCoverage</goal>
+                                </goals>
+                                <phase>verify</phase>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
