@@ -26,9 +26,9 @@ jobs:
           # The cache key will be the hashed contents of pom.xml, so changes to pom.xml will invalidate the cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Run Maven clean verify
-        run: mvn -f pom.xml clean verify $ACTIVE_PROFILES $ADDITIONAL_MAVEN_ARGS $COVERALLS_TOKEN sonar:sonar
+        run: mvn -f pom.xml clean verify $ACTIVE_PROFILES $ADDITIONAL_MAVEN_ARGS $COVERALLS_TOKEN
         env:
           ACTIVE_PROFILES: -Pjacoco
-          ADDITIONAL_MAVEN_ARGS: coveralls:report
+          ADDITIONAL_MAVEN_ARGS: coveralls:report sonar:sonar
           COVERALLS_TOKEN: -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
