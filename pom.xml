@@ -16,6 +16,71 @@
         <!-- Use Java 11 -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+
+        <!-- Plugin versions -->
+        <jacoco.version>0.8.5</jacoco.version>
+        <coveralls.version>4.3.0</coveralls.version>
     </properties>
+
+    <!-- Dependencies -->
+    <dependencies>
+
+
+
+    </dependencies>
+
+    <build>
+        <!-- Plugin Management -->
+        <pluginManagement>
+            <plugins>
+
+                <!-- JaCoCo Plugin -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <configuration>
+                        <excludes>
+
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <!-- Coveralls Plugin -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <!-- Profiles -->
+    <profiles>
+
+        <!-- JaCoCo Profile -->
+        <profile>
+            <id>jacoco</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 
 </project>
