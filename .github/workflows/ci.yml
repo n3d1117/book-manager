@@ -1,15 +1,15 @@
 # This workflow will build and test a Java 11 project with Maven
 # Source: https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
-name: build
-
-on: [push, pull_request]
+name: Build on CI with Maven
+on: [push]
 
 jobs:
+  
+  # First job: build project after push to branch
   build:
-
     runs-on: ubuntu-18.04
-
+    name: Build project after push to branch
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -25,11 +25,46 @@ jobs:
             ~/.sonar/cache
           # The cache key will be the hashed contents of pom.xml, so changes to pom.xml will invalidate the cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-      - name: Run Maven clean verify
+      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar)
         run: mvn -f pom.xml clean verify $ACTIVE_PROFILES $ADDITIONAL_MAVEN_ARGS $COVERALLS_TOKEN
         env:
-          ACTIVE_PROFILES: -Pjacoco
+          ACTIVE_PROFILES: -Pjacoco,mutation-testing
           ADDITIONAL_MAVEN_ARGS: coveralls:report sonar:sonar
           COVERALLS_TOKEN: -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  # Second job: also build on Java 8 and 13, but only after merging a PR
+  build-on-pr-merge:
+    if: startsWith(github.event.head_commit.message , 'Merge pull request')
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [8, 13]
+    name: Build project on Java 8 and 13 after merging a pull request
+    # Same steps as first job (sadly, you can't yet reuse steps with Github Actions, so duplication is inevitable here)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Cache Maven packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.m2
+            ~/.sonar/cache
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar)
+        run: mvn -f pom.xml clean verify $ACTIVE_PROFILES $ADDITIONAL_MAVEN_ARGS $COVERALLS_TOKEN
+        env:
+          ACTIVE_PROFILES: -Pjacoco,mutation-testing
+          ADDITIONAL_MAVEN_ARGS: coveralls:report sonar:sonar
+          COVERALLS_TOKEN: -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    
+    
