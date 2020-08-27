@@ -22,6 +22,7 @@
         <coveralls.version>4.3.0</coveralls.version>
         <pitest.version>1.5.2</pitest.version>
         <sonar.version>3.7.0.1746</sonar.version>
+        <junit.version>4.13</junit.version>
 
         <!-- SonarCloud Properties -->
         <sonar.projectKey>n3d1117_book-manager</sonar.projectKey>
@@ -39,7 +40,12 @@
     <!-- Dependencies -->
     <dependencies>
 
-
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
 
     </dependencies>
 
