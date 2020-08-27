@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        java: [1.8, 13]
+        java: [8, 13]
     name: Build and test on Java ${{ matrix.java }}
     # Same steps as first job (sadly, you can't yet reuse steps with Github Actions, so duplication is inevitable here)
     steps:
@@ -57,14 +57,11 @@ jobs:
             ~/.m2
             ~/.sonar/cache
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar)
-        run: mvn -f pom.xml clean verify $ACTIVE_PROFILES $ADDITIONAL_MAVEN_ARGS $COVERALLS_TOKEN
+      - name: Run mvn clean verify (with jacoco and mutation testing)
+        run: mvn -f pom.xml clean verify $ACTIVE_PROFILES
         env:
+          # Avoid reporting to sonar and coveralls
           ACTIVE_PROFILES: -Pjacoco,mutation-testing
-          ADDITIONAL_MAVEN_ARGS: coveralls:report sonar:sonar
-          COVERALLS_TOKEN: -DrepoToken=${{ secrets.COVERALLS_REPO_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
     
     
