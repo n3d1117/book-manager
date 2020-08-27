@@ -9,7 +9,7 @@ jobs:
   # First job: build project after push to branch
   build:
     runs-on: ubuntu-18.04
-    name: Build project after push to branch
+    name: Build and test on Java 11
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -41,7 +41,7 @@ jobs:
     strategy:
       matrix:
         java: [8, 13]
-    name: Build project on Java 8 and 13 after merging a pull request
+    name: Build and test on Java 8 and 13
     # Same steps as first job (sadly, you can't yet reuse steps with Github Actions, so duplication is inevitable here)
     steps:
       - name: Checkout code
