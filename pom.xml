@@ -22,6 +22,7 @@
         <coveralls.version>4.3.0</coveralls.version>
         <pitest.version>1.5.2</pitest.version>
         <sonar.version>3.7.0.1746</sonar.version>
+        <junit.version>4.13</junit.version>
 
         <!-- SonarCloud Properties -->
         <sonar.projectKey>n3d1117_book-manager</sonar.projectKey>
@@ -39,7 +40,12 @@
     <!-- Dependencies -->
     <dependencies>
 
-
+        <!-- JUnit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+        </dependency>
 
     </dependencies>
 
@@ -73,6 +79,16 @@
                     <groupId>org.eluder.coveralls</groupId>
                     <artifactId>coveralls-maven-plugin</artifactId>
                     <version>${coveralls.version}</version>
+                    <dependencies>
+                        <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
+                        until a new version of coveralls-maven-plugin is released.
+                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <!-- PIT Mutation Testing Plugin -->
