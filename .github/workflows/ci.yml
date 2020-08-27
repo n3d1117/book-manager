@@ -1,4 +1,5 @@
-# This workflow will build and test a Java 11 project with Maven
+# This workflow will build and test a Java 8 project with Maven
+# Will also test on Java 9 and 11 after a PR merge
 # Source: https://docs.github.com/en/actions/language-and-framework-guides/building-and-testing-java-with-maven
 
 name: Build on CI with Maven
