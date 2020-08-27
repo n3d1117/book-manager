@@ -37,11 +37,11 @@ jobs:
   # Second job: also build on Java 8 and 13, but only after merging a PR
   build-on-pr-merge:
     if: startsWith(github.event.head_commit.message , 'Merge pull request')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
-        java: [8, 13]
-    name: Build and test on Java 8 and 13
+        java: [1.8, 13]
+    name: Build and test on Java ${{ matrix.java }}
     # Same steps as first job (sadly, you can't yet reuse steps with Github Actions, so duplication is inevitable here)
     steps:
       - name: Checkout code
