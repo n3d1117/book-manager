@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        java: [8, 13]
+        java: [8, 11, 13]
     name: Build and test on Java ${{ matrix.java }}
     # Same steps as first job (sadly, you can't yet reuse steps with Github Actions, so duplication is inevitable here)
     steps:
@@ -50,13 +50,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java }}
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.m2
-            ~/.sonar/cache
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
       - name: Run mvn clean verify (with jacoco and mutation testing)
         run: mvn -f pom.xml clean verify $ACTIVE_PROFILES
         env:
