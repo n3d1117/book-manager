@@ -50,65 +50,64 @@
 
     <build>
 
+        <!-- Plugin Management -->
+        <pluginManagement>
+            <plugins>
+
+                <!-- JaCoCo Plugin -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/Main.*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- Coveralls Plugin -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls.version}</version>
+                    <dependencies>
+                        <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
+                        until a new version of coveralls-maven-plugin is released.
+                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>2.3.1</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- PIT Mutation Testing Plugin -->
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest.version}</version>
+                    <configuration>
+                        <mutators>
+                            <mutator>DEFAULTS</mutator>
+                        </mutators>
+                        <mutationThreshold>98</mutationThreshold>
+                    </configuration>
+                </plugin>
+
+                <!-- Sonar Plugin -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonarqube.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
         <!-- Plugins -->
         <plugins>
-
-            <!-- JaCoCo Plugin -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>${jacoco.version}</version>
-                <configuration>
-                    <excludes>
-
-                    </excludes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Coveralls Plugin -->
-            <plugin>
-                <groupId>org.eluder.coveralls</groupId>
-                <artifactId>coveralls-maven-plugin</artifactId>
-                <version>${coveralls.version}</version>
-                <dependencies>
-                    <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
-                    until a new version of coveralls-maven-plugin is released.
-                    See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
-                    <dependency>
-                        <groupId>javax.xml.bind</groupId>
-                        <artifactId>jaxb-api</artifactId>
-                        <version>2.3.1</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <!-- PIT Mutation Testing Plugin -->
-            <plugin>
-                <groupId>org.pitest</groupId>
-                <artifactId>pitest-maven</artifactId>
-                <version>${pitest.version}</version>
-                <configuration>
-                    <mutators>
-                        <mutator>DEFAULTS</mutator>
-                    </mutators>
-                    <mutationThreshold>98</mutationThreshold>
-                </configuration>
-            </plugin>
-
-            <!-- Sonar Plugin -->
-            <plugin>
-                <groupId>org.sonarsource.scanner.maven</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-                <version>${sonarqube.version}</version>
-            </plugin>
 
             <!-- Maven Assembly Plugin -->
             <plugin>
@@ -163,14 +162,59 @@
     <!-- Profiles -->
     <profiles>
 
-        <!-- JaCoCo Profile -->
+        <!-- JaCoCo - jacoco-report profile, used on CI to generate the report used by Coveralls -->
         <profile>
-            <id>jacoco</id>
+            <id>jacoco-report</id>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- JaCoCo - jacoco-check profile, used locally to check for 100% code coverage -->
+        <profile>
+            <id>jacoco-check</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>jacoco-check</id>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                    <goal>report</goal>
+                                    <goal>check</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <rule>
+                                            <element>PACKAGE</element>
+                                            <limits>
+                                                <limit>
+                                                    <counter>LINE</counter>
+                                                    <value>COVEREDRATIO</value>
+                                                    <minimum>1.00</minimum>
+                                                </limit>
+                                            </limits>
+                                        </rule>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
