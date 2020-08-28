@@ -24,11 +24,6 @@
         <sonar.version>3.7.0.1746</sonar.version>
         <junit.version>4.13</junit.version>
 
-        <!-- SonarCloud Properties -->
-        <sonar.projectKey>n3d1117_book-manager</sonar.projectKey>
-        <sonar.organization>n3d1117-github</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-
         <!-- Make Sonar track integration tests too -->
         <sonar.junit.reportPaths>
             ${project.build.directory}/surefire-reports,
