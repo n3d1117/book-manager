@@ -126,7 +126,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>it.ned.bookmanager.App</mainClass>
+                                    <mainClass>it.ned.bookmanager.Main</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
