@@ -17,12 +17,15 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <!-- Dependencies versions -->
+        <junit.version>4.13</junit.version>
+
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
         <coveralls.version>4.3.0</coveralls.version>
         <pitest.version>1.5.2</pitest.version>
-        <sonar.version>3.7.0.1746</sonar.version>
-        <junit.version>4.13</junit.version>
+        <sonarqube.version>3.7.0.1746</sonarqube.version>
+        <exec-maven.version>3.0.0</exec-maven.version>
 
         <!-- Make Sonar track integration tests too -->
         <sonar.junit.reportPaths>
@@ -40,74 +43,121 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
 
     <build>
-        <!-- Plugin Management -->
-        <pluginManagement>
-            <plugins>
 
-                <!-- JaCoCo Plugin -->
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.version}</version>
-                    <configuration>
-                        <excludes>
+        <!-- Plugins -->
+        <plugins>
 
-                        </excludes>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>prepare-agent</goal>
-                                <goal>report</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+            <!-- JaCoCo Plugin -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <excludes>
 
-                <!-- Coveralls Plugin -->
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls.version}</version>
-                    <dependencies>
-                        <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
-                        until a new version of coveralls-maven-plugin is released.
-                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
-                        <dependency>
-                            <groupId>javax.xml.bind</groupId>
-                            <artifactId>jaxb-api</artifactId>
-                            <version>2.3.1</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 
-                <!-- PIT Mutation Testing Plugin -->
-                <plugin>
-                    <groupId>org.pitest</groupId>
-                    <artifactId>pitest-maven</artifactId>
-                    <version>${pitest.version}</version>
-                    <configuration>
-                        <mutators>
-                            <mutator>DEFAULTS</mutator>
-                        </mutators>
-                        <mutationThreshold>98</mutationThreshold>
-                    </configuration>
-                </plugin>
+            <!-- Coveralls Plugin -->
+            <plugin>
+                <groupId>org.eluder.coveralls</groupId>
+                <artifactId>coveralls-maven-plugin</artifactId>
+                <version>${coveralls.version}</version>
+                <dependencies>
+                    <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
+                    until a new version of coveralls-maven-plugin is released.
+                    See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>2.3.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
 
-                <!-- Sonar Plugin -->
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonar.version}</version>
-                </plugin>
+            <!-- PIT Mutation Testing Plugin -->
+            <plugin>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>${pitest.version}</version>
+                <configuration>
+                    <mutators>
+                        <mutator>DEFAULTS</mutator>
+                    </mutators>
+                    <mutationThreshold>98</mutationThreshold>
+                </configuration>
+            </plugin>
 
-            </plugins>
-        </pluginManagement>
+            <!-- Sonar Plugin -->
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>${sonarqube.version}</version>
+            </plugin>
+
+            <!-- Maven Assembly Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <archive>
+                                <manifest>
+                                    <mainClass>it.ned.bookmanager.App</mainClass>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Exec Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>${exec-maven.version}</version>
+                <executions>
+                    <execution>
+                        <id>run-jar-with-dependencies</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>java</executable>
+                            <arguments>
+                                <argument>-jar</argument>
+                                <argument>${project.build.directory}/${project.artifactId}-${project.version}-jar-with-dependencies.jar</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
     </build>
 
     <!-- Profiles -->

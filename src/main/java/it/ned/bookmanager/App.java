@@ -1,4 +1,4 @@
-package bookmanager;
+package it.ned.bookmanager;
 
 public class App {
     public String sayHello(String name) {
@@ -10,5 +10,8 @@ public class App {
 
     public String sayHello() {
         return sayHello(null);
+    }
+
+    public static void main(String[] args) {
     }
 }

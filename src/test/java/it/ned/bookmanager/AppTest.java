@@ -1,4 +1,4 @@
-package bookmanager;
+package it.ned.bookmanager;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
