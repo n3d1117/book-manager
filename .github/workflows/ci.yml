@@ -9,8 +9,8 @@ jobs:
 
   # First job: build and test on Java 8
   build:
-    # Skip build if commit message contains '[ci skip]'
-    if: "!contains(github.event.head_commit.message, '[ci skip]')"
+    # Skip build if commit message contains '[ci skip]' or if it's a tag push
+    if: "!contains(github.event.head_commit.message, '[ci skip]') && !startsWith(github.ref, 'refs/tags/v')"
 
     runs-on: ubuntu-18.04
     name: Build and test on Java 8
@@ -55,7 +55,7 @@ jobs:
           SONAR_PROJECT: n3d1117_book-manager
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  
+
   # Second job: also build on Java 9, 11 and 13, but only after merging a PR
   build-on-pr-merge:
     if: startsWith(github.event.head_commit.message, 'Merge pull request')
@@ -88,28 +88,3 @@ jobs:
         run: mvn -f pom.xml clean verify $ENABLED_PROFILES
         env:
           ENABLED_PROFILES: -P jacoco-check,mutation-testing
-
-  # Third job: automated Github release when a tag is pushed, uploading fatjar as an asset
-  deploy:
-    if: startsWith(github.ref, 'refs/tags/v')
-
-    needs: build # wait for build to finish first
-    runs-on: ubuntu-18.04
-    name: Automated release with .jar
-
-    steps:
-      - name: Check out latest code
-        uses: actions/checkout@v2
-      - name: Set up JDK 8
-        uses: actions/setup-java@v1
-        with:
-          java-version: 8
-      - name: Package .jar (mvn clean package)
-        run: mvn -B -f pom.xml clean package
-      - name: Create Github release with tag and upload fatjar as asset
-        uses: softprops/action-gh-release@v1
-        with:
-          files: target/*-jar-with-dependencies.jar
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
