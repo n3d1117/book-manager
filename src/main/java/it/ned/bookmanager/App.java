@@ -12,6 +12,5 @@ public class App {
         return sayHello(null);
     }
 
-    public static void main(String[] args) {
-    }
+    public static void main(String[] args) { }
 }
