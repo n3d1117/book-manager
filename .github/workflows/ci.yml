@@ -42,12 +42,12 @@ jobs:
         run: |
           mvn -B -f pom.xml clean verify \
           $ENABLED_PROFILES $ADDITIONAL_GOALS \
-          -DrepoToken=$COVERALLS_TOKEN \
-          -Dsonar.host.url=$SONAR_URL \
-          -Dsonar.organization=$SONAR_ORGANIZATION \
-          -Dsonar.projectKey=$SONAR_PROJECT
+          -D repoToken=$COVERALLS_TOKEN \
+          -D sonar.host.url=$SONAR_URL \
+          -D sonar.organization=$SONAR_ORGANIZATION \
+          -D sonar.projectKey=$SONAR_PROJECT
         env:
-          ENABLED_PROFILES: -Pjacoco,mutation-testing
+          ENABLED_PROFILES: -P jacoco-report,mutation-testing
           ADDITIONAL_GOALS: coveralls:report sonar:sonar
           COVERALLS_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
           SONAR_URL: https://sonarcloud.io
@@ -87,4 +87,5 @@ jobs:
       - name: Run mvn clean verify (with jacoco and mutation testing)
         run: mvn -f pom.xml clean verify $ENABLED_PROFILES
         env:
-          ENABLED_PROFILES: -Pjacoco,mutation-testing
+          ENABLED_PROFILES: -P jacoco-check,mutation-testing
+
