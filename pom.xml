@@ -33,6 +33,11 @@
             ${project.build.directory}/failsafe-reports
         </sonar.junit.reportPaths>
 
+        <!-- Exclude classes from Sonar Code Coverage -->
+        <sonar.coverage.exclusions>
+            **/Main.*
+        </sonar.coverage.exclusions>
+
     </properties>
 
     <!-- Dependencies -->
