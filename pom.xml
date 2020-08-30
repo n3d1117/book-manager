@@ -36,6 +36,7 @@
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
             **/Main.*
+            **/model/*.*
         </sonar.coverage.exclusions>
 
     </properties>
@@ -67,6 +68,7 @@
                     <configuration>
                         <excludes>
                             <exclude>**/Main.*</exclude>
+                            <exclude>**/model/*.*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
