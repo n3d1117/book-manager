@@ -113,7 +113,7 @@
                             <param>*Test</param>
                         </targetTests>
                         <mutators>
-                            <mutator>DEFAULTS</mutator>
+                            <mutator>STRONGER</mutator>
                         </mutators>
                         <mutationThreshold>100</mutationThreshold>
                     </configuration>
