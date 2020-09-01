@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
 
 public class BookManagerControllerTest {
@@ -57,7 +58,7 @@ public class BookManagerControllerTest {
         controller.addAuthor(AUTHOR_FIXTURE);
 
         InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).saveAuthor(AUTHOR_FIXTURE);
+        inOrder.verify(authorService).addAuthor(AUTHOR_FIXTURE);
         inOrder.verify(view).authorAdded(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
@@ -130,7 +131,7 @@ public class BookManagerControllerTest {
 
         InOrder inOrder = inOrder(authorService, bookService, view);
         inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
-        inOrder.verify(view).authorNotAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verify(view).authorDoesNotExistError(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -145,7 +146,7 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(authorService, bookService, view);
         inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
         inOrder.verify(bookService).findBookById(BOOK_FIXTURE.getId());
-        inOrder.verify(view).authorNotAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verify(view).bookDoesNotExistError(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -161,6 +162,48 @@ public class BookManagerControllerTest {
         inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
         inOrder.verify(bookService).findBookById(BOOK_FIXTURE.getId());
         inOrder.verify(view).authorAlreadyAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    /* Retrieve books from given author */
+
+    @Test
+    public void testRetrievedBooksFromAuthorWhenThereAreMany() {
+        List<Book> writtenBooks = asList(BOOK_FIXTURE, new Book("2", "1984", 283));
+        when(authorService.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+        when(authorService.allWrittenBooks(AUTHOR_FIXTURE)).thenReturn(writtenBooks);
+
+        controller.allBooksFromAuthor(AUTHOR_FIXTURE);
+
+        InOrder inOrder = inOrder(authorService, view);
+        inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(authorService).allWrittenBooks(AUTHOR_FIXTURE);
+        inOrder.verify(view).showBooksFromAuthor(AUTHOR_FIXTURE, writtenBooks);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testRetrievedBooksFromAuthorWhenThereAreNone() {
+        when(authorService.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+        when(authorService.allWrittenBooks(AUTHOR_FIXTURE)).thenReturn(Collections.emptyList());
+
+        controller.allBooksFromAuthor(AUTHOR_FIXTURE);
+
+        InOrder inOrder = inOrder(authorService, view);
+        inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).showBooksFromAuthor(AUTHOR_FIXTURE, Collections.emptyList());
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testRetrievedBooksFromAuthorWhenAuthorDoesNotExist() {
+        when(authorService.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(null);
+
+        controller.allBooksFromAuthor(AUTHOR_FIXTURE);
+
+        InOrder inOrder = inOrder(authorService, view);
+        inOrder.verify(authorService).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).authorDoesNotExistError(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -186,7 +229,7 @@ public class BookManagerControllerTest {
         controller.addBook(BOOK_FIXTURE);
 
         InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).saveBook(BOOK_FIXTURE);
+        inOrder.verify(bookService).addBook(BOOK_FIXTURE);
         inOrder.verify(view).bookAdded(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }

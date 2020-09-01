@@ -8,6 +8,8 @@ import it.ned.bookmanager.view.BookManagerView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.List;
+
 public class BookManagerController {
 
     private final AuthorService authorService;
@@ -35,7 +37,7 @@ public class BookManagerController {
     public void addAuthor(Author author) {
         LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
         if (!authorExists(author)) {
-            authorService.saveAuthor(author);
+            authorService.addAuthor(author);
             view.authorAdded(author);
         } else {
             view.authorNotAddedError(author);
@@ -45,7 +47,7 @@ public class BookManagerController {
     public void addBook(Book book) {
         LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
         if (!bookExists(book)) {
-            bookService.saveBook(book);
+            bookService.addBook(book);
             view.bookAdded(book);
         } else {
             view.bookNotAddedError(book);
@@ -74,15 +76,25 @@ public class BookManagerController {
 
     public void assignAuthorToBook(Author author, Book book) {
         LOGGER.debug(() -> String.format("Assigning author %s to book %s", author.toString(), book.toString()));
-        if (authorExists(author) && bookExists(book)) {
-            if (!bookHasAuthor(book)) {
-                authorService.assignAuthorToBook(author, book);
-                view.assignedAuthorToBook(author, book);
-            } else {
-                view.authorAlreadyAssignedToBookError(author, book);
-            }
+        if (!authorExists(author)) {
+            view.authorDoesNotExistError(author);
+        } else if (!bookExists(book)) {
+            view.bookDoesNotExistError(book);
+        } else if (bookHasAuthor(book)) {
+            view.authorAlreadyAssignedToBookError(author, book);
         } else {
-            view.authorNotAssignedToBookError(author, book);
+            authorService.assignAuthorToBook(author, book);
+            view.assignedAuthorToBook(author, book);
+        }
+    }
+
+    public void allBooksFromAuthor(Author author) {
+        LOGGER.debug(() -> String.format("Showing all books from author %s", author.toString()));
+        if (authorExists(author)) {
+            List<Book> writtenBooks = authorService.allWrittenBooks(author);
+            view.showBooksFromAuthor(author, writtenBooks);
+        } else {
+            view.authorDoesNotExistError(author);
         }
     }
 
@@ -97,4 +109,5 @@ public class BookManagerController {
     private boolean bookHasAuthor(Book book) {
         return authorService.findAuthorFromBookId(book.getId()) != null;
     }
+
 }

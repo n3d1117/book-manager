@@ -6,10 +6,11 @@ import it.ned.bookmanager.model.Book;
 import java.util.List;
 
 public interface AuthorService {
-    public List<Author> getAllAuthors();
-    public Author findAuthorById(String id);
-    public Author findAuthorFromBookId(String bookId);
-    public void saveAuthor(Author author);
-    public void deleteAuthor(Author author);
-    public void assignAuthorToBook(Author author, Book book);
+    List<Author> getAllAuthors();
+    Author findAuthorById(String id);
+    Author findAuthorFromBookId(String bookId);
+    void addAuthor(Author author);
+    void deleteAuthor(Author author);
+    Book assignAuthorToBook(Author author, Book book);
+    List<Book> allWrittenBooks(Author author);
 }
