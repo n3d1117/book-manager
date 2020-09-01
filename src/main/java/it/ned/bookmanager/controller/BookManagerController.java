@@ -59,11 +59,28 @@ public class BookManagerController {
         }
     }
 
+    public void assignAuthorToBook(Author author, Book book) {
+        if (authorExists(author) && bookExists(book)) {
+            if (!bookHasAuthor(book)) {
+                service.assignAuthorToBook(author, book);
+                view.assignedAuthorToBook(author, book);
+            } else {
+                view.authorAlreadyAssignedToBookError(author, book);
+            }
+        } else {
+            view.authorNotAssignedToBookError(author, book);
+        }
+    }
+
     private boolean authorExists(Author author) {
         return service.findAuthorById(author.getId()) != null;
     }
 
     private boolean bookExists(Book book) {
         return service.findBookById(book.getId()) != null;
+    }
+
+    private boolean bookHasAuthor(Book book) {
+        return service.findAuthorFromBookId(book.getId()) != null;
     }
 }

@@ -24,6 +24,8 @@ public class BookManagerService {
         return null;
     }
 
+    public Author findAuthorFromBookId(String bookId) { return null; }
+
     public void saveAuthor(Author author) {
     }
 
@@ -35,4 +37,8 @@ public class BookManagerService {
 
     public void deleteBook(Book book) {
     }
+
+    public void assignAuthorToBook(Author author, Book book) {
+    }
+
 }

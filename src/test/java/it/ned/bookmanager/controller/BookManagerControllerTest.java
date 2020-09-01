@@ -1,6 +1,5 @@
 package it.ned.bookmanager.controller;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -44,7 +43,10 @@ public class BookManagerControllerTest {
         controller.allAuthors();
 
         verify(view).showAllAuthors(authors);
+        verifyNoMoreInteractions(ignoreStubs(service));
     }
+
+    /* Add author */
 
     @Test
     public void testAuthorAddedSuccessfully() {
@@ -55,6 +57,7 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).saveAuthor(AUTHOR_FIXTURE);
         inOrder.verify(view).authorAdded(AUTHOR_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -67,8 +70,10 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).findAuthorById(georgeOrwellClone.getId());
         inOrder.verify(view).authorNotAddedError(georgeOrwellClone);
-        inOrder.verify(service, never()).saveAuthor(georgeOrwellClone);
+        inOrder.verifyNoMoreInteractions();
     }
+
+    /* Delete author */
 
     @Test
     public void testAuthorDeletedSuccessfully() {
@@ -80,6 +85,7 @@ public class BookManagerControllerTest {
         inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
         inOrder.verify(service).deleteAuthor(AUTHOR_FIXTURE);
         inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -91,6 +97,69 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
         inOrder.verify(view).authorNotDeletedError(AUTHOR_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    /* Assign author to book */
+
+    @Test
+    public void testAuthorAssignedToBookSuccessfully() {
+        when(service.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+        when(service.findBookById(BOOK_FIXTURE.getId())).thenReturn(BOOK_FIXTURE);
+        when(service.findAuthorFromBookId(BOOK_FIXTURE.getId())).thenReturn(null);
+
+        controller.assignAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+
+        InOrder inOrder = inOrder(service, view);
+        inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(service).findBookById(BOOK_FIXTURE.getId());
+        inOrder.verify(service).assignAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verify(view).assignedAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testAuthorNotAssignedToBookWhenAuthorDoesNotExist() {
+        when(service.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(null);
+        when(service.findBookById(BOOK_FIXTURE.getId())).thenReturn(BOOK_FIXTURE);
+        when(service.findAuthorFromBookId(BOOK_FIXTURE.getId())).thenReturn(null);
+
+        controller.assignAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+
+        InOrder inOrder = inOrder(service, view);
+        inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).authorNotAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testAuthorNotAssignedToBookWhenBookDoesNotExist() {
+        when(service.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+        when(service.findBookById(BOOK_FIXTURE.getId())).thenReturn(null);
+        when(service.findAuthorFromBookId(BOOK_FIXTURE.getId())).thenReturn(null);
+
+        controller.assignAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+
+        InOrder inOrder = inOrder(service, view);
+        inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(service).findBookById(BOOK_FIXTURE.getId());
+        inOrder.verify(view).authorNotAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testAuthorNotAssignedToBookWhenAuthorAlreadyPresent() {
+        when(service.findAuthorById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+        when(service.findBookById(BOOK_FIXTURE.getId())).thenReturn(BOOK_FIXTURE);
+        when(service.findAuthorFromBookId(BOOK_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
+
+        controller.assignAuthorToBook(AUTHOR_FIXTURE, BOOK_FIXTURE);
+
+        InOrder inOrder = inOrder(service, view);
+        inOrder.verify(service).findAuthorById(AUTHOR_FIXTURE.getId());
+        inOrder.verify(service).findBookById(BOOK_FIXTURE.getId());
+        inOrder.verify(view).authorAlreadyAssignedToBookError(AUTHOR_FIXTURE, BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
     /* Books */
@@ -103,7 +172,10 @@ public class BookManagerControllerTest {
         controller.allBooks();
 
         verify(view).showAllBooks(books);
+        verifyNoMoreInteractions(ignoreStubs(service));
     }
+
+    /* Add book */
 
     @Test
     public void testBookAddedSuccessfully() {
@@ -114,6 +186,7 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).saveBook(BOOK_FIXTURE);
         inOrder.verify(view).bookAdded(BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -126,8 +199,10 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).findBookById(animalFarmClone.getId());
         inOrder.verify(view).bookNotAddedError(animalFarmClone);
-        inOrder.verify(service, never()).saveBook(animalFarmClone);
+        inOrder.verifyNoMoreInteractions();
     }
+
+    /* Delete book */
 
     @Test
     public void testBookDeletedSuccessfully() {
@@ -139,6 +214,7 @@ public class BookManagerControllerTest {
         inOrder.verify(service).findBookById(BOOK_FIXTURE.getId());
         inOrder.verify(service).deleteBook(BOOK_FIXTURE);
         inOrder.verify(view).bookDeleted(BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -150,6 +226,7 @@ public class BookManagerControllerTest {
         InOrder inOrder = inOrder(service, view);
         inOrder.verify(service).findBookById(BOOK_FIXTURE.getId());
         inOrder.verify(view).bookNotDeletedError(BOOK_FIXTURE);
+        inOrder.verifyNoMoreInteractions();
     }
 
 }

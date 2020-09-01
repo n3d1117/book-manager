@@ -16,4 +16,7 @@ public interface BookManagerView {
     void authorNotDeletedError(Author author);
     void bookDeleted(Book book);
     void bookNotDeletedError(Book book);
+    void assignedAuthorToBook(Author author, Book book);
+    void authorNotAssignedToBookError(Author author, Book book);
+    void authorAlreadyAssignedToBookError(Author author, Book book);
 }
