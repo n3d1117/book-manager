@@ -21,6 +21,7 @@
         <junit.version>4.13</junit.version>
         <mockito.version>3.3.3</mockito.version>
         <log4j.version>2.13.3</log4j.version>
+        <assertj-swing.version>3.9.2</assertj-swing.version>
 
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
@@ -74,6 +75,13 @@
             <version>${log4j.version}</version>
         </dependency>
 
+        <!-- AssertJ Swing -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-swing-junit</artifactId>
+            <version>${assertj-swing.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
