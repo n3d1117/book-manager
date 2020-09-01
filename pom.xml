@@ -38,7 +38,7 @@
 
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
-            **/Main.*
+            **/Main.*,
             **/model/*.*
         </sonar.coverage.exclusions>
 
