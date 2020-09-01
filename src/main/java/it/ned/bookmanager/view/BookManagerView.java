@@ -15,4 +15,27 @@ public class BookManagerView {
         // TODO Auto-generated method stub
     }
 
+    public void authorAdded(Author author) {
+    }
+
+    public void authorNotAddedError(Author author) {
+    }
+
+    public void bookAdded(Book book) {
+    }
+
+    public void bookNotAddedError(Book book) {
+    }
+
+    public void authorDeleted(Author author) {
+    }
+
+    public void authorNotDeletedError(Author author) {
+    }
+
+    public void bookDeleted(Book book) {
+    }
+
+    public void bookNotDeletedError(Book book) {
+    }
 }

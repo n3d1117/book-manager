@@ -8,9 +8,9 @@ public class Book {
     private final String title;
     private final Integer numberOfPages;
 
-    public Book(String id, String name, Integer numberOfPages) {
+    public Book(String id, String title, Integer numberOfPages) {
         this.id = id;
-        this.title = name;
+        this.title = title;
         this.numberOfPages = numberOfPages;
     }
 

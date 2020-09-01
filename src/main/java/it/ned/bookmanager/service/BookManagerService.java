@@ -16,4 +16,24 @@ public class BookManagerService {
         // TODO Auto-generated method stub
         return null;
     }
+
+    public Author findAuthorById(String id) {
+        return null;
+    }
+
+    public Book findBookById(String id) {
+        return null;
+    }
+
+    public void saveAuthor(Author author) {
+    }
+
+    public void saveBook(Book book) {
+    }
+
+    public void deleteAuthor(Author author) {
+    }
+
+    public void deleteBook(Book book) {
+    }
 }
