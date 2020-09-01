@@ -5,37 +5,15 @@ import it.ned.bookmanager.model.Book;
 
 import java.util.List;
 
-public class BookManagerView {
-
-    public void showAllBooks(List<Book> allBooks) {
-        // TODO Auto-generated method stub
-    }
-
-    public void showAllAuthors(List<Author> allAuthors) {
-        // TODO Auto-generated method stub
-    }
-
-    public void authorAdded(Author author) {
-    }
-
-    public void authorNotAddedError(Author author) {
-    }
-
-    public void bookAdded(Book book) {
-    }
-
-    public void bookNotAddedError(Book book) {
-    }
-
-    public void authorDeleted(Author author) {
-    }
-
-    public void authorNotDeletedError(Author author) {
-    }
-
-    public void bookDeleted(Book book) {
-    }
-
-    public void bookNotDeletedError(Book book) {
-    }
+public interface BookManagerView {
+    void showAllBooks(List<Book> allBooks);
+    void showAllAuthors(List<Author> allAuthors);
+    void authorAdded(Author author);
+    void authorNotAddedError(Author author);
+    void bookAdded(Book book);
+    void bookNotAddedError(Book book);
+    void authorDeleted(Author author);
+    void authorNotDeletedError(Author author);
+    void bookDeleted(Book book);
+    void bookNotDeletedError(Book book);
 }
