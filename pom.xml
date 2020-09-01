@@ -105,10 +105,17 @@
                     <artifactId>pitest-maven</artifactId>
                     <version>${pitest.version}</version>
                     <configuration>
+                        <excludedClasses>
+                            <param>it.ned.bookmanager.model.*</param>
+                            <param>it.ned.bookmanager.view.*</param>
+                        </excludedClasses>
+                        <targetTests>
+                            <param>*Test</param>
+                        </targetTests>
                         <mutators>
                             <mutator>DEFAULTS</mutator>
                         </mutators>
-                            <mutationThreshold>100</mutationThreshold>
+                        <mutationThreshold>100</mutationThreshold>
                     </configuration>
                 </plugin>
 
