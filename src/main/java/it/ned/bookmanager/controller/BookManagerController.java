@@ -4,11 +4,15 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.BookManagerService;
 import it.ned.bookmanager.view.BookManagerView;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class BookManagerController {
 
     private final BookManagerService service;
     private final BookManagerView view;
+
+    private static final Logger LOGGER = LogManager.getLogger(BookManagerController.class);
 
     public BookManagerController(BookManagerService service, BookManagerView view) {
         this.service = service;
@@ -16,14 +20,17 @@ public class BookManagerController {
     }
 
     public void allBooks() {
+        LOGGER.debug(() -> "Showing all books");
         view.showAllBooks(service.getAllBooks());
     }
 
     public void allAuthors() {
+        LOGGER.debug(() -> "Showing all authors");
         view.showAllAuthors(service.getAllAuthors());
     }
 
     public void addAuthor(Author author) {
+        LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
         if (!authorExists(author)) {
             service.saveAuthor(author);
             view.authorAdded(author);
@@ -33,6 +40,7 @@ public class BookManagerController {
     }
 
     public void addBook(Book book) {
+        LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
         if (!bookExists(book)) {
             service.saveBook(book);
             view.bookAdded(book);
@@ -42,6 +50,7 @@ public class BookManagerController {
     }
 
     public void deleteAuthor(Author author) {
+        LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
         if (authorExists(author)) {
             service.deleteAuthor(author);
             view.authorDeleted(author);
@@ -51,6 +60,7 @@ public class BookManagerController {
     }
 
     public void deleteBook(Book book) {
+        LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
         if (bookExists(book)) {
             service.deleteBook(book);
             view.bookDeleted(book);
@@ -60,6 +70,7 @@ public class BookManagerController {
     }
 
     public void assignAuthorToBook(Author author, Book book) {
+        LOGGER.debug(() -> String.format("Assigning author %s to book %s", author.toString(), book.toString()));
         if (authorExists(author) && bookExists(book)) {
             if (!bookHasAuthor(book)) {
                 service.assignAuthorToBook(author, book);
