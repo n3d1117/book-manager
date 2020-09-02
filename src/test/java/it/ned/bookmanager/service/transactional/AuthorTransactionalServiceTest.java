@@ -92,6 +92,24 @@ public class AuthorTransactionalServiceTest {
     }
 
     @Test
+    public void testDeleteAuthorAndAssociatedBooks() {
+        Book animalFarm = new Book("1", "Animal Farm", 93);
+        Book nineteenEightFour = new Book("2", "1984", 283);
+        List<Book> books = Arrays.asList(animalFarm, nineteenEightFour);
+
+        when(authorRepository.allWrittenBooksForAuthor(AUTHOR_FIXTURE_1)).thenReturn(books);
+
+        authorService.deleteAuthor(AUTHOR_FIXTURE_1);
+
+        InOrder inOrder = inOrder(transactionManager, authorRepository, bookRepository);
+        inOrder.verify(transactionManager).doInTransaction(any());
+        inOrder.verify(bookRepository).delete(animalFarm);
+        inOrder.verify(bookRepository).delete(nineteenEightFour);
+        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
     public void testDeleteAuthorWhenAuthorIsNull() {
         authorService.deleteAuthor(null);
 

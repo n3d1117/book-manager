@@ -2,6 +2,8 @@ package it.ned.bookmanager.service.transactional;
 
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.AuthorRepository;
+import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.transaction.TransactionManager;
 
@@ -41,8 +43,12 @@ public class AuthorTransactionalService implements AuthorService {
     @Override
     public void deleteAuthor(Author author) {
         transactionManager.doInTransaction(factory -> {
-            if (author != null)
-                factory.createAuthorRepository().delete(author);
+            if (author != null) {
+                AuthorRepository authorRepository = factory.createAuthorRepository();
+                BookRepository bookRepository = factory.createBookRepository();
+                authorRepository.allWrittenBooksForAuthor(author).forEach(bookRepository::delete);
+                authorRepository.delete(author);
+            }
             return null;
         });
     }
