@@ -22,6 +22,8 @@
         <mockito.version>3.3.3</mockito.version>
         <log4j.version>2.13.3</log4j.version>
         <assertj-swing.version>3.9.2</assertj-swing.version>
+        <mongo-java.version>3.12.7</mongo-java.version>
+        <logback-classic.version>1.2.3</logback-classic.version>
 
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
@@ -81,6 +83,20 @@
             <artifactId>assertj-swing-junit</artifactId>
             <version>${assertj-swing.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Mongo Java API -->
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+            <version>${mongo-java.version}</version>
+        </dependency>
+
+        <!-- Logback (required to see Mongo Java Driver logs)-->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
         </dependency>
 
     </dependencies>
