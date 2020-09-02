@@ -18,11 +18,7 @@ import org.mockito.MockitoAnnotations;
 
 import static org.mockito.AdditionalAnswers.answer;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.verify;
-
+import static org.mockito.Mockito.*;
 import static org.junit.Assert.assertEquals;
 
 public class BookTransactionalServiceTest {
@@ -52,6 +48,8 @@ public class BookTransactionalServiceTest {
 
         assertEquals(books, retrievedBooks);
         verify(transactionManager).doInTransaction(any());
+        verify(bookRepository).findAll();
+        verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
@@ -62,6 +60,8 @@ public class BookTransactionalServiceTest {
 
         assertEquals(BOOK_FIXTURE_1, retrievedBook);
         verify(transactionManager).doInTransaction(any());
+        verify(bookRepository).findById(BOOK_FIXTURE_1.getId());
+        verifyNoMoreInteractions(bookRepository);
     }
 
     @Test
