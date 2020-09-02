@@ -4,9 +4,13 @@ import java.util.Objects;
 
 public class Book {
 
-    private final String id;
-    private final String title;
-    private final Integer numberOfPages;
+    private String id;
+    private String title;
+    private Integer numberOfPages;
+
+    // By default all POJOs must include a public or protected, empty constructor
+    // See also http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
+    protected Book() { }
 
     public Book(String id, String title, Integer numberOfPages) {
         this.id = id;
@@ -24,6 +28,18 @@ public class Book {
 
     public Integer getNumberOfPages() {
         return numberOfPages;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public void setNumberOfPages(final Integer numberOfPages) {
+        this.numberOfPages = numberOfPages;
     }
 
     @Override

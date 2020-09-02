@@ -4,8 +4,12 @@ import java.util.Objects;
 
 public class Author {
 
-    private final String id;
-    private final String name;
+    private String id;
+    private String name;
+
+    // By default all POJOs must include a public or protected, empty constructor
+    // See also http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
+    protected Author() { }
 
     public Author(String id, String name) {
         this.id = id;
@@ -18,6 +22,14 @@ public class Author {
 
     public String getName() {
         return name;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 
     @Override
