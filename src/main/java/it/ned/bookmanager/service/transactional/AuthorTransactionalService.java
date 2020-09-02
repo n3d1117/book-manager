@@ -46,8 +46,8 @@ public class AuthorTransactionalService implements AuthorService {
             if (author != null) {
                 AuthorRepository authorRepository = factory.createAuthorRepository();
                 BookRepository bookRepository = factory.createBookRepository();
-                authorRepository.allWrittenBooksForAuthor(author).forEach(bookRepository::delete);
-                authorRepository.delete(author);
+                authorRepository.allWrittenBooksForAuthor(author).forEach(b -> bookRepository.delete(b.getId()));
+                authorRepository.delete(author.getId());
             }
             return null;
         });

@@ -88,7 +88,7 @@ public class BookTransactionalServiceTest {
 
         InOrder inOrder = inOrder(transactionManager, bookRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
-        inOrder.verify(bookRepository).delete(BOOK_FIXTURE_1);
+        inOrder.verify(bookRepository).delete(BOOK_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
     }
 

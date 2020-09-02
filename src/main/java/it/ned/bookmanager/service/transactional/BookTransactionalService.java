@@ -41,7 +41,7 @@ public class BookTransactionalService implements BookService {
     public void deleteBook(Book book) {
         transactionManager.doInTransaction(factory -> {
             if (book != null)
-                factory.createBookRepository().delete(book);
+                factory.createBookRepository().delete(book.getId());
             return null;
         });
     }

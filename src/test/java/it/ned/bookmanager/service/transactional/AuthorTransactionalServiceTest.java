@@ -92,7 +92,7 @@ public class AuthorTransactionalServiceTest {
 
         InOrder inOrder = inOrder(transactionManager, authorRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
-        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1);
+        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -108,9 +108,9 @@ public class AuthorTransactionalServiceTest {
 
         InOrder inOrder = inOrder(transactionManager, authorRepository, bookRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
-        inOrder.verify(bookRepository).delete(animalFarm);
-        inOrder.verify(bookRepository).delete(nineteenEightyFour);
-        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1);
+        inOrder.verify(bookRepository).delete(animalFarm.getId());
+        inOrder.verify(bookRepository).delete(nineteenEightyFour.getId());
+        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
     }
 
