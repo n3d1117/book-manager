@@ -7,15 +7,17 @@ public class Book {
     private String id;
     private String title;
     private Integer numberOfPages;
+    private String authorId;
 
     // By default all POJOs must include a public or protected, empty constructor
     // See also http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
     protected Book() { }
 
-    public Book(String id, String title, Integer numberOfPages) {
+    public Book(String id, String title, Integer numberOfPages, String authorId) {
         this.id = id;
         this.title = title;
         this.numberOfPages = numberOfPages;
+        this.authorId = authorId;
     }
 
     public String getId() {
@@ -30,6 +32,10 @@ public class Book {
         return numberOfPages;
     }
 
+    public String getAuthorId() {
+        return authorId;
+    }
+
     public void setId(final String id) {
         this.id = id;
     }
@@ -42,19 +48,24 @@ public class Book {
         this.numberOfPages = numberOfPages;
     }
 
+    public void setAuthorId(String authorId) {
+        this.authorId = authorId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
-        return id.equals(book.getId()) &&
-                Objects.equals(title, book.getTitle()) &&
-                Objects.equals(numberOfPages, book.getNumberOfPages());
+        return Objects.equals(id, book.id) &&
+                Objects.equals(title, book.title) &&
+                Objects.equals(numberOfPages, book.numberOfPages) &&
+                Objects.equals(authorId, book.authorId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, numberOfPages);
+        return Objects.hash(id, title, numberOfPages, authorId);
     }
 
     @Override
@@ -63,6 +74,7 @@ public class Book {
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
                 ", numberOfPages=" + numberOfPages +
+                ", authorId='" + authorId + '\'' +
                 '}';
     }
 }

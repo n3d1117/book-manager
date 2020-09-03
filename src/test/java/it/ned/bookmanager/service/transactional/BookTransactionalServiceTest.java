@@ -3,6 +3,7 @@ package it.ned.bookmanager.service.transactional;
 import java.util.Arrays;
 import java.util.List;
 
+import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.repository.RepositoryFactory;
@@ -28,8 +29,8 @@ public class BookTransactionalServiceTest {
     @Mock private BookRepository bookRepository;
     @InjectMocks private BookTransactionalService bookService;
 
-    private static final Book BOOK_FIXTURE_1 = new Book("1", "Animal Farm", 93);
-    private static final Book BOOK_FIXTURE_2 = new Book("2", "1984", 283);
+    private static final Book BOOK_FIXTURE_1 = new Book("1", "Animal Farm", 93, "1");
+    private static final Book BOOK_FIXTURE_2 = new Book("2", "1984", 283, "1");
 
     @Before
     public void setUp() {
@@ -44,7 +45,7 @@ public class BookTransactionalServiceTest {
         List<Book> books = Arrays.asList(BOOK_FIXTURE_1, BOOK_FIXTURE_2);
         when(bookRepository.findAll()).thenReturn(books);
 
-        List<Book> retrievedBooks = bookService.getAllBooks();
+        List<Book> retrievedBooks = bookService.findAll();
 
         assertEquals(books, retrievedBooks);
         verify(transactionManager).doInTransaction(any());
@@ -56,7 +57,7 @@ public class BookTransactionalServiceTest {
     public void testFindBookById() {
         when(bookRepository.findById(BOOK_FIXTURE_1.getId())).thenReturn(BOOK_FIXTURE_1);
 
-        Book retrievedBook = bookService.findBookById(BOOK_FIXTURE_1.getId());
+        Book retrievedBook = bookService.findById(BOOK_FIXTURE_1.getId());
 
         assertEquals(BOOK_FIXTURE_1, retrievedBook);
         verify(transactionManager).doInTransaction(any());
@@ -66,7 +67,7 @@ public class BookTransactionalServiceTest {
 
     @Test
     public void testAddBook() {
-        bookService.addBook(BOOK_FIXTURE_1);
+        bookService.add(BOOK_FIXTURE_1);
 
         InOrder inOrder = inOrder(transactionManager, bookRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
@@ -76,7 +77,7 @@ public class BookTransactionalServiceTest {
 
     @Test
     public void testAddBookWhenBookIsNull() {
-        bookService.addBook(null);
+        bookService.add(null);
 
         verify(transactionManager).doInTransaction(any());
         verifyNoInteractions(bookRepository);
@@ -84,7 +85,7 @@ public class BookTransactionalServiceTest {
 
     @Test
     public void testDeleteBook() {
-        bookService.deleteBook(BOOK_FIXTURE_1);
+        bookService.delete(BOOK_FIXTURE_1.getId());
 
         InOrder inOrder = inOrder(transactionManager, bookRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
@@ -93,10 +94,13 @@ public class BookTransactionalServiceTest {
     }
 
     @Test
-    public void testDeleteBookWhenBookIsNull() {
-        bookService.deleteBook(null);
+    public void testDeleteAllBooksFromAuthorId() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        bookService.deleteAllBooksForAuthorId(georgeOrwell.getId());
 
-        verify(transactionManager).doInTransaction(any());
-        verifyNoInteractions(bookRepository);
+        InOrder inOrder = inOrder(transactionManager, bookRepository);
+        inOrder.verify(transactionManager).doInTransaction(any());
+        inOrder.verify(bookRepository).deleteAllBooksForAuthorId(georgeOrwell.getId());
+        inOrder.verifyNoMoreInteractions();
     }
 }

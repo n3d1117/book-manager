@@ -1,9 +1,6 @@
 package it.ned.bookmanager.service.transactional;
 
 import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.AuthorRepository;
-import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.transaction.TransactionManager;
 
@@ -18,21 +15,20 @@ public class AuthorTransactionalService implements AuthorService {
     }
 
     @Override
-    public List<Author> getAllAuthors() {
+    public List<Author> findAll() {
         return transactionManager.doInTransaction(
                 factory -> factory.createAuthorRepository().findAll()
         );
     }
 
     @Override
-    public Author findAuthorById(String id) {
+    public Author findById(String id) {
         return transactionManager.doInTransaction(
                 factory -> factory.createAuthorRepository().findById(id)
         );
     }
 
-    @Override
-    public void addAuthor(Author author) {
+    public void add(Author author) {
         transactionManager.doInTransaction(factory -> {
             if (author != null)
                 factory.createAuthorRepository().add(author);
@@ -41,42 +37,11 @@ public class AuthorTransactionalService implements AuthorService {
     }
 
     @Override
-    public void deleteAuthor(Author author) {
+    public void delete(String authorId) {
         transactionManager.doInTransaction(factory -> {
-            if (author != null) {
-                AuthorRepository authorRepository = factory.createAuthorRepository();
-                BookRepository bookRepository = factory.createBookRepository();
-                authorRepository.allWrittenBooksForAuthor(author).forEach(b -> bookRepository.delete(b.getId()));
-                authorRepository.delete(author.getId());
-            }
+            factory.createBookRepository().deleteAllBooksForAuthorId(authorId);
+            factory.createAuthorRepository().delete(authorId);
             return null;
         });
-    }
-
-    @Override
-    public Author findAuthorFromBookId(String bookId) {
-        return transactionManager.doInTransaction(factory -> {
-            if (factory.createBookRepository().findById(bookId) != null) {
-                return factory.createAuthorRepository().findAuthorFromBookId(bookId);
-            }
-            return null;
-        });
-    }
-
-    @Override
-    public Book assignAuthorToBook(Author author, Book book) {
-        return transactionManager.doInTransaction(factory -> {
-            if (factory.createBookRepository().findById(book.getId()) != null) {
-                return factory.createAuthorRepository().assignAuthorToBook(author, book);
-            }
-            return null;
-        });
-    }
-
-    @Override
-    public List<Book> allWrittenBooks(Author author) {
-        return transactionManager.doInTransaction(
-                factory -> factory.createAuthorRepository().allWrittenBooksForAuthor(author)
-        );
     }
 }
