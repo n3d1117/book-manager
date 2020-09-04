@@ -1,8 +1,8 @@
-package it.ned.bookmanager.repository;
+package it.ned.bookmanager.service;
 
 import java.util.List;
 
-public interface Repository<T> {
+public interface Service<T> {
     List<T> findAll();
     T findById(String id);
     void add(T t);

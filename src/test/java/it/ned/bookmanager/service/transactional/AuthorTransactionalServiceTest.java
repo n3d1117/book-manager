@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.repository.AuthorRepository;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.repository.RepositoryFactory;
@@ -48,7 +47,7 @@ public class AuthorTransactionalServiceTest {
         List<Author> authors = Arrays.asList(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
         when(authorRepository.findAll()).thenReturn(authors);
 
-        List<Author> retrievedBooks = authorService.getAllAuthors();
+        List<Author> retrievedBooks = authorService.findAll();
 
         assertEquals(authors, retrievedBooks);
         verify(transactionManager).doInTransaction(any());
@@ -60,7 +59,7 @@ public class AuthorTransactionalServiceTest {
     public void testFindAuthorById() {
         when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(AUTHOR_FIXTURE_1);
 
-        Author retrieved = authorService.findAuthorById(AUTHOR_FIXTURE_1.getId());
+        Author retrieved = authorService.findById(AUTHOR_FIXTURE_1.getId());
 
         assertEquals(AUTHOR_FIXTURE_1, retrieved);
         verify(transactionManager).doInTransaction(any());
@@ -70,7 +69,7 @@ public class AuthorTransactionalServiceTest {
 
     @Test
     public void testAddAuthor() {
-        authorService.addAuthor(AUTHOR_FIXTURE_1);
+        authorService.add(AUTHOR_FIXTURE_1);
 
         InOrder inOrder = inOrder(transactionManager, authorRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
@@ -80,7 +79,7 @@ public class AuthorTransactionalServiceTest {
 
     @Test
     public void testAddAuthorWhenAuthorIsNull() {
-        authorService.addAuthor(null);
+        authorService.add(null);
 
         verify(transactionManager).doInTransaction(any());
         verifyNoInteractions(authorRepository);
@@ -88,104 +87,22 @@ public class AuthorTransactionalServiceTest {
 
     @Test
     public void testDeleteAuthor() {
-        authorService.deleteAuthor(AUTHOR_FIXTURE_1);
+        authorService.delete(AUTHOR_FIXTURE_1.getId());
 
         InOrder inOrder = inOrder(transactionManager, authorRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
-        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1);
+        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testDeleteAuthorAndAssociatedBooks() {
-        Book animalFarm = new Book("1", "Animal Farm", 93);
-        Book nineteenEightyFour = new Book("2", "1984", 283);
-        List<Book> books = Arrays.asList(animalFarm, nineteenEightyFour);
-
-        when(authorRepository.allWrittenBooksForAuthor(AUTHOR_FIXTURE_1)).thenReturn(books);
-
-        authorService.deleteAuthor(AUTHOR_FIXTURE_1);
+        authorService.delete(AUTHOR_FIXTURE_1.getId());
 
         InOrder inOrder = inOrder(transactionManager, authorRepository, bookRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
-        inOrder.verify(bookRepository).delete(animalFarm);
-        inOrder.verify(bookRepository).delete(nineteenEightyFour);
-        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1);
+        inOrder.verify(bookRepository).deleteAllBooksForAuthorId(AUTHOR_FIXTURE_1.getId());
+        inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
-    }
-
-    @Test
-    public void testDeleteAuthorWhenAuthorIsNull() {
-        authorService.deleteAuthor(null);
-
-        verify(transactionManager).doInTransaction(any());
-        verifyNoInteractions(authorRepository);
-    }
-
-    @Test
-    public void testFindAuthorFromBookId() {
-        Book book = new Book("1", "Animal Farm", 93);
-        when(bookRepository.findById(book.getId())).thenReturn(book);
-        when(authorRepository.findAuthorFromBookId(book.getId())).thenReturn(AUTHOR_FIXTURE_1);
-
-        Author authorRetrieved = authorService.findAuthorFromBookId(book.getId());
-
-        assertEquals(AUTHOR_FIXTURE_1, authorRetrieved);
-        verify(transactionManager).doInTransaction(any());
-        verify(authorRepository).findAuthorFromBookId(book.getId());
-        verifyNoMoreInteractions(authorRepository);
-    }
-
-    @Test
-    public void testFindAuthorFromBookIdFailsWhenBookDoesNotExist() {
-        when(bookRepository.findById("1")).thenReturn(null);
-
-        Author authorRetrieved = authorService.findAuthorFromBookId("1");
-
-        assertNull(authorRetrieved);
-        verify(transactionManager).doInTransaction(any());
-        verifyNoInteractions(authorRepository);
-    }
-
-    @Test
-    public void testAssignAuthorToBook() {
-        Book book = new Book("1", "Animal Farm", 93);
-        when(bookRepository.findById(book.getId())).thenReturn(book);
-        when(authorRepository.assignAuthorToBook(AUTHOR_FIXTURE_1, book)).thenReturn(book);
-
-        Book bookRetrieved = authorService.assignAuthorToBook(AUTHOR_FIXTURE_1, book);
-
-        assertEquals(book, bookRetrieved);
-        verify(transactionManager).doInTransaction(any());
-        verify(authorRepository).assignAuthorToBook(AUTHOR_FIXTURE_1, book);
-        verifyNoMoreInteractions(authorRepository);
-    }
-
-    @Test
-    public void testAssignAuthorToBookFailsWhenBookDoesNotExist() {
-        Book book = new Book("1", "Animal Farm", 93);
-        when(bookRepository.findById(book.getId())).thenReturn(null);
-
-        Book bookRetrieved = authorService.assignAuthorToBook(AUTHOR_FIXTURE_1, book);
-
-        assertNull(bookRetrieved);
-        verify(transactionManager).doInTransaction(any());
-        verifyNoInteractions(authorRepository);
-    }
-
-    @Test
-    public void testRetrieveAllBooksFromAuthor() {
-        List<Book> books = Arrays.asList(
-                new Book("1", "Animal Farm", 93),
-                new Book("2", "1984", 283)
-        );
-        when(authorRepository.allWrittenBooksForAuthor(AUTHOR_FIXTURE_1)).thenReturn(books);
-
-        List<Book> retrievedBooks = authorService.allWrittenBooks(AUTHOR_FIXTURE_1);
-
-        assertEquals(books, retrievedBooks);
-        verify(transactionManager).doInTransaction(any());
-        verify(authorRepository).allWrittenBooksForAuthor(AUTHOR_FIXTURE_1);
-        verifyNoMoreInteractions(authorRepository);
     }
 }

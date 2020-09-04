@@ -15,21 +15,21 @@ public class BookTransactionalService implements BookService {
     }
 
     @Override
-    public List<Book> getAllBooks() {
+    public List<Book> findAll() {
         return transactionManager.doInTransaction(
                 factory -> factory.createBookRepository().findAll()
         );
     }
 
     @Override
-    public Book findBookById(String id) {
+    public Book findById(String id) {
         return transactionManager.doInTransaction(
                 factory -> factory.createBookRepository().findById(id)
         );
     }
 
     @Override
-    public void addBook(Book book) {
+    public void add(Book book) {
         transactionManager.doInTransaction(factory -> {
             if (book != null)
                 factory.createBookRepository().add(book);
@@ -38,10 +38,17 @@ public class BookTransactionalService implements BookService {
     }
 
     @Override
-    public void deleteBook(Book book) {
+    public void delete(String bookId) {
         transactionManager.doInTransaction(factory -> {
-            if (book != null)
-                factory.createBookRepository().delete(book);
+            factory.createBookRepository().delete(bookId);
+            return null;
+        });
+    }
+
+    @Override
+    public void deleteAllBooksForAuthorId(String authorId) {
+        transactionManager.doInTransaction(factory -> {
+            factory.createBookRepository().deleteAllBooksForAuthorId(authorId);
             return null;
         });
     }

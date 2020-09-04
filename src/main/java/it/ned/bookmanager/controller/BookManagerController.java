@@ -8,7 +8,6 @@ import it.ned.bookmanager.view.BookManagerView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.List;
 
 public class BookManagerController {
 
@@ -26,18 +25,18 @@ public class BookManagerController {
 
     public void allBooks() {
         LOGGER.debug(() -> "Showing all books");
-        view.showAllBooks(bookService.getAllBooks());
+        view.showAllBooks(bookService.findAll());
     }
 
     public void allAuthors() {
         LOGGER.debug(() -> "Showing all authors");
-        view.showAllAuthors(authorService.getAllAuthors());
+        view.showAllAuthors(authorService.findAll());
     }
 
     public void addAuthor(Author author) {
         LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
         if (!authorExists(author)) {
-            authorService.addAuthor(author);
+            authorService.add(author);
             view.authorAdded(author);
         } else {
             view.authorNotAddedError(author);
@@ -47,7 +46,7 @@ public class BookManagerController {
     public void addBook(Book book) {
         LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
         if (!bookExists(book)) {
-            bookService.addBook(book);
+            bookService.add(book);
             view.bookAdded(book);
         } else {
             view.bookNotAddedError(book);
@@ -57,7 +56,7 @@ public class BookManagerController {
     public void deleteAuthor(Author author) {
         LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
         if (authorExists(author)) {
-            authorService.deleteAuthor(author);
+            authorService.delete(author.getId());
             view.authorDeleted(author);
         } else {
             view.authorNotDeletedError(author);
@@ -67,47 +66,19 @@ public class BookManagerController {
     public void deleteBook(Book book) {
         LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
         if (bookExists(book)) {
-            bookService.deleteBook(book);
+            bookService.delete(book.getId());
             view.bookDeleted(book);
         } else {
             view.bookNotDeletedError(book);
         }
     }
 
-    public void assignAuthorToBook(Author author, Book book) {
-        LOGGER.debug(() -> String.format("Assigning author %s to book %s", author.toString(), book.toString()));
-        if (!authorExists(author)) {
-            view.authorDoesNotExistError(author);
-        } else if (!bookExists(book)) {
-            view.bookDoesNotExistError(book);
-        } else if (bookHasAuthor(book)) {
-            view.authorAlreadyAssignedToBookError(author, book);
-        } else {
-            authorService.assignAuthorToBook(author, book);
-            view.assignedAuthorToBook(author, book);
-        }
-    }
-
-    public void allBooksFromAuthor(Author author) {
-        LOGGER.debug(() -> String.format("Showing all books from author %s", author.toString()));
-        if (authorExists(author)) {
-            List<Book> writtenBooks = authorService.allWrittenBooks(author);
-            view.showBooksFromAuthor(author, writtenBooks);
-        } else {
-            view.authorDoesNotExistError(author);
-        }
-    }
-
     private boolean authorExists(Author author) {
-        return authorService.findAuthorById(author.getId()) != null;
+        return authorService.findById(author.getId()) != null;
     }
 
     private boolean bookExists(Book book) {
-        return bookService.findBookById(book.getId()) != null;
-    }
-
-    private boolean bookHasAuthor(Book book) {
-        return authorService.findAuthorFromBookId(book.getId()) != null;
+        return bookService.findById(book.getId()) != null;
     }
 
 }
