@@ -4,6 +4,10 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorNotFoundException;
+import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,50 +39,42 @@ public class BookManagerController {
 
     public void addAuthor(Author author) {
         LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
-        if (!authorExists(author)) {
+        try {
             authorService.add(author);
             view.authorAdded(author);
-        } else {
-            view.authorNotAddedError(author);
+        } catch(AuthorAlreadyInDatabaseException exception) {
+            view.authorNotAddedBecauseAlreadyExistsError(author);
         }
     }
 
     public void addBook(Book book) {
         LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
-        if (!bookExists(book)) {
+        try {
             bookService.add(book);
             view.bookAdded(book);
-        } else {
-            view.bookNotAddedError(book);
+        } catch(BookAlreadyInDatabaseException exception) {
+            view.bookNotAddedBecauseAlreadyExistsError(book);
         }
     }
 
     public void deleteAuthor(Author author) {
         LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
-        if (authorExists(author)) {
+        try {
             authorService.delete(author.getId());
             view.authorDeleted(author);
-        } else {
-            view.authorNotDeletedError(author);
+        } catch(AuthorNotFoundException exception) {
+            view.authorNotDeletedBecauseNotFoundError(author);
         }
     }
 
     public void deleteBook(Book book) {
         LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
-        if (bookExists(book)) {
+        try {
             bookService.delete(book.getId());
             view.bookDeleted(book);
-        } else {
-            view.bookNotDeletedError(book);
+        } catch(BookNotFoundException exception) {
+            view.bookNotDeletedBecauseNotFoundError(book);
         }
-    }
-
-    private boolean authorExists(Author author) {
-        return authorService.findById(author.getId()) != null;
-    }
-
-    private boolean bookExists(Book book) {
-        return bookService.findById(book.getId()) != null;
     }
 
 }

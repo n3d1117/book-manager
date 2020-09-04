@@ -1,7 +1,11 @@
 package it.ned.bookmanager.service.transactional;
 
 import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.exception.AuthorNotFoundException;
+import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.transaction.TransactionManager;
 
 import java.util.List;
@@ -9,6 +13,10 @@ import java.util.List;
 public class BookTransactionalService implements BookService {
 
     private final TransactionManager transactionManager;
+
+    private static final String BOOK_NOT_FOUND_ERROR_MESSAGE = "Book with id %s not found in database.";
+    private static final String BOOK_ALREADY_IN_DB_ERROR_MESSAGE = "Book with id %s is already in database.";
+    private static final String AUTHOR_NOT_FOUND_ERROR_MESSAGE = "Author with id %s not found in database.";
 
     public BookTransactionalService(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -31,8 +39,14 @@ public class BookTransactionalService implements BookService {
     @Override
     public void add(Book book) {
         transactionManager.doInTransaction(factory -> {
-            if (book != null)
-                factory.createBookRepository().add(book);
+            if (book != null) {
+                BookRepository bookRepository = factory.createBookRepository();
+                if (bookRepository.findById(book.getId()) != null)
+                    throw new BookAlreadyInDatabaseException(
+                            String.format(BOOK_ALREADY_IN_DB_ERROR_MESSAGE, book.getId())
+                    );
+                bookRepository.add(book);
+            }
             return null;
         });
     }
@@ -40,7 +54,12 @@ public class BookTransactionalService implements BookService {
     @Override
     public void delete(String bookId) {
         transactionManager.doInTransaction(factory -> {
-            factory.createBookRepository().delete(bookId);
+            BookRepository bookRepository = factory.createBookRepository();
+            if (bookRepository.findById(bookId) == null)
+                throw new BookNotFoundException(
+                        String.format(BOOK_NOT_FOUND_ERROR_MESSAGE, bookId)
+                );
+            bookRepository.delete(bookId);
             return null;
         });
     }
@@ -48,6 +67,10 @@ public class BookTransactionalService implements BookService {
     @Override
     public void deleteAllBooksForAuthorId(String authorId) {
         transactionManager.doInTransaction(factory -> {
+            if (factory.createAuthorRepository().findById(authorId) == null)
+                throw new AuthorNotFoundException(
+                        String.format(AUTHOR_NOT_FOUND_ERROR_MESSAGE, authorId)
+                );
             factory.createBookRepository().deleteAllBooksForAuthorId(authorId);
             return null;
         });
