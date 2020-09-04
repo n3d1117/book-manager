@@ -7,6 +7,8 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.repository.AuthorRepository;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.repository.RepositoryFactory;
+import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.transaction.TransactionCode;
 import it.ned.bookmanager.transaction.TransactionManager;
 
@@ -68,7 +70,7 @@ public class AuthorTransactionalServiceTest {
     }
 
     @Test
-    public void testAddAuthor() {
+    public void testAddAuthorSuccessfully() {
         authorService.add(AUTHOR_FIXTURE_1);
 
         InOrder inOrder = inOrder(transactionManager, authorRepository);
@@ -86,17 +88,41 @@ public class AuthorTransactionalServiceTest {
     }
 
     @Test
-    public void testDeleteAuthor() {
+    public void testAddAuthorShouldFailWhenAlreadyInDatabase() {
+        when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(AUTHOR_FIXTURE_1);
+
+        AuthorAlreadyInDatabaseException e = assertThrows(AuthorAlreadyInDatabaseException.class, () ->
+                authorService.add(AUTHOR_FIXTURE_1)
+        );
+        assertTrue(e.getMessage().contains(AUTHOR_FIXTURE_1.getId()));
+    }
+
+    @Test
+    public void testDeleteAuthorThrowsExceptionWhenItDoesNotExist() {
+        String authorIdToDelete = "3";
+        when(authorRepository.findById(authorIdToDelete)).thenReturn(null);
+
+        AuthorNotFoundException e = assertThrows(AuthorNotFoundException.class, () ->
+                authorService.delete(authorIdToDelete)
+        );
+        assertTrue(e.getMessage().contains(authorIdToDelete));
+    }
+
+    @Test
+    public void testDeleteAuthorSuccessfully() {
+        when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(AUTHOR_FIXTURE_1);
         authorService.delete(AUTHOR_FIXTURE_1.getId());
 
         InOrder inOrder = inOrder(transactionManager, authorRepository);
         inOrder.verify(transactionManager).doInTransaction(any());
+        inOrder.verify(authorRepository).findById(AUTHOR_FIXTURE_1.getId());
         inOrder.verify(authorRepository).delete(AUTHOR_FIXTURE_1.getId());
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testDeleteAuthorAndAssociatedBooks() {
+        when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(AUTHOR_FIXTURE_1);
         authorService.delete(AUTHOR_FIXTURE_1.getId());
 
         InOrder inOrder = inOrder(transactionManager, authorRepository, bookRepository);

@@ -7,6 +7,10 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorNotFoundException;
+import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
 
 import org.junit.Before;
@@ -16,6 +20,7 @@ import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import static org.mockito.Mockito.when;
 
 import static org.mockito.Mockito.*;
 
@@ -65,13 +70,13 @@ public class BookManagerControllerTest {
     @Test
     public void testAuthorNotAddedWhenAlreadyExisting() {
         Author georgeOrwellClone = new Author(BOOK_FIXTURE.getId(), "George Orwell's clone");
-        when(authorService.findById(georgeOrwellClone.getId())).thenReturn(AUTHOR_FIXTURE);
+        doThrow(new AuthorAlreadyInDatabaseException("Author already exists")).when(authorService).add(georgeOrwellClone);
 
         controller.addAuthor(georgeOrwellClone);
 
         InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).findById(georgeOrwellClone.getId());
-        inOrder.verify(view).authorNotAddedError(georgeOrwellClone);
+        inOrder.verify(authorService).add(georgeOrwellClone);
+        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(georgeOrwellClone);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -79,12 +84,9 @@ public class BookManagerControllerTest {
 
     @Test
     public void testAuthorDeletedSuccessfully() {
-        when(authorService.findById(AUTHOR_FIXTURE.getId())).thenReturn(AUTHOR_FIXTURE);
-
         controller.deleteAuthor(AUTHOR_FIXTURE);
 
         InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).findById(AUTHOR_FIXTURE.getId());
         inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
         inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
@@ -92,13 +94,13 @@ public class BookManagerControllerTest {
 
     @Test
     public void testAuthorDeletionFailureWhenItDoesNotExist() {
-        when(authorService.findById(AUTHOR_FIXTURE.getId())).thenReturn(null);
+        doThrow(new AuthorNotFoundException("Author not found")).when(authorService).delete(AUTHOR_FIXTURE.getId());
 
         controller.deleteAuthor(AUTHOR_FIXTURE);
 
         InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).findById(AUTHOR_FIXTURE.getId());
-        inOrder.verify(view).authorNotDeletedError(AUTHOR_FIXTURE);
+        inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).authorNotDeletedBecauseNotFoundError(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -132,13 +134,13 @@ public class BookManagerControllerTest {
     @Test
     public void testBookNotAddedWhenAlreadyExisting() {
         Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        when(bookService.findById(animalFarmClone.getId())).thenReturn(BOOK_FIXTURE);
+        doThrow(new BookAlreadyInDatabaseException("Book already exists")).when(bookService).add(animalFarmClone);
 
         controller.addBook(animalFarmClone);
 
         InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).findById(animalFarmClone.getId());
-        inOrder.verify(view).bookNotAddedError(animalFarmClone);
+        inOrder.verify(bookService).add(animalFarmClone);
+        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(animalFarmClone);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -146,12 +148,9 @@ public class BookManagerControllerTest {
 
     @Test
     public void testBookDeletedSuccessfully() {
-        when(bookService.findById(BOOK_FIXTURE.getId())).thenReturn(BOOK_FIXTURE);
-
         controller.deleteBook(BOOK_FIXTURE);
 
         InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).findById(BOOK_FIXTURE.getId());
         inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
         inOrder.verify(view).bookDeleted(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
@@ -159,13 +158,13 @@ public class BookManagerControllerTest {
 
     @Test
     public void testBookDeletionFailureWhenItDoesNotExist() {
-        when(bookService.findById(BOOK_FIXTURE.getId())).thenReturn(null);
+        doThrow(new BookNotFoundException("Author not found")).when(bookService).delete(BOOK_FIXTURE.getId());
 
         controller.deleteBook(BOOK_FIXTURE);
 
         InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).findById(BOOK_FIXTURE.getId());
-        inOrder.verify(view).bookNotDeletedError(BOOK_FIXTURE);
+        inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
+        inOrder.verify(view).bookNotDeletedBecauseNotFoundError(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
