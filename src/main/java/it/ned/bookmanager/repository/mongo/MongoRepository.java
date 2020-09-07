@@ -1,7 +1,8 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.MongoClient;
+import com.mongodb.client.MongoClient;
 import com.mongodb.MongoClientSettings;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import it.ned.bookmanager.repository.Repository;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +20,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 public class MongoRepository<T> implements Repository<T> {
 
     protected final MongoCollection<T> collection;
+    protected final ClientSession session;
 
     protected final String entityShortName;
     protected final Logger logger;
@@ -29,7 +31,8 @@ public class MongoRepository<T> implements Repository<T> {
     // of the type parameter into the constructor of the generic type.
     // See also https://stackoverflow.com/a/3437930
     // We also use the passed type to extract the entity short name, for logging purposes.
-    public MongoRepository(MongoClient mongoClient, String dbName, String collectionName, Class<T> type, Logger logger) {
+    public MongoRepository(MongoClient mongoClient, ClientSession session, String collectionName, String dbName, Class<T> type, Logger logger) {
+        this.session = session;
         this.logger = logger;
         this.entityShortName = type.getSimpleName();
 
@@ -47,7 +50,7 @@ public class MongoRepository<T> implements Repository<T> {
     public List<T> findAll() {
         logger.debug(() -> String.format("Finding all objects of type %s", entityShortName));
         return StreamSupport
-                .stream(collection.find().spliterator(), false)
+                .stream(collection.find(session).spliterator(), false)
                 .collect(Collectors.toList());
     }
 
@@ -57,19 +60,19 @@ public class MongoRepository<T> implements Repository<T> {
         // When querying POJOs you must query against the document field name and not the
         // Pojo’s property name. The _id document key here maps to the POJO’s id property.
         // See also: http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
-        return collection.find(eq("_id", id)).first();
+        return collection.find(session, eq("_id", id)).first();
     }
 
     @Override
     public void add(T t) {
         logger.debug(() -> String.format("Adding %s: %s", entityShortName, t.toString()));
-        collection.insertOne(t);
+        collection.insertOne(session, t);
     }
 
     @Override
     public void delete(String id) {
         logger.debug(() -> String.format("Deleting %s with id %s", entityShortName, id));
-        collection.deleteOne(eq("_id", id));
+        collection.deleteOne(session, eq("_id", id));
     }
 
 }

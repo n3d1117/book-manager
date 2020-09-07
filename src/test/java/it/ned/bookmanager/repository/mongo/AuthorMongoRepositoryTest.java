@@ -1,18 +1,21 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
+import it.ned.bookmanager.model.Author;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-import it.ned.bookmanager.model.Author;
+import com.mongodb.MongoClientSettings;
+
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+
 import org.junit.*;
 
-import java.net.InetSocketAddress;
+import org.testcontainers.containers.MongoDBContainer;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -24,12 +27,13 @@ import static org.junit.Assert.assertEquals;
 
 public class AuthorMongoRepositoryTest {
 
-    private static MongoServer server;
-    private static InetSocketAddress serverAddress;
+    @ClassRule
+    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
 
     private MongoClient client;
+    private ClientSession session;
     private MongoCollection<Author> collection;
-    private AuthorMongoRepository authorRepository;
+    private AuthorMongoRepository repository;
 
     private static final String DB_NAME = "bookmanager";
     private static final String DB_AUTHOR_COLLECTION = "authors";
@@ -37,23 +41,13 @@ public class AuthorMongoRepositoryTest {
     private static final Author AUTHOR_FIXTURE_1 = new Author("1", "George Orwell");
     private static final Author AUTHOR_FIXTURE_2 = new Author("2", "Dan Brown");
 
-    @BeforeClass
-    public static void startServer() {
-        server = new MongoServer(new MemoryBackend());
-        serverAddress = server.bind();
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        server.shutdown();
-    }
-
     @Before
-    public void setUp() {
+    public void setup() {
 
-        client = new MongoClient(new ServerAddress(serverAddress));
+        client = MongoClients.create(container.getReplicaSetUrl());
+        session = client.startSession();
 
-        authorRepository = new AuthorMongoRepository(client, DB_NAME, DB_AUTHOR_COLLECTION);
+        repository = new AuthorMongoRepository(client, session, DB_NAME, DB_AUTHOR_COLLECTION);
 
         MongoDatabase database = client.getDatabase(DB_NAME);
 
@@ -69,45 +63,51 @@ public class AuthorMongoRepositoryTest {
                 .withCodecRegistry(pojoCodecRegistry);
     }
 
+    @AfterClass
+    public static void stopContainer() {
+        container.stop();
+    }
+
     @After
     public void tearDown() {
+        session.close();
         client.close();
     }
 
     @Test
     public void testFindAllAuthorsWhenDatabaseIsEmpty() {
-        assertThat(authorRepository.findAll()).isEmpty();
+        assertThat(repository.findAll()).isEmpty();
     }
 
     @Test
     public void testFindAllAuthorsWhenThereAreMany() {
         collection.insertOne(AUTHOR_FIXTURE_1);
         collection.insertOne(AUTHOR_FIXTURE_2);
-        assertThat(authorRepository.findAll()).containsExactly(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
+        assertThat(repository.findAll()).containsExactly(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
     }
 
     @Test
     public void testFindAuthorByIdNotFound() {
-        assertThat(authorRepository.findById("1")).isNull();
+        assertThat(repository.findById("1")).isNull();
     }
 
     @Test
     public void testFindAuthorByIdFound() {
         collection.insertOne(AUTHOR_FIXTURE_1);
         collection.insertOne(AUTHOR_FIXTURE_2);
-        assertEquals(AUTHOR_FIXTURE_2, authorRepository.findById(AUTHOR_FIXTURE_2.getId()));
+        assertEquals(AUTHOR_FIXTURE_2, repository.findById(AUTHOR_FIXTURE_2.getId()));
     }
 
     @Test
     public void testAddAuthor() {
-        authorRepository.add(AUTHOR_FIXTURE_1);
+        repository.add(AUTHOR_FIXTURE_1);
         assertThat(allAuthorsInDatabase()).containsExactly(AUTHOR_FIXTURE_1);
     }
 
     @Test
     public void testDeleteAuthor() {
         collection.insertOne(AUTHOR_FIXTURE_1);
-        authorRepository.delete(AUTHOR_FIXTURE_1.getId());
+        repository.delete(AUTHOR_FIXTURE_1.getId());
         assertThat(allAuthorsInDatabase()).isEmpty();
     }
 

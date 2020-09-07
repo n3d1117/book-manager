@@ -1,19 +1,22 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.MongoClient;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.ServerAddress;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
+
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.MongoClientSettings;
+
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+
 import org.junit.*;
 
-import java.net.InetSocketAddress;
+import org.testcontainers.containers.MongoDBContainer;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -24,10 +27,12 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 
 public class BookMongoRepositoryTest {
-    private static MongoServer server;
-    private static InetSocketAddress serverAddress;
+
+    @ClassRule
+    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
 
     private MongoClient client;
+    private ClientSession session;
     private BookMongoRepository repository;
     private MongoCollection<Book> collection;
 
@@ -37,21 +42,12 @@ public class BookMongoRepositoryTest {
     private static final Book BOOK_FIXTURE_1 = new Book("1", "Animal Farm", 93, "1");
     private static final Book BOOK_FIXTURE_2 = new Book("2", "1984", 283, "1");
 
-    @BeforeClass
-    public static void startServer() {
-        server = new MongoServer(new MemoryBackend());
-        serverAddress = server.bind();
-    }
-
-    @AfterClass
-    public static void stopServer() {
-        server.shutdown();
-    }
-
     @Before
-    public void setUp() {
-        client = new MongoClient(new ServerAddress(serverAddress));
-        repository = new BookMongoRepository(client, DB_NAME, DB_BOOK_COLLECTION);
+    public void setup() {
+        client = MongoClients.create(container.getReplicaSetUrl());
+        session = client.startSession();
+
+        repository = new BookMongoRepository(client, session, DB_NAME, DB_BOOK_COLLECTION);
 
         MongoDatabase database = client.getDatabase(DB_NAME);
 
@@ -67,8 +63,14 @@ public class BookMongoRepositoryTest {
                 .withCodecRegistry(pojoCodecRegistry);
     }
 
+    @AfterClass
+    public static void stopContainer() {
+        container.stop();
+    }
+
     @After
     public void tearDown() {
+        session.close();
         client.close();
     }
 
