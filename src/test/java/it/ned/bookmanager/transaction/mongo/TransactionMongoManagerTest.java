@@ -41,7 +41,13 @@ public class TransactionMongoManagerTest {
     @Before
     public void setup() {
 
+        // NOTE: MongoClients.create() returns a final instance of MongoClient, and by default
+        // Mockito cannot spy a final type. However, mocking final classes can be activated
+        // explicitly by the mockito extension mechanism: just create in the classpath a file
+        // /mockito-extensions/org.mockito.plugins.MockMaker containing the value "mock-maker-inline".
+        // See also: https://www.javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#39
         client = spy(MongoClients.create(container.getReplicaSetUrl()));
+
         session = spy(client.startSession());
 
         MongoDatabase database = client.getDatabase(DB_NAME);
@@ -66,14 +72,8 @@ public class TransactionMongoManagerTest {
         when(client.startSession()).thenReturn(session);
     }
 
-    @AfterClass
-    public static void stopContainer() {
-        container.stop();
-    }
-
     @After
     public void tearDown() {
-        session.close();
         client.close();
     }
 
@@ -90,7 +90,7 @@ public class TransactionMongoManagerTest {
     }
 
     @Test
-    public void testTransactionFailureEnsureRollback() {
+    public void tesRollbackOnTransactionFailure() {
         transactionManager.doInTransaction(factory -> {
             authorCollection.insertOne(session, AUTHOR_FIXTURE);
             bookCollection.insertOne(session, BOOK_FIXTURE);

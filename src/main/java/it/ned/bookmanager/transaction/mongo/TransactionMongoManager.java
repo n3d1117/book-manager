@@ -6,6 +6,7 @@ import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.TransactionBody;
 import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
 import it.ned.bookmanager.transaction.TransactionCode;
 import it.ned.bookmanager.transaction.TransactionManager;
@@ -32,7 +33,7 @@ public class TransactionMongoManager implements TransactionManager {
     @Override
     public <T> T doInTransaction(TransactionCode<T> code) {
 
-        final ClientSession clientSession = mongoClient.startSession();
+        ClientSession clientSession = mongoClient.startSession();
 
         // See also: https://docs.mongodb.com/manual/core/transactions/
         TransactionOptions options = TransactionOptions.builder()
@@ -43,9 +44,10 @@ public class TransactionMongoManager implements TransactionManager {
 
         MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoClient, clientSession,
                 databaseName, authorsCollectionName, booksCollectionName);
+        TransactionBody<T> body = (() -> code.apply(repositoryFactory));
 
         try {
-            clientSession.withTransaction(() -> code.apply(repositoryFactory), options);
+            clientSession.withTransaction(body, options);
         } catch (RuntimeException e) {
             LOGGER.debug(() -> String.format("Caught a RuntimeException: %s", e.getMessage()));
         } finally {

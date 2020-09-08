@@ -5,7 +5,6 @@ import it.ned.bookmanager.model.Book;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.MongoClientSettings;
@@ -32,7 +31,6 @@ public class BookMongoRepositoryTest {
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
 
     private MongoClient client;
-    private ClientSession session;
     private BookMongoRepository repository;
     private MongoCollection<Book> collection;
 
@@ -45,9 +43,7 @@ public class BookMongoRepositoryTest {
     @Before
     public void setup() {
         client = MongoClients.create(container.getReplicaSetUrl());
-        session = client.startSession();
-
-        repository = new BookMongoRepository(client, session, DB_NAME, DB_BOOK_COLLECTION);
+        repository = new BookMongoRepository(client, client.startSession(), DB_NAME, DB_BOOK_COLLECTION);
 
         MongoDatabase database = client.getDatabase(DB_NAME);
 
@@ -63,14 +59,8 @@ public class BookMongoRepositoryTest {
                 .withCodecRegistry(pojoCodecRegistry);
     }
 
-    @AfterClass
-    public static void stopContainer() {
-        container.stop();
-    }
-
     @After
     public void tearDown() {
-        session.close();
         client.close();
     }
 
