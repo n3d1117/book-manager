@@ -5,6 +5,6 @@ import it.ned.bookmanager.repository.RepositoryFactory;
 import java.util.function.Function;
 
 @FunctionalInterface
-public interface TransactionCode<R> extends Function<RepositoryFactory, R> {
+public interface TransactionCode<T> extends Function<RepositoryFactory, T> {
 
 }
