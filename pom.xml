@@ -42,7 +42,8 @@
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
             **/Main.*,
-            **/model/*.*
+            **/model/*.*,
+            **/repository/mongo/MongoRepositoryFactory.*
         </sonar.coverage.exclusions>
 
     </properties>
@@ -126,6 +127,7 @@
                         <excludes>
                             <exclude>**/Main.*</exclude>
                             <exclude>**/model/*.*</exclude>
+                            <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -156,6 +158,7 @@
                         <excludedClasses>
                             <param>it.ned.bookmanager.model.*</param>
                             <param>it.ned.bookmanager.view.*</param>
+                            <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>
                         </excludedClasses>
                         <targetTests>
                             <param>*Test</param>
