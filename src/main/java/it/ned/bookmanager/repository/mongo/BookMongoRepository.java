@@ -13,7 +13,8 @@ public class BookMongoRepository extends MongoRepository<Book> implements BookRe
 
     private static final Logger bookRepoLogger = LogManager.getLogger(BookMongoRepository.class);
 
-    public BookMongoRepository(MongoClient mongoClient, ClientSession session, String dbName, String collectionName) {
+    public BookMongoRepository(MongoClient mongoClient, ClientSession session, String dbName,
+                               String collectionName) {
         super(mongoClient, session, collectionName, dbName, Book.class, bookRepoLogger);
     }
 

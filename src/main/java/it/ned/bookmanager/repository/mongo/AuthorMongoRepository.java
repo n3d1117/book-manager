@@ -11,7 +11,8 @@ public class AuthorMongoRepository extends MongoRepository<Author> implements Au
 
     private static final Logger authorRepoLogger = LogManager.getLogger(AuthorMongoRepository.class);
 
-    public AuthorMongoRepository(MongoClient mongoClient, ClientSession session, String dbName, String collectionName) {
+    public AuthorMongoRepository(MongoClient mongoClient, ClientSession session, String dbName,
+                                 String collectionName) {
         super(mongoClient, session, collectionName, dbName, Author.class, authorRepoLogger);
     }
 

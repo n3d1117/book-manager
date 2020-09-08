@@ -40,10 +40,11 @@ public class MongoRepository<T> implements Repository<T> {
     // Since this is a generic class, we find out the runtime type by passing the class
     // of the type parameter to the constructor. We also use the passed type to extract
     // the entity's short name (i.e "Book"), for logging purposes.
-    public MongoRepository(MongoClient mongoClient, ClientSession session, String collectionName, String dbName, Class<T> type, Logger logger) {
+    public MongoRepository(MongoClient mongoClient, ClientSession session, String collectionName,
+                           String dbName, Class<T> entityType, Logger logger) {
         this.session = session;
         this.logger = logger;
-        this.entityShortName = type.getSimpleName();
+        this.entityShortName = entityType.getSimpleName();
 
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
@@ -51,7 +52,7 @@ public class MongoRepository<T> implements Repository<T> {
         );
         collection = mongoClient
                 .getDatabase(dbName)
-                .getCollection(collectionName, type)
+                .getCollection(collectionName, entityType)
                 .withCodecRegistry(pojoCodecRegistry);
     }
 
