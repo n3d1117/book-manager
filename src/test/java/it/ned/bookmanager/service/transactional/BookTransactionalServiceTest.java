@@ -39,7 +39,7 @@ public class BookTransactionalServiceTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
         when(transactionManager.doInTransaction(any()))
                 .thenAnswer(answer((TransactionCode<?> code) -> code.apply(repositoryFactory)));
         when(repositoryFactory.createBookRepository()).thenReturn(bookRepository);

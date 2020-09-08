@@ -37,7 +37,7 @@ public class BookManagerControllerTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     /* Authors */
