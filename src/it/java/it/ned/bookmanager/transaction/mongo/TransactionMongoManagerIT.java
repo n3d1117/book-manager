@@ -77,6 +77,7 @@ public class TransactionMongoManagerIT {
 
     @Test
     public void testInitialCollectionsAreCreatedCorrectly() {
+        transactionManager = new TransactionMongoManager(client, DB_NAME, AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
         assertThat(client.getDatabase(DB_NAME).listCollectionNames())
                 .containsExactly(AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
     }
