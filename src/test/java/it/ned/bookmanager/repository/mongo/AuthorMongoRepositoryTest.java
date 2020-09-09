@@ -64,6 +64,13 @@ public class AuthorMongoRepositoryTest {
     }
 
     @Test
+    public void testNewCollectionIsCreatedCorrectly() {
+        String newCollection = "new_collection";
+        repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, newCollection);
+        assertThat(client.getDatabase(DB_NAME).listCollectionNames()).contains(newCollection);
+    }
+
+    @Test
     public void testFindAllAuthorsWhenDatabaseIsEmpty() {
         assertThat(repository.findAll()).isEmpty();
     }

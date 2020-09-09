@@ -4,11 +4,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import it.ned.bookmanager.repository.Repository;
 import org.apache.logging.log4j.Logger;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -20,7 +22,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 //
 // A generic repository using MongoDB APIs that provides basic operations on any java object,
 // such as findAll, findById, add and delete, leveraging mongodb's POJO support for
-// automatic serialization. See also: https://mongodb.github.io/mongo-java-driver/4.1/bson/pojos/
+// automatic serialization. See also: http://mongodb.github.io/mongo-java-driver/3.12/bson/pojos/
 // NOTE: This class assumes that your object has a field named 'id', or at least one field annotated
 // with @BsonId. See documentation for more details.
 //
@@ -50,8 +52,16 @@ public class MongoRepository<T> implements Repository<T> {
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
         );
-        collection = mongoClient
-                .getDatabase(dbName)
+
+        MongoDatabase database = mongoClient.getDatabase(dbName);
+
+        // In MongoDB 4.2 and earlier, when dealing with multi-document transactions
+        // you must create the collection beforehand (if it does not already exist).
+        // See also: https://docs.mongodb.com/manual/core/transactions/
+        if (!database.listCollectionNames().into(new ArrayList<>()).contains(collectionName))
+            database.createCollection(collectionName);
+
+        collection = database
                 .getCollection(collectionName, entityType)
                 .withCodecRegistry(pojoCodecRegistry);
     }
@@ -69,7 +79,7 @@ public class MongoRepository<T> implements Repository<T> {
         logger.debug(() -> String.format("Finding %s with id %s", entityShortName, id));
         // When querying POJOs you must query against the document field name and not the
         // Pojo’s property name. The _id document key here maps to the POJO’s id property.
-        // See also: http://mongodb.github.io/mongo-java-driver/3.9/bson/pojos/
+        // See also: http://mongodb.github.io/mongo-java-driver/3.12/bson/pojos/
         return collection.find(session, eq("_id", id)).first();
     }
 

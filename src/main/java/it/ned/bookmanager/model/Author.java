@@ -8,7 +8,7 @@ public class Author {
     private String name;
 
     // By default all POJOs must include a public or protected, empty constructor
-    // See also http://mongodb.github.io/mongo-java-driver/4.1/bson/pojos/
+    // See also http://mongodb.github.io/mongo-java-driver/3.12/bson/pojos/
     protected Author() { }
 
     public Author(String id, String name) {

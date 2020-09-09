@@ -10,7 +10,7 @@ public class Book {
     private String authorId;
 
     // By default all POJOs must include a public or protected, empty constructor
-    // See also http://mongodb.github.io/mongo-java-driver/4.1/bson/pojos/
+    // See also http://mongodb.github.io/mongo-java-driver/3.12/bson/pojos/
     protected Book() { }
 
     public Book(String id, String title, Integer numberOfPages, String authorId) {
