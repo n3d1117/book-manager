@@ -166,7 +166,7 @@
                         <mutators>
                             <mutator>STRONGER</mutator>
                         </mutators>
-                        <mutationThreshold>98</mutationThreshold>
+                        <mutationThreshold>100</mutationThreshold>
                         <timeoutConstant>15000</timeoutConstant>
                     </configuration>
                 </plugin>
