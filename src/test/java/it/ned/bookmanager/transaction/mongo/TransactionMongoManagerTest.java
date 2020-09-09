@@ -54,9 +54,6 @@ public class TransactionMongoManagerTest {
         MongoDatabase database = client.getDatabase(DB_NAME);
         database.drop();
 
-        database.createCollection(AUTHOR_COLLECTION_NAME);
-        database.createCollection(BOOK_COLLECTION_NAME);
-
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
@@ -76,6 +73,21 @@ public class TransactionMongoManagerTest {
     @After
     public void tearDown() {
         client.close();
+    }
+
+    @Test
+    public void testInitialCollectionsAreCreatedCorrectly() {
+        assertThat(client.getDatabase(DB_NAME).listCollectionNames())
+                .containsExactly(AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+    }
+
+    @Test
+    public void testNewCollectionsAreCreatedCorrectly() {
+        String newAuthorCollection = "new_collection_1";
+        String newBookCollection = "new_collection_2";
+        transactionManager = new TransactionMongoManager(client, DB_NAME, newAuthorCollection, newBookCollection);
+        assertThat(client.getDatabase(DB_NAME).listCollectionNames())
+                .contains(newAuthorCollection, newBookCollection);
     }
 
     @Test

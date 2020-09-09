@@ -70,13 +70,6 @@ public class BookMongoRepositoryTest {
     }
 
     @Test
-    public void testNewCollectionIsCreatedCorrectly() {
-        String newCollection = "new_collection";
-        repository = new BookMongoRepository(client, client.startSession(), DB_NAME, newCollection);
-        assertThat(client.getDatabase(DB_NAME).listCollectionNames()).contains(newCollection);
-    }
-
-    @Test
     public void testFindAllBooksWhenThereAreMany() {
         collection.insertOne(BOOK_FIXTURE_1);
         collection.insertOne(BOOK_FIXTURE_2);
