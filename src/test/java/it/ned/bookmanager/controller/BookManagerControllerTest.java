@@ -70,7 +70,8 @@ public class BookManagerControllerTest {
     @Test
     public void testAuthorNotAddedWhenAlreadyExisting() {
         Author georgeOrwellClone = new Author(BOOK_FIXTURE.getId(), "George Orwell's clone");
-        doThrow(new AuthorAlreadyInDatabaseException("Author already exists")).when(authorService).add(georgeOrwellClone);
+        doThrow(new AuthorAlreadyInDatabaseException("Author already exists"))
+                .when(authorService).add(georgeOrwellClone);
 
         controller.addAuthor(georgeOrwellClone);
 
@@ -94,7 +95,8 @@ public class BookManagerControllerTest {
 
     @Test
     public void testAuthorDeletionFailureWhenItDoesNotExist() {
-        doThrow(new AuthorNotFoundException("Author not found")).when(authorService).delete(AUTHOR_FIXTURE.getId());
+        doThrow(new AuthorNotFoundException("Author not found"))
+                .when(authorService).delete(AUTHOR_FIXTURE.getId());
 
         controller.deleteAuthor(AUTHOR_FIXTURE);
 
@@ -134,7 +136,8 @@ public class BookManagerControllerTest {
     @Test
     public void testBookNotAddedWhenAlreadyExisting() {
         Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        doThrow(new BookAlreadyInDatabaseException("Book already exists")).when(bookService).add(animalFarmClone);
+        doThrow(new BookAlreadyInDatabaseException("Book already exists"))
+                .when(bookService).add(animalFarmClone);
 
         controller.addBook(animalFarmClone);
 
@@ -158,7 +161,8 @@ public class BookManagerControllerTest {
 
     @Test
     public void testBookDeletionFailureWhenItDoesNotExist() {
-        doThrow(new BookNotFoundException("Author not found")).when(bookService).delete(BOOK_FIXTURE.getId());
+        doThrow(new BookNotFoundException("Author not found"))
+                .when(bookService).delete(BOOK_FIXTURE.getId());
 
         controller.deleteBook(BOOK_FIXTURE);
 

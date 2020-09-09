@@ -49,9 +49,9 @@ public class AuthorTransactionalServiceTest {
         List<Author> authors = Arrays.asList(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
         when(authorRepository.findAll()).thenReturn(authors);
 
-        List<Author> retrievedBooks = authorService.findAll();
+        List<Author> retrievedAuthors = authorService.findAll();
 
-        assertEquals(authors, retrievedBooks);
+        assertEquals(authors, retrievedAuthors);
         verify(transactionManager).doInTransaction(any());
         verify(authorRepository).findAll();
         verifyNoMoreInteractions(authorRepository);

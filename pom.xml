@@ -29,6 +29,7 @@
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
         <coveralls.version>4.3.0</coveralls.version>
+        <jabx-api.version>2.3.1</jabx-api.version>
         <pitest.version>1.5.2</pitest.version>
         <sonarqube.version>3.7.0.1746</sonarqube.version>
         <exec-maven.version>3.0.0</exec-maven.version>
@@ -94,7 +95,7 @@
             <version>${mongo-java.version}</version>
         </dependency>
 
-        <!-- Logback (required to see Mongo Java Driver logs)-->
+        <!-- Logback (required to see Mongo Java Driver logs) -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -108,7 +109,6 @@
             <version>${testcontainers.version}</version>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 
@@ -140,11 +140,11 @@
                     <dependencies>
                         <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
                         until a new version of coveralls-maven-plugin is released.
-                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112-->
+                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
                         <dependency>
                             <groupId>javax.xml.bind</groupId>
                             <artifactId>jaxb-api</artifactId>
-                            <version>2.3.1</version>
+                            <version>${jabx-api.version}</version>
                         </dependency>
                     </dependencies>
                 </plugin>
