@@ -1,10 +1,11 @@
-package it.ned.bookmanager.transaction.mongo;
+package transaction.mongo;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.*;
@@ -20,7 +21,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class TransactionMongoManagerTest {
+public class TransactionMongoManagerIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);

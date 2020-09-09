@@ -1,4 +1,4 @@
-package it.ned.bookmanager.repository.mongo;
+package repository.mongo;
 
 import it.ned.bookmanager.model.Author;
 
@@ -8,6 +8,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.MongoClientSettings;
 
+import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
@@ -24,7 +25,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 
-public class AuthorMongoRepositoryTest {
+public class AuthorMongoRepositoryIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
