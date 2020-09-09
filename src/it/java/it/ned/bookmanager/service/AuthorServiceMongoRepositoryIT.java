@@ -1,11 +1,10 @@
-package service;
+package it.ned.bookmanager.service;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.mongo.BookMongoRepository;
-import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.transactional.BookTransactionalService;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
+import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
 import it.ned.bookmanager.transaction.TransactionManager;
 import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 import org.junit.After;
@@ -18,20 +17,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class BookServiceMongoRepositoryIT {
+public class AuthorServiceMongoRepositoryIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
 
-    private BookService service;
-    private BookMongoRepository repository;
+    private AuthorService service;
+    private AuthorMongoRepository repository;
     private MongoClient client;
 
     private static final String DB_NAME = "bookmanager";
     private static final String DB_BOOK_COLLECTION = "books";
     private static final String DB_AUTHOR_COLLECTION = "authors";
 
-    private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
+    private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
 
     @Before
     public void setup() {
@@ -40,12 +39,12 @@ public class BookServiceMongoRepositoryIT {
 
         TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME,
                 DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
-        service = new BookTransactionalService(transactionManager);
+        service = new AuthorTransactionalService(transactionManager);
 
-        repository = new BookMongoRepository(client, client.startSession(), DB_NAME, DB_BOOK_COLLECTION);
+        repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, DB_AUTHOR_COLLECTION);
 
-        for (Book book: repository.findAll())
-            repository.delete(book.getId());
+        for (Author author: repository.findAll())
+            repository.delete(author.getId());
     }
 
     @After
@@ -54,21 +53,21 @@ public class BookServiceMongoRepositoryIT {
     }
 
     @Test
-    public void testFindAllBooks() {
-        repository.add(BOOK_FIXTURE);
-        assertThat(service.findAll()).containsExactly(BOOK_FIXTURE);
+    public void testFindAllAuthors() {
+        repository.add(AUTHOR_FIXTURE);
+        assertThat(service.findAll()).containsExactly(AUTHOR_FIXTURE);
     }
 
     @Test
-    public void testBookFoundWhenAdded() {
-        repository.add(BOOK_FIXTURE);
-        assertEquals(BOOK_FIXTURE, service.findById(BOOK_FIXTURE.getId()));
+    public void testAuthorFoundWhenAdded() {
+        repository.add(AUTHOR_FIXTURE);
+        assertEquals(AUTHOR_FIXTURE, service.findById(AUTHOR_FIXTURE.getId()));
     }
 
     @Test
-    public void testBookNotFoundWhenDeleted() {
-        repository.add(BOOK_FIXTURE);
-        repository.delete(BOOK_FIXTURE.getId());
-        assertNull(service.findById(BOOK_FIXTURE.getId()));
+    public void testAuthorNotFoundWhenDeleted() {
+        repository.add(AUTHOR_FIXTURE);
+        repository.delete(AUTHOR_FIXTURE.getId());
+        assertNull(service.findById(AUTHOR_FIXTURE.getId()));
     }
 }

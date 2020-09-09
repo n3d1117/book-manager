@@ -1,8 +1,7 @@
-package controller;
+package it.ned.bookmanager.controller;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.controller.BookManagerController;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;

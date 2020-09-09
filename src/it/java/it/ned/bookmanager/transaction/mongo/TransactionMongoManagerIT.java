@@ -1,11 +1,10 @@
-package transaction.mongo;
+package it.ned.bookmanager.transaction.mongo;
 
 import com.mongodb.MongoClientSettings;
 import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.*;

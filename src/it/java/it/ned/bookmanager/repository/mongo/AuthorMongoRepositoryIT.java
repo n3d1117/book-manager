@@ -1,4 +1,4 @@
-package repository.mongo;
+package it.ned.bookmanager.repository.mongo;
 
 import it.ned.bookmanager.model.Author;
 
@@ -8,7 +8,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.MongoClientSettings;
 
-import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
