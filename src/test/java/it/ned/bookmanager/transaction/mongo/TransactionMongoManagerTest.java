@@ -17,6 +17,7 @@ import java.util.stream.StreamSupport;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class TransactionMongoManagerTest {
@@ -75,6 +76,12 @@ public class TransactionMongoManagerTest {
     @After
     public void tearDown() {
         client.close();
+    }
+
+    @Test
+    public void testTransactionReturnValueIsCorrect() {
+        Author retrieved = transactionManager.doInTransaction(factory -> AUTHOR_FIXTURE);
+        assertEquals(AUTHOR_FIXTURE, retrieved);
     }
 
     @Test

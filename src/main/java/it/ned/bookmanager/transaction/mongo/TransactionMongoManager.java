@@ -32,6 +32,7 @@ public class TransactionMongoManager implements TransactionManager {
 
     @Override
     public <T> T doInTransaction(TransactionCode<T> code) {
+        T result = null;
 
         ClientSession clientSession = mongoClient.startSession();
 
@@ -47,13 +48,13 @@ public class TransactionMongoManager implements TransactionManager {
         TransactionBody<T> body = (() -> code.apply(repositoryFactory));
 
         try {
-            clientSession.withTransaction(body, options);
+            result = clientSession.withTransaction(body, options);
         } catch (RuntimeException e) {
             LOGGER.debug(() -> String.format("Caught a RuntimeException: %s", e.getMessage()));
         } finally {
             clientSession.close();
         }
 
-        return null;
+        return result;
     }
 }
