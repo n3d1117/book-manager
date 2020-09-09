@@ -252,6 +252,7 @@
                         </excludedClasses>
                         <targetTests>
                             <param>*Test</param>
+                            <param>*IT</param>
                         </targetTests>
                         <mutators>
                             <mutator>STRONGER</mutator>
