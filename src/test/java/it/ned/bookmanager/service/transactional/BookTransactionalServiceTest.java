@@ -72,6 +72,18 @@ public class BookTransactionalServiceTest {
     }
 
     @Test
+    public void testFindBookByIdWhenBookDoesNotExist() {
+        when(bookRepository.findById(BOOK_FIXTURE_1.getId())).thenReturn(null);
+
+        Book retrievedBook = bookService.findById(BOOK_FIXTURE_1.getId());
+
+        assertNull(retrievedBook);
+        verify(transactionManager).doInTransaction(any());
+        verify(bookRepository).findById(BOOK_FIXTURE_1.getId());
+        verifyNoMoreInteractions(bookRepository);
+    }
+
+    @Test
     public void testAddBookSuccessfully() {
         bookService.add(BOOK_FIXTURE_1);
 

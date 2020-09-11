@@ -33,6 +33,8 @@
         <pitest.version>1.5.2</pitest.version>
         <sonarqube.version>3.7.0.1746</sonarqube.version>
         <exec-maven.version>3.0.0</exec-maven.version>
+        <build-helper.version>3.2.0</build-helper.version>
+        <maven-failsafe.version>2.22.2</maven-failsafe.version>
 
         <!-- Make Sonar track integration tests too -->
         <sonar.junit.reportPaths>
@@ -114,73 +116,6 @@
 
     <build>
 
-        <!-- Plugin Management -->
-        <pluginManagement>
-            <plugins>
-
-                <!-- JaCoCo Plugin -->
-                <plugin>
-                    <groupId>org.jacoco</groupId>
-                    <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>${jacoco.version}</version>
-                    <configuration>
-                        <excludes>
-                            <exclude>**/Main.*</exclude>
-                            <exclude>**/model/*.*</exclude>
-                            <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-
-                <!-- Coveralls Plugin -->
-                <plugin>
-                    <groupId>org.eluder.coveralls</groupId>
-                    <artifactId>coveralls-maven-plugin</artifactId>
-                    <version>${coveralls.version}</version>
-                    <dependencies>
-                        <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
-                        until a new version of coveralls-maven-plugin is released.
-                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
-                        <dependency>
-                            <groupId>javax.xml.bind</groupId>
-                            <artifactId>jaxb-api</artifactId>
-                            <version>${jabx-api.version}</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-
-                <!-- PIT Mutation Testing Plugin -->
-                <plugin>
-                    <groupId>org.pitest</groupId>
-                    <artifactId>pitest-maven</artifactId>
-                    <version>${pitest.version}</version>
-                    <configuration>
-                        <excludedClasses>
-                            <param>it.ned.bookmanager.model.*</param>
-                            <param>it.ned.bookmanager.view.*</param>
-                            <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>
-                        </excludedClasses>
-                        <targetTests>
-                            <param>*Test</param>
-                        </targetTests>
-                        <mutators>
-                            <mutator>STRONGER</mutator>
-                        </mutators>
-                        <mutationThreshold>100</mutationThreshold>
-                        <timeoutConstant>15000</timeoutConstant>
-                    </configuration>
-                </plugin>
-
-                <!-- Sonar Plugin -->
-                <plugin>
-                    <groupId>org.sonarsource.scanner.maven</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${sonarqube.version}</version>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
-
         <!-- Plugins -->
         <plugins>
 
@@ -231,7 +166,112 @@
                 </executions>
             </plugin>
 
+            <!-- Build Helper Maven Plugin -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/it/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Maven Failsafe Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven-failsafe.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
+
+        <!-- Plugin Management -->
+        <pluginManagement>
+            <plugins>
+
+                <!-- JaCoCo Plugin -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco.version}</version>
+                    <configuration>
+                        <excludes>
+                            <exclude>**/Main.*</exclude>
+                            <exclude>**/model/*.*</exclude>
+                            <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
+                        </excludes>
+                    </configuration>
+                </plugin>
+
+                <!-- Coveralls Plugin -->
+                <plugin>
+                    <groupId>org.eluder.coveralls</groupId>
+                    <artifactId>coveralls-maven-plugin</artifactId>
+                    <version>${coveralls.version}</version>
+                    <dependencies>
+                        <!-- Explicit dep on jaxb-api to avoid problems with JDK9 and later,
+                        until a new version of coveralls-maven-plugin is released.
+                        See also https://github.com/trautonen/coveralls-maven-plugin/issues/112 -->
+                        <dependency>
+                            <groupId>javax.xml.bind</groupId>
+                            <artifactId>jaxb-api</artifactId>
+                            <version>${jabx-api.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- PIT Mutation Testing Plugin -->
+                <plugin>
+                    <groupId>org.pitest</groupId>
+                    <artifactId>pitest-maven</artifactId>
+                    <version>${pitest.version}</version>
+                    <configuration>
+                        <excludedClasses>
+                            <param>it.ned.bookmanager.model.*</param>
+                            <param>it.ned.bookmanager.view.*</param>
+                            <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>
+                        </excludedClasses>
+                        <targetTests>
+                            <param>*Test</param>
+                            <param>*IT</param>
+                        </targetTests>
+                        <mutators>
+                            <mutator>STRONGER</mutator>
+                        </mutators>
+                        <mutationThreshold>100</mutationThreshold>
+                        <timeoutConstant>15000</timeoutConstant>
+                    </configuration>
+                </plugin>
+
+                <!-- Sonar Plugin -->
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                    <version>${sonarqube.version}</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
     </build>
 
     <!-- Profiles -->

@@ -25,7 +25,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 
-public class BookMongoRepositoryTest {
+public class BookMongoRepositoryIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
@@ -70,13 +70,6 @@ public class BookMongoRepositoryTest {
     }
 
     @Test
-    public void testNewCollectionIsCreatedCorrectly() {
-        String newCollection = "new_collection";
-        repository = new BookMongoRepository(client, client.startSession(), DB_NAME, newCollection);
-        assertThat(client.getDatabase(DB_NAME).listCollectionNames()).contains(newCollection);
-    }
-
-    @Test
     public void testFindAllBooksWhenThereAreMany() {
         collection.insertOne(BOOK_FIXTURE_1);
         collection.insertOne(BOOK_FIXTURE_2);
@@ -109,17 +102,17 @@ public class BookMongoRepositoryTest {
     }
 
     @Test
-    public void testDeleteAllWrittenBooksFromAuthorId() {
-        Author author = new Author("1", "George Orwell");
-        Author author2 = new Author("2", "Dan Brown");
+    public void testDeleteAllBooksFromAuthorId() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
 
-        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, author2.getId());
+        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, danBrown.getId());
 
         collection.insertOne(BOOK_FIXTURE_1);
         collection.insertOne(theDaVinciCode);
         collection.insertOne(BOOK_FIXTURE_2);
 
-        repository.deleteAllBooksForAuthorId(author.getId());
+        repository.deleteAllBooksForAuthorId(georgeOrwell.getId());
         assertThat(allBooksInDatabase()).containsExactly(theDaVinciCode);
     }
 

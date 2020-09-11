@@ -70,6 +70,18 @@ public class AuthorTransactionalServiceTest {
     }
 
     @Test
+    public void testFindAuthorByIdWhenAuthorDoesNotExist() {
+        when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(null);
+
+        Author retrievedAuthor = authorService.findById(AUTHOR_FIXTURE_1.getId());
+
+        assertNull(retrievedAuthor);
+        verify(transactionManager).doInTransaction(any());
+        verify(authorRepository).findById(AUTHOR_FIXTURE_1.getId());
+        verifyNoMoreInteractions(authorRepository);
+    }
+
+    @Test
     public void testAddAuthorSuccessfully() {
         authorService.add(AUTHOR_FIXTURE_1);
 

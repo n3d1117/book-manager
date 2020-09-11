@@ -4,13 +4,11 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import it.ned.bookmanager.repository.Repository;
 import org.apache.logging.log4j.Logger;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -53,15 +51,8 @@ public class MongoRepository<T> implements Repository<T> {
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
         );
 
-        MongoDatabase database = mongoClient.getDatabase(dbName);
-
-        // In MongoDB 4.2 and earlier, when dealing with multi-document transactions
-        // you must create the collection beforehand (if it does not already exist).
-        // See also: https://docs.mongodb.com/manual/core/transactions/
-        if (!database.listCollectionNames().into(new ArrayList<>()).contains(collectionName))
-            database.createCollection(collectionName);
-
-        collection = database
+        collection = mongoClient
+                .getDatabase(dbName)
                 .getCollection(collectionName, entityType)
                 .withCodecRegistry(pojoCodecRegistry);
     }

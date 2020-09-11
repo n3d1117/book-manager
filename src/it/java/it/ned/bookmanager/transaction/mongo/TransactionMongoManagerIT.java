@@ -1,7 +1,6 @@
 package it.ned.bookmanager.transaction.mongo;
 
 import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
@@ -20,7 +19,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
-public class TransactionMongoManagerTest {
+public class TransactionMongoManagerIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
@@ -54,9 +53,6 @@ public class TransactionMongoManagerTest {
         MongoDatabase database = client.getDatabase(DB_NAME);
         database.drop();
 
-        database.createCollection(AUTHOR_COLLECTION_NAME);
-        database.createCollection(BOOK_COLLECTION_NAME);
-
         CodecRegistry pojoCodecRegistry = fromRegistries(
                 MongoClientSettings.getDefaultCodecRegistry(),
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
@@ -76,6 +72,22 @@ public class TransactionMongoManagerTest {
     @After
     public void tearDown() {
         client.close();
+    }
+
+    @Test
+    public void testInitialCollectionsAreCreatedCorrectly() {
+        transactionManager = new TransactionMongoManager(client, DB_NAME, AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+        assertThat(client.getDatabase(DB_NAME).listCollectionNames())
+                .containsExactly(AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+    }
+
+    @Test
+    public void testNewCollectionsAreCreatedCorrectly() {
+        String newAuthorCollection = "new_collection_1";
+        String newBookCollection = "new_collection_2";
+        transactionManager = new TransactionMongoManager(client, DB_NAME, newAuthorCollection, newBookCollection);
+        assertThat(client.getDatabase(DB_NAME).listCollectionNames())
+                .contains(newAuthorCollection, newBookCollection);
     }
 
     @Test
@@ -101,7 +113,7 @@ public class TransactionMongoManagerTest {
         transactionManager.doInTransaction(factory -> {
             authorCollection.insertOne(session, AUTHOR_FIXTURE);
             bookCollection.insertOne(session, BOOK_FIXTURE);
-            throw new MongoException("Simulating a transaction failure here!");
+            throw new RuntimeException("Simulating a transaction failure here!");
         });
         assertThat(allAuthorsInDatabase()).isEmpty();
         assertThat(allBooksInDatabase()).isEmpty();

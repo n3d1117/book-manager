@@ -24,7 +24,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 
-public class AuthorMongoRepositoryTest {
+public class AuthorMongoRepositoryIT {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
@@ -61,13 +61,6 @@ public class AuthorMongoRepositoryTest {
     @After
     public void tearDown() {
         client.close();
-    }
-
-    @Test
-    public void testNewCollectionIsCreatedCorrectly() {
-        String newCollection = "new_collection";
-        repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, newCollection);
-        assertThat(client.getDatabase(DB_NAME).listCollectionNames()).contains(newCollection);
     }
 
     @Test
