@@ -114,7 +114,7 @@ public class TransactionMongoManagerIT {
         transactionManager.doInTransaction(factory -> {
             authorCollection.insertOne(session, AUTHOR_FIXTURE);
             bookCollection.insertOne(session, BOOK_FIXTURE);
-            throw new MongoException("Simulating a transaction failure here!");
+            throw new RuntimeException("Simulating a transaction failure here!");
         });
         assertThat(allAuthorsInDatabase()).isEmpty();
         assertThat(allBooksInDatabase()).isEmpty();
