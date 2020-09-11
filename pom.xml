@@ -49,6 +49,17 @@
             **/repository/mongo/MongoRepositoryFactory.*
         </sonar.coverage.exclusions>
 
+        <!-- Disable certain Sonar rules -->
+        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+
+        <!-- Disable "Inheritance tree of classes should not be too deep" for Swing view -->
+        <sonar.issue.ignore.multicriteria.e1.ruleKey>
+            java:S110
+        </sonar.issue.ignore.multicriteria.e1.ruleKey>
+        <sonar.issue.ignore.multicriteria.e1.resourceKey>
+            **/BookManagerSwingView.java
+        </sonar.issue.ignore.multicriteria.e1.resourceKey>
+
     </properties>
 
     <!-- Dependencies -->
