@@ -1,7 +1,6 @@
 package it.ned.bookmanager.transaction.mongo;
 
 import com.mongodb.MongoClientSettings;
-import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;

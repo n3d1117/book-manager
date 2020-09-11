@@ -3,7 +3,8 @@ package it.ned.bookmanager.service;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
+import it.ned.bookmanager.repository.AuthorRepository;
+import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
 import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
 import it.ned.bookmanager.transaction.TransactionManager;
 import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
@@ -23,12 +24,12 @@ public class AuthorServiceMongoRepositoryIT {
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
 
     private AuthorService service;
-    private AuthorMongoRepository repository;
+    private AuthorRepository repository;
     private MongoClient client;
 
     private static final String DB_NAME = "bookmanager";
-    private static final String DB_BOOK_COLLECTION = "books";
     private static final String DB_AUTHOR_COLLECTION = "authors";
+    private static final String DB_BOOK_COLLECTION = "books";
 
     private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
 
@@ -41,7 +42,9 @@ public class AuthorServiceMongoRepositoryIT {
                 DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
         service = new AuthorTransactionalService(transactionManager);
 
-        repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, DB_AUTHOR_COLLECTION);
+        MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(client, client.startSession(),
+                DB_NAME, DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
+        repository = repositoryFactory.createAuthorRepository();
 
         for (Author author: repository.findAll())
             repository.delete(author.getId());
@@ -59,7 +62,7 @@ public class AuthorServiceMongoRepositoryIT {
     }
 
     @Test
-    public void testAuthorFoundWhenAdded() {
+    public void testFindAuthorById() {
         repository.add(AUTHOR_FIXTURE);
         assertEquals(AUTHOR_FIXTURE, service.findById(AUTHOR_FIXTURE.getId()));
     }

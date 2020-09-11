@@ -102,17 +102,17 @@ public class BookMongoRepositoryIT {
     }
 
     @Test
-    public void testDeleteAllWrittenBooksFromAuthorId() {
-        Author author = new Author("1", "George Orwell");
-        Author author2 = new Author("2", "Dan Brown");
+    public void testDeleteAllBooksFromAuthorId() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
 
-        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, author2.getId());
+        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, danBrown.getId());
 
         collection.insertOne(BOOK_FIXTURE_1);
         collection.insertOne(theDaVinciCode);
         collection.insertOne(BOOK_FIXTURE_2);
 
-        repository.deleteAllBooksForAuthorId(author.getId());
+        repository.deleteAllBooksForAuthorId(georgeOrwell.getId());
         assertThat(allBooksInDatabase()).containsExactly(theDaVinciCode);
     }
 
@@ -122,4 +122,3 @@ public class BookMongoRepositoryIT {
                 .collect(Collectors.toList());
     }
 }
-
