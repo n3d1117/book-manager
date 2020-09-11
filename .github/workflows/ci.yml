@@ -39,15 +39,14 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar) w/ xvfb
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: |
-            mvn -B -f pom.xml clean verify \
-            $ENABLED_PROFILES $ADDITIONAL_GOALS \
-            -D repoToken=$COVERALLS_TOKEN \
-            -D sonar.host.url=$SONAR_URL \
-            -D sonar.organization=$SONAR_ORGANIZATION \
-            -D sonar.projectKey=$SONAR_PROJECT
+        run: |
+          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
+          mvn -B -f pom.xml clean verify \
+          $ENABLED_PROFILES $ADDITIONAL_GOALS \
+          -D repoToken=$COVERALLS_TOKEN \
+          -D sonar.host.url=$SONAR_URL \
+          -D sonar.organization=$SONAR_ORGANIZATION \
+          -D sonar.projectKey=$SONAR_PROJECT
         env:
           ENABLED_PROFILES: -P jacoco-report,mutation-testing
           ADDITIONAL_GOALS: coveralls:report sonar:sonar
@@ -87,8 +86,8 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       # Avoid duplicated reports to sonar and coveralls
       - name: Run mvn clean verify (with jacoco and mutation testing) w/ xvfb
-        uses: GabrielBB/xvfb-action@v1
-        with:
-          run: mvn -f pom.xml clean verify $ENABLED_PROFILES
+        run: |
+          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
+          mvn -f pom.xml clean verify $ENABLED_PROFILES
         env:
           ENABLED_PROFILES: -P jacoco-check,mutation-testing
