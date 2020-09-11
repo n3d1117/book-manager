@@ -228,6 +228,7 @@
                         <excludes>
                             <exclude>**/Main.*</exclude>
                             <exclude>**/model/*.*</exclude>
+                            <exclude>**/view/swing/*.*</exclude>
                             <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
                         </excludes>
                     </configuration>
@@ -259,12 +260,19 @@
                         <excludedClasses>
                             <param>it.ned.bookmanager.model.*</param>
                             <param>it.ned.bookmanager.view.*</param>
+                            <param>it.ned.bookmanager.view.swing.*</param>
                             <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>
                         </excludedClasses>
                         <targetTests>
                             <param>*Test</param>
-                            <param>*IT</param>
+                            <!-- Also include some integration tests that are meant to be tested with pit -->
+                            <param>it.ned.bookmanager.repository.mongo.AuthorMongoRepositoryIT</param>
+                            <param>it.ned.bookmanager.repository.mongo.BookMongoRepositoryIT</param>
+                            <param>it.ned.bookmanager.transaction.mongo.TransactionMongoManagerIT</param>
                         </targetTests>
+                        <excludedTestClasses>
+                            <param>it.ned.bookmanager.view.swing.*</param>
+                        </excludedTestClasses>
                         <mutators>
                             <mutator>STRONGER</mutator>
                         </mutators>
