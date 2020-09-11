@@ -38,8 +38,9 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar)
+      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar) w/ xvfb
         run: |
+          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
           mvn -B -f pom.xml clean verify \
           $ENABLED_PROFILES $ADDITIONAL_GOALS \
           -D repoToken=$COVERALLS_TOKEN \
@@ -84,7 +85,9 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
       # Avoid duplicated reports to sonar and coveralls
-      - name: Run mvn clean verify (with jacoco and mutation testing)
-        run: mvn -f pom.xml clean verify $ENABLED_PROFILES
+      - name: Run mvn clean verify (with jacoco and mutation testing) w/ xvfb
+        run: |
+          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
+          mvn -f pom.xml clean verify $ENABLED_PROFILES
         env:
           ENABLED_PROFILES: -P jacoco-check,mutation-testing
