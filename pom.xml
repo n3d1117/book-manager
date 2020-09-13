@@ -46,6 +46,7 @@
         <sonar.coverage.exclusions>
             **/Main.*,
             **/model/*.*,
+            **/view/**.*,
             **/repository/mongo/MongoRepositoryFactory.*
         </sonar.coverage.exclusions>
 
@@ -57,7 +58,7 @@
             java:S110
         </sonar.issue.ignore.multicriteria.e1.ruleKey>
         <sonar.issue.ignore.multicriteria.e1.resourceKey>
-            **/BookManagerSwingView.java
+            **/view/swing/**.java
         </sonar.issue.ignore.multicriteria.e1.resourceKey>
 
         <!-- Disable "Tests should include assertions" since we use AssertJ Swing -->
