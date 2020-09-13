@@ -80,8 +80,8 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         nameTextBox.enterText(" ");
         addButton.requireDisabled();
 
-        idTextBox.enterText("");
-        nameTextBox.enterText("");
+        idTextBox.setText("");
+        nameTextBox.setText("");
 
         idTextBox.enterText(" ");
         nameTextBox.enterText("George Orwell");
