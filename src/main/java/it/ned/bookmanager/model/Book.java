@@ -2,7 +2,7 @@ package it.ned.bookmanager.model;
 
 import java.util.Objects;
 
-public class Book {
+public class Book implements Comparable<Book> {
 
     private String id;
     private String title;
@@ -76,5 +76,11 @@ public class Book {
                 ", numberOfPages=" + numberOfPages +
                 ", authorId='" + authorId + '\'' +
                 '}';
+    }
+
+
+    @Override
+    public int compareTo(Book book) {
+        return this.getTitle().compareTo(book.getTitle());
     }
 }
