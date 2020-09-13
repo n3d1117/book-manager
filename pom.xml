@@ -50,7 +50,7 @@
         </sonar.coverage.exclusions>
 
         <!-- Disable certain Sonar rules -->
-        <sonar.issue.ignore.multicriteria>e1</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
 
         <!-- Disable "Inheritance tree of classes should not be too deep" for Swing view -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>
@@ -59,6 +59,14 @@
         <sonar.issue.ignore.multicriteria.e1.resourceKey>
             **/BookManagerSwingView.java
         </sonar.issue.ignore.multicriteria.e1.resourceKey>
+
+        <!-- Disable "Tests should include assertions" since we use AssertJ Swing -->
+        <sonar.issue.ignore.multicriteria.e2.ruleKey>
+            java:S2699
+        </sonar.issue.ignore.multicriteria.e2.ruleKey>
+        <sonar.issue.ignore.multicriteria.e2.resourceKey>
+            **/BookManagerSwingViewTest.java
+        </sonar.issue.ignore.multicriteria.e2.resourceKey>
 
     </properties>
 
