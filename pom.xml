@@ -237,6 +237,7 @@
                             <exclude>**/Main.*</exclude>
                             <exclude>**/model/*.*</exclude>
                             <exclude>**/view/swing/*.*</exclude>
+                            <exclude>**/view/swing/components/*.*</exclude>
                             <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
                         </excludes>
                     </configuration>
@@ -269,6 +270,7 @@
                             <param>it.ned.bookmanager.model.*</param>
                             <param>it.ned.bookmanager.view.*</param>
                             <param>it.ned.bookmanager.view.swing.*</param>
+                            <param>it.ned.bookmanager.view.swing.components.*</param>
                             <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>
                         </excludedClasses>
                         <targetTests>
