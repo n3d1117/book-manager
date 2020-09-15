@@ -6,8 +6,8 @@ import it.ned.bookmanager.model.Book;
 import java.util.List;
 
 public interface BookManagerView {
-    void showAllBooks(List<Book> allBooks);
     void showAllAuthors(List<Author> allAuthors);
+    void showAllBooks(List<Book> allBooks);
 
     void authorAdded(Author author);
     void authorDeleted(Author author);
