@@ -1,5 +1,6 @@
 package it.ned.bookmanager.view.swing;
 
+import it.ned.bookmanager.controller.BookManagerController;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.view.BookManagerView;
@@ -18,6 +19,8 @@ import java.util.List;
 import static java.awt.Font.BOLD;
 
 public class BookManagerSwingView extends JFrame implements BookManagerView {
+
+    private transient BookManagerController controller;
 
     private final JPanel mainPanel;
 
@@ -41,7 +44,6 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     private static final String AUTHOR_NOT_FOUND_ERROR = "Error: Author with id %s not found!";
     private static final String BOOK_ALREADY_EXISTS_ERROR = "Error: Book with id %s already exists!";
     private static final String BOOK_NOT_FOUND_ERROR = "Error: Book with id %s not found!";
-
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -355,6 +357,34 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         booksTable.getSelectionModel().addListSelectionListener(e ->
                 deleteBookButton.setEnabled(booksTable.getSelectedRow() != -1)
         );
+
+        // 'Add Author' button action
+        addAuthorButton.addActionListener(e ->
+                controller.addAuthor(new Author(authorIdTextField.getText(), authorNameTextField.getText()))
+        );
+
+        // 'Delete Author' button action
+        deleteAuthorButton.addActionListener(e ->
+                controller.deleteAuthor(authorList.getSelectedValue())
+        );
+
+        // 'Add Book' button action
+        addBookButton.addActionListener(e -> {
+            if (authorComboBox.getSelectedItem() instanceof Author) {
+                Author selectedAuthor = (Author)authorComboBox.getSelectedItem();
+                controller.addBook(
+                        new Book(bookIdTextField.getText(),
+                                bookTitleTextField.getText(),
+                                Integer.parseInt(bookLengthTextField.getText()),
+                                selectedAuthor.getId())
+                );
+            }
+        });
+
+        // 'Delete Book' button action
+        deleteBookButton.addActionListener(e ->
+                controller.deleteBook(bookTableModel.getBookAt(booksTable.getSelectedRow()))
+        );
     }
 
     private void enableAddBookButton() {
@@ -378,6 +408,12 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     public BookTableModel getBookTableModel() {
         return bookTableModel;
+    }
+
+    /* Setters */
+
+    public void setController(BookManagerController controller) {
+        this.controller = controller;
     }
 
     /* Overrides */

@@ -1,5 +1,6 @@
 package it.ned.bookmanager.view.swing;
 
+import it.ned.bookmanager.controller.BookManagerController;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import org.assertj.swing.annotation.GUITest;
@@ -13,10 +14,13 @@ import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
@@ -24,10 +28,14 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     private FrameFixture window;
     private BookManagerSwingView view;
 
+    @Mock private BookManagerController controller;
+
     @Override
     protected void onSetUp() {
+        MockitoAnnotations.openMocks(this);
         GuiActionRunner.execute(() -> {
             view = new BookManagerSwingView();
+            view.setController(controller);
             return view;
         });
         window = new FrameFixture(robot(), view);
@@ -363,37 +371,50 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
     }
 
+    @Test @GUITest
+    public void testAddAuthorButtonShouldDelegateToControllerAddAuthor() {
+        window.textBox("authorIdTextField").enterText("1");
+        window.textBox("authorNameTextField").enterText("George Orwell");
+        window.button(JButtonMatcher.withName("addAuthorButton")).click();
+        verify(controller).addAuthor(new Author("1", "George Orwell"));
+    }
 
+    @Test @GUITest
+    public void testDeleteAuthorButtonShouldDelegateToControllerDeleteAuthor() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorListModel().addElement(danBrown);
+        });
+        window.list("authorsList").selectItem(1);
+        window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
+        verify(controller).deleteAuthor(danBrown);
+    }
 
+    @Test @GUITest
+    public void testAddBookButtonShouldDelegateToControllerAddBook() {
+        GuiActionRunner.execute(() -> {
+            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
+        });
+        window.textBox("bookIdTextField").enterText("1");
+        window.textBox("bookTitleTextField").enterText("Animal Farm");
+        window.textBox("bookLengthTextField").enterText("93");
+        window.comboBox("authorsCombobox").selectItem(0);
+        window.button(JButtonMatcher.withName("addBookButton")).click();
+        verify(controller).addBook(new Book("1", "Animal Farm", 93, "1"));
+    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    @Test @GUITest
+    public void testDeleteBookButtonShouldDelegateToControllerDeleteBook() {
+        Book nineteenEightyFour = new Book("2", "1984", 293, "1");
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() -> {
+            view.getBookTableModel().addElement(nineteenEightyFour);
+            view.getBookTableModel().addElement(animalFarm);
+        });
+        window.table("booksTable").selectRows(1);
+        window.button(JButtonMatcher.withName("deleteBookButton")).click();
+        verify(controller).deleteBook(animalFarm);
+    }
 }

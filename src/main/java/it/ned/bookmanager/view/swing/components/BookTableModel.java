@@ -49,6 +49,12 @@ public class BookTableModel extends AbstractTableModel {
         return value;
     }
 
+    public Book getBookAt(int bookRow) {
+        if(bookRow < 0)
+            return null;
+        return books.get(bookRow);
+    }
+
     public void addElement(Book bookToAdd) {
         books.add(bookToAdd);
         fireTableDataChanged();
