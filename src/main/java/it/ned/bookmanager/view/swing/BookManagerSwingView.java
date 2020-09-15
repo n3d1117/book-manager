@@ -1,6 +1,8 @@
 package it.ned.bookmanager.view.swing;
 
 import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.view.BookManagerView;
 import it.ned.bookmanager.view.swing.components.AuthorCellRenderer;
 import it.ned.bookmanager.view.swing.components.AuthorComboBox;
 import it.ned.bookmanager.view.swing.components.BookTableCellRenderer;
@@ -11,10 +13,11 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 import static java.awt.Font.BOLD;
 
-public class BookManagerSwingView extends JFrame {
+public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     private final JPanel mainPanel;
 
@@ -31,6 +34,14 @@ public class BookManagerSwingView extends JFrame {
 
     private final JTable booksTable;
     private final BookTableModel bookTableModel;
+    private final JLabel authorErrorLabel;
+    private final JLabel bookErrorLabel;
+
+    private static final String AUTHOR_ALREADY_EXISTS_ERROR = "Error: Author with id %s already exists!";
+    private static final String AUTHOR_NOT_FOUND_ERROR = "Error: Author with id %s not found!";
+    private static final String BOOK_ALREADY_EXISTS_ERROR = "Error: Book with id %s already exists!";
+    private static final String BOOK_NOT_FOUND_ERROR = "Error: Book with id %s not found!";
+
 
     public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
@@ -108,7 +119,7 @@ public class BookManagerSwingView extends JFrame {
         scrollPaneAuthors.setViewportView(authorList);
 
         // Author error label
-        JLabel authorErrorLabel = new JLabel(" ");
+        authorErrorLabel = new JLabel(" ");
         authorErrorLabel.setName("authorErrorLabel");
         authorErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         authorErrorLabel.setFont(new Font(new JLabel().getFont().getFontName(), BOLD, 12));
@@ -213,8 +224,8 @@ public class BookManagerSwingView extends JFrame {
         booksTable.setDefaultRenderer(String.class, new BookTableCellRenderer());
         scrollPaneBooks.setViewportView(booksTable);
 
-        // Author error label
-        JLabel bookErrorLabel = new JLabel(" ");
+        // Book error label
+        bookErrorLabel = new JLabel(" ");
         bookErrorLabel.setName("bookErrorLabel");
         bookErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
         bookErrorLabel.setFont(new Font(new JLabel().getFont().getFontName(), BOLD, 12));
@@ -355,6 +366,8 @@ public class BookManagerSwingView extends JFrame {
         );
     }
 
+    /* Getters */
+
     public DefaultListModel<Author> getAuthorListModel() {
         return authorListModel;
     }
@@ -365,5 +378,74 @@ public class BookManagerSwingView extends JFrame {
 
     public BookTableModel getBookTableModel() {
         return bookTableModel;
+    }
+
+    /* Overrides */
+
+    @Override
+    public void showAllAuthors(List<Author> allAuthors) {
+        allAuthors.forEach(author -> {
+            authorListModel.addElement(author);
+            authorComboBoxModel.addElement(author);
+        });
+    }
+
+    @Override
+    public void showAllBooks(List<Book> allBooks) {
+        allBooks.forEach(bookTableModel::addElement);
+    }
+
+    @Override
+    public void authorAdded(Author author) {
+        authorListModel.addElement(author);
+        authorComboBoxModel.addElement(author);
+        resetAuthorErrorLabel();
+    }
+
+    @Override
+    public void authorDeleted(Author author) {
+        authorListModel.removeElement(author);
+        authorComboBoxModel.removeElement(author);
+        resetAuthorErrorLabel();
+    }
+
+    @Override
+    public void bookAdded(Book book) {
+        bookTableModel.addElement(book);
+        resetBookErrorLabel();
+    }
+
+    @Override
+    public void bookDeleted(Book book) {
+        bookTableModel.removeElement(book);
+        resetBookErrorLabel();
+    }
+
+    @Override
+    public void authorNotAddedBecauseAlreadyExistsError(Author author) {
+        authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, author.getId()));
+    }
+
+    @Override
+    public void authorNotDeletedBecauseNotFoundError(Author author) {
+        authorErrorLabel.setText(String.format(AUTHOR_NOT_FOUND_ERROR, author.getId()));
+    }
+
+    @Override
+    public void bookNotAddedBecauseAlreadyExistsError(Book book) {
+        bookErrorLabel.setText(String.format(BOOK_ALREADY_EXISTS_ERROR, book.getId()));
+    }
+
+    @Override
+    public void bookNotDeletedBecauseNotFoundError(Book book) {
+        bookErrorLabel.setText(String.format(BOOK_NOT_FOUND_ERROR, book.getId()));
+    }
+
+    private void resetAuthorErrorLabel() {
+        authorErrorLabel.setText(" ");
+    }
+
+    private void resetBookErrorLabel() {
+        bookErrorLabel.setText(" ");
     }
 }

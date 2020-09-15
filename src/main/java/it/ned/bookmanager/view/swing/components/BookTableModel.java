@@ -51,7 +51,11 @@ public class BookTableModel extends AbstractTableModel {
 
     public void addElement(Book bookToAdd) {
         books.add(bookToAdd);
-        Collections.sort(books);
+        fireTableDataChanged();
+    }
+
+    public void removeElement(Book bookToRemove) {
+        books.remove(bookToRemove);
         fireTableDataChanged();
     }
 }

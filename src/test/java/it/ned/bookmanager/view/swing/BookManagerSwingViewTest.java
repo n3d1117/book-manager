@@ -14,6 +14,10 @@ import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.Arrays;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
@@ -189,4 +193,207 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         window.table("booksTable").unselectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).requireDisabled();
     }
+
+    @Test @GUITest
+    public void testShowAllAuthorsShouldAddAuthorsToList() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() ->
+                view.showAllAuthors(Arrays.asList(georgeOrwell, danBrown))
+        );
+        String[] authorsListContent = window.list("authorsList").contents();
+        assertThat(authorsListContent).containsExactly(
+                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testShowAllAuthorsShouldAddAuthorsToCombobox() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() ->
+                view.showAllAuthors(Arrays.asList(georgeOrwell, danBrown))
+        );
+        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
+        assertThat(authorsListComboboxContent).containsExactly(
+                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testShowAllBooksShouldAddBooksToTable() {
+        Book nineteenEightyFour = new Book("2", "1984", 293, "1");
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.showAllBooks(Arrays.asList(nineteenEightyFour, animalFarm))
+        );
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                nineteenEightyFour.getTitle(),
+                nineteenEightyFour.getAuthorId(),
+                nineteenEightyFour.getNumberOfPages().toString()
+        );
+        assertThat(booksTableContent[1]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
+        );
+    }
+
+    @Test @GUITest
+    public void testAuthorAddedShouldAddAuthorToListAndComboboxAndResetErrorLabel() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.authorAdded(georgeOrwell)
+        );
+        String[] authorsListContent = window.list("authorsList").contents();
+        assertThat(authorsListContent).containsExactly("👤 " + georgeOrwell.getName());
+
+        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
+        assertThat(authorsListComboboxContent).containsExactly("👤 " + georgeOrwell.getName());
+
+        window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testAuthorDeletedShouldRemoveAuthorFromListAndComboboxAndResetErrorLabel() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+            view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorComboBoxModel().addElement(danBrown);
+        });
+
+        GuiActionRunner.execute(() -> {
+            view.authorDeleted(new Author("1", "George Orwell"));
+        });
+
+        String expected = "👤 " + danBrown.getName();
+
+        String[] authorsListContent = window.list("authorsList").contents();
+        assertThat(authorsListContent).containsExactly(expected);
+        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
+        assertThat(authorsListComboboxContent).containsExactly(expected);
+
+        window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testBookAddedShouldAddBookToTableAndResetErrorLabel() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.bookAdded(animalFarm)
+        );
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
+        );
+
+        window.label("bookErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testBookDeletedShouldRemoveBookFromTableAndResetErrorLabel() {
+        Book nineteenEightyFour = new Book("2", "1984", 293, "1");
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() -> {
+            view.getBookTableModel().addElement(nineteenEightyFour);
+            view.getBookTableModel().addElement(animalFarm);
+        });
+
+        GuiActionRunner.execute(() -> {
+            view.bookDeleted(new Book("2", "1984", 293, "1"));
+        });
+
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
+        );
+
+        window.label("bookErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testAuthorNotAddedBecauseAlreadyExistsErrorShouldDisplayErrorMessage() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
+        );
+        window.label("authorErrorLabel").requireText(
+                String.format("Error: Author with id %s already exists!", georgeOrwell.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testAuthorNotDeletedBecauseNotFoundErrorShouldDisplayErrorMessage() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.authorNotDeletedBecauseNotFoundError(georgeOrwell)
+        );
+        window.label("authorErrorLabel").requireText(
+                String.format("Error: Author with id %s not found!", georgeOrwell.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testBookNotAddedBecauseAlreadyExistsErrorShouldDisplayErrorMessage() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
+        );
+        window.label("bookErrorLabel").requireText(
+                String.format("Error: Book with id %s already exists!", animalFarm.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testBookNotDeletedBecauseNotFoundErrorShouldDisplayErrorMessage() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.bookNotDeletedBecauseNotFoundError(animalFarm)
+        );
+        window.label("bookErrorLabel").requireText(
+                String.format("Error: Book with id %s not found!", animalFarm.getId())
+        );
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
