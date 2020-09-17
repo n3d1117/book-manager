@@ -78,7 +78,6 @@ public class Book implements Comparable<Book> {
                 '}';
     }
 
-
     @Override
     public int compareTo(Book book) {
         return this.getTitle().compareTo(book.getTitle());

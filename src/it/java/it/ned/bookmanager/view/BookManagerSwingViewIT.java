@@ -79,19 +79,19 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testShowAllAuthors() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
-        authorRepository.add(georgeOrwell);
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
         authorRepository.add(danBrown);
+        authorRepository.add(georgeOrwell);
         GuiActionRunner.execute(() ->
                 controller.allAuthors()
         );
         assertThat(window.list("authorsList").contents()).containsExactly(
-                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
         );
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
         assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
         );
     }
 
@@ -230,26 +230,27 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testDeleteAuthorAndAssociatedBooks() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
 
         Book animalFarm = new Book("1", "Animal Farm", 93, georgeOrwell.getId());
         Book nineteenEightyFour = new Book("2", "1984", 293, georgeOrwell.getId());
         Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, danBrown.getId());
 
         GuiActionRunner.execute(() -> {
-            controller.addAuthor(georgeOrwell);
             controller.addAuthor(danBrown);
+            controller.addAuthor(georgeOrwell);
             controller.addBook(animalFarm);
             controller.addBook(nineteenEightyFour);
             controller.addBook(theDaVinciCode);
         });
 
-        window.list("authorsList").selectItem(0);
+        window.list("authorsList").selectItem(1);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
-        assertThat(window.list("authorsList").contents()).containsExactly("👤 Dan Brown");
-        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly("👤 Dan Brown");
+        String expected = "👤 Dan Brown";
+        assertThat(window.list("authorsList").contents()).containsExactly(expected);
+        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
 
         String[][] booksTableContent = window.table("booksTable").contents();
         assertThat(booksTableContent[0]).containsExactly(
@@ -259,5 +260,3 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         );
     }
 }
-
-// Todo: add some tests for deletedAllBooksForAuthor

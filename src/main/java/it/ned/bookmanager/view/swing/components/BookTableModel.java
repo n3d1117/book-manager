@@ -50,13 +50,14 @@ public class BookTableModel extends AbstractTableModel {
     }
 
     public Book getBookAt(int bookRow) {
-        if(bookRow < 0)
+        if (bookRow < 0)
             return null;
         return books.get(bookRow);
     }
 
     public void addElement(Book bookToAdd) {
         books.add(bookToAdd);
+        Collections.sort(books);
         fireTableDataChanged();
     }
 
@@ -67,6 +68,7 @@ public class BookTableModel extends AbstractTableModel {
 
     public void removeAllBooksFromAuthorId(String authorId) {
         books.removeIf(book -> book.getAuthorId().equals(authorId));
+        Collections.sort(books);
         fireTableDataChanged();
     }
 }
