@@ -58,6 +58,11 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         authorRepository = new AuthorMongoRepository(client, session, DB_NAME, DB_AUTHOR_COLLECTION);
         bookRepository = new BookMongoRepository(client, session, DB_NAME, DB_BOOK_COLLECTION);
 
+        for (Author author : authorRepository.findAll())
+            authorRepository.delete(author.getId());
+        for (Book book : bookRepository.findAll())
+            bookRepository.delete(book.getId());
+
         GuiActionRunner.execute(() -> {
             TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME,
                     DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
