@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-18.04
     strategy:
       matrix:
-        java: [9, 11, 13]
+        java: [11, 13]
     name: Test on other Java versions
 
     # Almost the same steps as first job (sadly, you can't yet reuse steps
