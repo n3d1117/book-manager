@@ -7,7 +7,7 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.repository.AuthorRepository;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.repository.RepositoryFactory;
-import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorDuplicateException;
 import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.transaction.TransactionCode;
 import it.ned.bookmanager.transaction.TransactionManager;
@@ -103,7 +103,7 @@ public class AuthorTransactionalServiceTest {
     public void testAddAuthorShouldFailWhenAlreadyInDatabase() {
         when(authorRepository.findById(AUTHOR_FIXTURE_1.getId())).thenReturn(AUTHOR_FIXTURE_1);
 
-        AuthorAlreadyInDatabaseException e = assertThrows(AuthorAlreadyInDatabaseException.class, () ->
+        AuthorDuplicateException e = assertThrows(AuthorDuplicateException.class, () ->
                 authorService.add(AUTHOR_FIXTURE_1)
         );
         assertTrue(e.getMessage().contains(AUTHOR_FIXTURE_1.getId()));

@@ -3,7 +3,7 @@ package it.ned.bookmanager.service.transactional;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.repository.AuthorRepository;
 import it.ned.bookmanager.service.AuthorService;
-import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorDuplicateException;
 import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.transaction.TransactionManager;
 
@@ -39,7 +39,7 @@ public class AuthorTransactionalService implements AuthorService {
             if (author != null) {
                 AuthorRepository authorRepository = factory.createAuthorRepository();
                 if (authorRepository.findById(author.getId()) != null)
-                    throw new AuthorAlreadyInDatabaseException(
+                    throw new AuthorDuplicateException(
                             String.format(AUTHOR_ALREADY_IN_DB_ERROR_MESSAGE, author.getId())
                     );
                 authorRepository.add(author);

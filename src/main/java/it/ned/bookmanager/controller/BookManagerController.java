@@ -4,9 +4,9 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorDuplicateException;
 import it.ned.bookmanager.service.exception.AuthorNotFoundException;
-import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +42,7 @@ public class BookManagerController {
         try {
             authorService.add(author);
             view.authorAdded(author);
-        } catch(AuthorAlreadyInDatabaseException exception) {
+        } catch(AuthorDuplicateException exception) {
             view.authorNotAddedBecauseAlreadyExistsError(author);
         }
     }
@@ -52,7 +52,7 @@ public class BookManagerController {
         try {
             bookService.add(book);
             view.bookAdded(book);
-        } catch(BookAlreadyInDatabaseException exception) {
+        } catch(BookDuplicateException exception) {
             view.bookNotAddedBecauseAlreadyExistsError(book);
         }
     }
