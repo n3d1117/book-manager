@@ -7,9 +7,9 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.exception.AuthorAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.AuthorDuplicateException;
 import it.ned.bookmanager.service.exception.AuthorNotFoundException;
-import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
 
@@ -70,7 +70,7 @@ public class BookManagerControllerTest {
     @Test
     public void testAuthorNotAddedWhenAlreadyExisting() {
         Author georgeOrwellClone = new Author(BOOK_FIXTURE.getId(), "George Orwell's clone");
-        doThrow(new AuthorAlreadyInDatabaseException("Author already exists"))
+        doThrow(new AuthorDuplicateException("Author already exists"))
                 .when(authorService).add(georgeOrwellClone);
 
         controller.addAuthor(georgeOrwellClone);
@@ -89,6 +89,7 @@ public class BookManagerControllerTest {
 
         InOrder inOrder = inOrder(authorService, view);
         inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).deletedAllBooksForAuthor(AUTHOR_FIXTURE);
         inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
@@ -136,7 +137,7 @@ public class BookManagerControllerTest {
     @Test
     public void testBookNotAddedWhenAlreadyExisting() {
         Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        doThrow(new BookAlreadyInDatabaseException("Book already exists"))
+        doThrow(new BookDuplicateException("Book already exists"))
                 .when(bookService).add(animalFarmClone);
 
         controller.addBook(animalFarmClone);

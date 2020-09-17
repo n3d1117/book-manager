@@ -1,6 +1,7 @@
 package it.ned.bookmanager.transaction.mongo;
 
 import com.mongodb.MongoClientSettings;
+import com.mongodb.MongoException;
 import com.mongodb.client.*;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
@@ -113,7 +114,7 @@ public class TransactionMongoManagerIT {
         transactionManager.doInTransaction(factory -> {
             authorCollection.insertOne(session, AUTHOR_FIXTURE);
             bookCollection.insertOne(session, BOOK_FIXTURE);
-            throw new RuntimeException("Simulating a transaction failure here!");
+            throw new MongoException("Simulating a transaction failure here!");
         });
         assertThat(allAuthorsInDatabase()).isEmpty();
         assertThat(allBooksInDatabase()).isEmpty();

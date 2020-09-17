@@ -14,6 +14,8 @@ public interface BookManagerView {
     void bookAdded(Book book);
     void bookDeleted(Book book);
 
+    void deletedAllBooksForAuthor(Author author);
+
     void authorNotAddedBecauseAlreadyExistsError(Author author);
     void authorNotDeletedBecauseNotFoundError(Author author);
     void bookNotAddedBecauseAlreadyExistsError(Book book);

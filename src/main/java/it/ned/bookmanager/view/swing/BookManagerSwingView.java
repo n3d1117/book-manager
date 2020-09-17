@@ -4,10 +4,7 @@ import it.ned.bookmanager.controller.BookManagerController;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.view.BookManagerView;
-import it.ned.bookmanager.view.swing.components.AuthorCellRenderer;
-import it.ned.bookmanager.view.swing.components.AuthorComboBox;
-import it.ned.bookmanager.view.swing.components.BookTableCellRenderer;
-import it.ned.bookmanager.view.swing.components.BookTableModel;
+import it.ned.bookmanager.view.swing.components.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -25,10 +22,10 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     private final JPanel mainPanel;
 
     private final JList<Author> authorList;
-    private final DefaultListModel<Author> authorListModel;
+    private final SortedListModel<Author> authorListModel;
 
-    private final JComboBox<Author> authorComboBox;
-    private final DefaultComboBoxModel<Author> authorComboBoxModel;
+    private final AuthorComboBox<Author> authorComboBox;
+    private final SortedComboBoxModel<Author> authorComboBoxModel;
 
     private final JTextField bookIdTextField;
     private final JTextField bookTitleTextField;
@@ -111,7 +108,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         leftSplitPanel.add(scrollPaneAuthors);
 
         // Authors List
-        authorListModel = new DefaultListModel<>();
+        authorListModel = new SortedListModel<>();
         authorList = new JList<>(authorListModel);
         authorList.setName("authorsList");
         authorList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -290,7 +287,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addBookPanel.add(bookAuthorLabel);
 
         // Book author combobox
-        authorComboBoxModel = new DefaultComboBoxModel<>();
+        authorComboBoxModel = new SortedComboBoxModel<>();
         authorComboBox = new AuthorComboBox<>(authorComboBoxModel);
         authorComboBox.setName("authorsCombobox");
         authorComboBox.setBounds(270, 10, 140, 20);
@@ -398,11 +395,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     /* Getters */
 
-    public DefaultListModel<Author> getAuthorListModel() {
+    public SortedListModel<Author> getAuthorListModel() {
         return authorListModel;
     }
 
-    public DefaultComboBoxModel<Author> getAuthorComboBoxModel() {
+    public SortedComboBoxModel<Author> getAuthorComboBoxModel() {
         return authorComboBoxModel;
     }
 
@@ -455,6 +452,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     public void bookDeleted(Book book) {
         bookTableModel.removeElement(book);
         resetBookErrorLabel();
+    }
+
+    @Override
+    public void deletedAllBooksForAuthor(Author author) {
+        bookTableModel.removeAllBooksFromAuthorId(author.getId());
     }
 
     @Override

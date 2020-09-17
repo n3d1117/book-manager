@@ -122,7 +122,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test @GUITest
     public void testAddBookButtonShouldBeEnabledWhenIdAndNameAndAuthorAndLengthAreNotEmpty() {
         GuiActionRunner.execute(() -> {
-            view.getAuthorComboBoxModel().addElement(new Author("1", "G. Orwell"));
+            Author author = new Author("1", "George Orwell");
+            view.getAuthorComboBoxModel().addElement(author);
+            view.getAuthorComboBoxModel().setSelectedItem(author);
         });
         window.textBox("bookIdTextField").enterText("1");
         window.textBox("bookTitleTextField").enterText("Animal Farm");
@@ -139,7 +141,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         JTextComponentFixture titleTextBox = window.textBox("bookTitleTextField");
         JTextComponentFixture lengthTextBox = window.textBox("bookLengthTextField");
         GuiActionRunner.execute(() -> {
-            Author georgeOrwell = new Author("1", "G. Orwell");
+            Author georgeOrwell = new Author("1", "George Orwell");
             view.getAuthorComboBoxModel().addElement(georgeOrwell);
             view.getAuthorComboBoxModel().setSelectedItem(georgeOrwell);
         });
@@ -204,34 +206,66 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testShowAllAuthorsShouldAddAuthorsToList() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
         GuiActionRunner.execute(() ->
-                view.showAllAuthors(Arrays.asList(georgeOrwell, danBrown))
+                view.showAllAuthors(Arrays.asList(danBrown, georgeOrwell))
         );
         String[] authorsListContent = window.list("authorsList").contents();
         assertThat(authorsListContent).containsExactly(
-                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testShowAllAuthorsShouldAddAuthorsToListInAlphabeticalOrder() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author jamesJoyce = new Author("2", "James Joyce");
+        Author georgeOrwell = new Author("3", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.showAllAuthors(Arrays.asList(jamesJoyce, danBrown, georgeOrwell))
+        );
+        String[] authorsListContent = window.list("authorsList").contents();
+        assertThat(authorsListContent).containsExactly(
+                "👤 " + danBrown.getName(),
+                "👤 " + georgeOrwell.getName(),
+                "👤 " + jamesJoyce.getName()
         );
     }
 
     @Test @GUITest
     public void testShowAllAuthorsShouldAddAuthorsToCombobox() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
         GuiActionRunner.execute(() ->
-                view.showAllAuthors(Arrays.asList(georgeOrwell, danBrown))
+                view.showAllAuthors(Arrays.asList(danBrown, georgeOrwell))
         );
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
         assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + georgeOrwell.getName(), "👤 " + danBrown.getName()
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testShowAllAuthorsShouldAddAuthorsToComboBoxInAlphabeticalOrder() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author jamesJoyce = new Author("2", "James Joyce");
+        Author georgeOrwell = new Author("3", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.showAllAuthors(Arrays.asList(jamesJoyce, danBrown, georgeOrwell))
+        );
+        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
+        assertThat(authorsListComboboxContent).containsExactly(
+                "👤 " + danBrown.getName(),
+                "👤 " + georgeOrwell.getName(),
+                "👤 " + jamesJoyce.getName()
         );
     }
 
     @Test @GUITest
     public void testShowAllBooksShouldAddBooksToTable() {
-        Book nineteenEightyFour = new Book("2", "1984", 293, "1");
-        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        Book nineteenEightyFour = new Book("1", "1984", 293, "1");
+        Book animalFarm = new Book("2", "Animal Farm", 93, "1");
         GuiActionRunner.execute(() ->
                 view.showAllBooks(Arrays.asList(nineteenEightyFour, animalFarm))
         );
@@ -249,6 +283,32 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testShowAllBooksShouldAddBooksToTableInAlphabeticalOrder() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        Book theDaVinciCode = new Book("2", "The Da Vinci Code", 402, "2");
+        Book ulysses = new Book("3", "Ulysses", 1341, "3");
+        GuiActionRunner.execute(() ->
+                view.showAllBooks(Arrays.asList(theDaVinciCode, ulysses, animalFarm))
+        );
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
+        );
+        assertThat(booksTableContent[1]).containsExactly(
+                theDaVinciCode.getTitle(),
+                theDaVinciCode.getAuthorId(),
+                theDaVinciCode.getNumberOfPages().toString()
+        );
+        assertThat(booksTableContent[2]).containsExactly(
+                ulysses.getTitle(),
+                ulysses.getAuthorId(),
+                ulysses.getNumberOfPages().toString()
+        );
+    }
+
+    @Test @GUITest
     public void testAuthorAddedShouldAddAuthorToListAndComboboxAndResetErrorLabel() {
         Author georgeOrwell = new Author("1", "George Orwell");
         GuiActionRunner.execute(() ->
@@ -261,6 +321,36 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(authorsListComboboxContent).containsExactly("👤 " + georgeOrwell.getName());
 
         window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testAuthorAddedShouldAddAuthorToListInAlphabeticalOrder() {
+        Author jamesJoyce = new Author("1", "James Joyce");
+        Author georgeOrwell = new Author("2", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.authorAdded(jamesJoyce);
+            view.authorAdded(georgeOrwell);
+        });
+        String[] authorsListContent = window.list("authorsList").contents();
+        assertThat(authorsListContent).containsExactly(
+                "👤 " + georgeOrwell.getName(),
+                "👤 " + jamesJoyce.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testAuthorAddedShouldAddAuthorToComboBoxInAlphabeticalOrder() {
+        Author jamesJoyce = new Author("2", "James Joyce");
+        Author georgeOrwell = new Author("3", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.authorAdded(jamesJoyce);
+            view.authorAdded(georgeOrwell);
+        });
+        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
+        assertThat(authorsListComboboxContent).containsExactly(
+                "👤 " + georgeOrwell.getName(),
+                "👤 " + jamesJoyce.getName()
+        );
     }
 
     @Test @GUITest
@@ -286,6 +376,32 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(authorsListComboboxContent).containsExactly(expected);
 
         window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testDeleteAllBooksForAuthorShouldRemoveAllAuthorsBooksFromBooksTable() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+
+        Book nineteenEightyFour = new Book("2", "1984", 293, georgeOrwell.getId());
+        Book animalFarm = new Book("1", "Animal Farm", 93, georgeOrwell.getId());
+        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, "3");
+
+        GuiActionRunner.execute(() -> {
+            view.getBookTableModel().addElement(nineteenEightyFour);
+            view.getBookTableModel().addElement(animalFarm);
+            view.getBookTableModel().addElement(theDaVinciCode);
+        });
+
+        GuiActionRunner.execute(() -> {
+            view.deletedAllBooksForAuthor(georgeOrwell);
+        });
+
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                theDaVinciCode.getTitle(),
+                theDaVinciCode.getAuthorId(),
+                theDaVinciCode.getNumberOfPages().toString()
+        );
     }
 
     @Test @GUITest
@@ -381,15 +497,15 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testDeleteAuthorButtonShouldDelegateToControllerDeleteAuthor() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
         GuiActionRunner.execute(() -> {
-            view.getAuthorListModel().addElement(georgeOrwell);
             view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorListModel().addElement(georgeOrwell);
         });
         window.list("authorsList").selectItem(1);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
-        verify(controller).deleteAuthor(danBrown);
+        verify(controller).deleteAuthor(georgeOrwell);
     }
 
     @Test @GUITest

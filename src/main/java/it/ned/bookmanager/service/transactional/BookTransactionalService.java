@@ -4,7 +4,7 @@ import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.service.BookService;
 import it.ned.bookmanager.service.exception.AuthorNotFoundException;
-import it.ned.bookmanager.service.exception.BookAlreadyInDatabaseException;
+import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.transaction.TransactionManager;
 
@@ -42,7 +42,7 @@ public class BookTransactionalService implements BookService {
             if (book != null) {
                 BookRepository bookRepository = factory.createBookRepository();
                 if (bookRepository.findById(book.getId()) != null)
-                    throw new BookAlreadyInDatabaseException(
+                    throw new BookDuplicateException(
                             String.format(BOOK_ALREADY_IN_DB_ERROR_MESSAGE, book.getId())
                     );
                 bookRepository.add(book);
