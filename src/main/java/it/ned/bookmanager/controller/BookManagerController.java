@@ -37,7 +37,7 @@ public class BookManagerController {
         view.showAllAuthors(authorService.findAll());
     }
 
-    public void addAuthor(Author author) {
+    public synchronized void addAuthor(Author author) {
         LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
         try {
             authorService.add(author);
@@ -47,7 +47,7 @@ public class BookManagerController {
         }
     }
 
-    public void addBook(Book book) {
+    public synchronized void addBook(Book book) {
         LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
         try {
             bookService.add(book);
@@ -57,7 +57,7 @@ public class BookManagerController {
         }
     }
 
-    public void deleteAuthor(Author author) {
+    public synchronized void deleteAuthor(Author author) {
         LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
         try {
             authorService.delete(author.getId());
@@ -68,7 +68,7 @@ public class BookManagerController {
         }
     }
 
-    public void deleteBook(Book book) {
+    public synchronized void deleteBook(Book book) {
         LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
         try {
             bookService.delete(book.getId());
