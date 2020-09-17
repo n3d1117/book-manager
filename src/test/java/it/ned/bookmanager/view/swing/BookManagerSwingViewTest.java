@@ -176,9 +176,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         titleTextBox.setText("");
         lengthTextBox.setText("");
 
-        GuiActionRunner.execute(() -> {
-            view.getAuthorComboBoxModel().setSelectedItem(null);
-        });
+        GuiActionRunner.execute(() ->
+            view.getAuthorComboBoxModel().setSelectedItem(null)
+        );
         idTextBox.enterText("1");
         titleTextBox.enterText("Animal Farm");
         lengthTextBox.enterText("93");
@@ -364,9 +364,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.getAuthorComboBoxModel().addElement(danBrown);
         });
 
-        GuiActionRunner.execute(() -> {
-            view.authorDeleted(new Author("1", "George Orwell"));
-        });
+        GuiActionRunner.execute(() ->
+            view.authorDeleted(new Author("1", "George Orwell"))
+        );
 
         String expected = "👤 " + danBrown.getName();
 
@@ -392,9 +392,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.getBookTableModel().addElement(theDaVinciCode);
         });
 
-        GuiActionRunner.execute(() -> {
-            view.deletedAllBooksForAuthor(georgeOrwell);
-        });
+        GuiActionRunner.execute(() ->
+            view.deletedAllBooksForAuthor(georgeOrwell)
+        );
 
         String[][] booksTableContent = window.table("booksTable").contents();
         assertThat(booksTableContent[0]).containsExactly(
@@ -429,9 +429,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.getBookTableModel().addElement(animalFarm);
         });
 
-        GuiActionRunner.execute(() -> {
-            view.bookDeleted(new Book("2", "1984", 293, "1"));
-        });
+        GuiActionRunner.execute(() ->
+            view.bookDeleted(new Book("2", "1984", 293, "1"))
+        );
 
         String[][] booksTableContent = window.table("booksTable").contents();
         assertThat(booksTableContent[0]).containsExactly(
@@ -510,9 +510,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testAddBookButtonShouldDelegateToControllerAddBook() {
-        GuiActionRunner.execute(() -> {
-            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
-        });
+        GuiActionRunner.execute(() ->
+            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
+        );
         window.textBox("bookIdTextField").enterText("1");
         window.textBox("bookTitleTextField").enterText("Animal Farm");
         window.textBox("bookLengthTextField").enterText("93");

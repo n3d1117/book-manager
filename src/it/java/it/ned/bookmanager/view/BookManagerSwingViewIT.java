@@ -172,9 +172,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testAddBookSuccess() {
-        GuiActionRunner.execute(() -> {
-            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
-        });
+        GuiActionRunner.execute(() ->
+            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
+        );
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText(animalFarm.getTitle());
@@ -193,9 +193,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     public void testAddBookError() {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         bookRepository.add(animalFarm);
-        GuiActionRunner.execute(() -> {
-            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
-        });
+        GuiActionRunner.execute(() ->
+            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
+        );
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText("Another Animal Farm");
         window.textBox("bookLengthTextField").enterText("189");
@@ -219,9 +219,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     public void testDeleteBookError() {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         // Add book manually to the table, but not to the database
-        GuiActionRunner.execute(() -> {
-            view.getBookTableModel().addElement(animalFarm);
-        });
+        GuiActionRunner.execute(() ->
+            view.getBookTableModel().addElement(animalFarm)
+        );
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
         String[][] booksTableContent = window.table("booksTable").contents();
