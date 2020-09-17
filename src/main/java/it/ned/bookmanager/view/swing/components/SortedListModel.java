@@ -3,7 +3,7 @@ package it.ned.bookmanager.view.swing.components;
 import javax.swing.*;
 import java.util.*;
 
-public class SortedListModel<T> extends AbstractListModel<T> {
+public class SortedListModel<T extends Comparable<? super T>> extends AbstractListModel<T> {
 
     private final transient SortedSet<T> model;
 

@@ -2,7 +2,7 @@ package it.ned.bookmanager.view.swing.components;
 
 import javax.swing.*;
 
-public class SortedComboBoxModel<T> extends DefaultComboBoxModel<T> {
+public class SortedComboBoxModel<T extends Comparable<? super T>> extends DefaultComboBoxModel<T> {
 
     @Override
     public void addElement(T element) {
