@@ -458,6 +458,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     }
 
     @Override
+    public void deletedAllBooksForAuthor(Author author) {
+        bookTableModel.removeAllBooksFromAuthorId(author.getId());
+    }
+
+    @Override
     public void authorNotAddedBecauseAlreadyExistsError(Author author) {
         authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, author.getId()));
     }

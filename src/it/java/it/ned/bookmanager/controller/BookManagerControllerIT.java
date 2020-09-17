@@ -86,6 +86,7 @@ public class BookManagerControllerIT {
 
         controller.deleteAuthor(AUTHOR_FIXTURE);
 
+        verify(view).deletedAllBooksForAuthor(AUTHOR_FIXTURE);
         verify(view).authorDeleted(AUTHOR_FIXTURE);
     }
 

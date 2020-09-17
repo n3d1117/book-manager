@@ -89,6 +89,7 @@ public class BookManagerControllerTest {
 
         InOrder inOrder = inOrder(authorService, view);
         inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
+        inOrder.verify(view).deletedAllBooksForAuthor(AUTHOR_FIXTURE);
         inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }

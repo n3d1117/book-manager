@@ -64,4 +64,9 @@ public class BookTableModel extends AbstractTableModel {
         books.remove(bookToRemove);
         fireTableDataChanged();
     }
+
+    public void removeAllBooksFromAuthorId(String authorId) {
+        books.removeIf(book -> book.getAuthorId().equals(authorId));
+        fireTableDataChanged();
+    }
 }

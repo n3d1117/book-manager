@@ -230,8 +230,8 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testShowAllBooksShouldAddBooksToTable() {
-        Book nineteenEightyFour = new Book("2", "1984", 293, "1");
-        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        Book nineteenEightyFour = new Book("1", "1984", 293, "1");
+        Book animalFarm = new Book("2", "Animal Farm", 93, "1");
         GuiActionRunner.execute(() ->
                 view.showAllBooks(Arrays.asList(nineteenEightyFour, animalFarm))
         );
@@ -286,6 +286,32 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(authorsListComboboxContent).containsExactly(expected);
 
         window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testDeleteAllBooksForAuthorShouldRemoveAllAuthorsBooksFromBooksTable() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+
+        Book nineteenEightyFour = new Book("2", "1984", 293, georgeOrwell.getId());
+        Book animalFarm = new Book("1", "Animal Farm", 93, georgeOrwell.getId());
+        Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, "3");
+
+        GuiActionRunner.execute(() -> {
+            view.getBookTableModel().addElement(nineteenEightyFour);
+            view.getBookTableModel().addElement(animalFarm);
+            view.getBookTableModel().addElement(theDaVinciCode);
+        });
+
+        GuiActionRunner.execute(() -> {
+            view.deletedAllBooksForAuthor(georgeOrwell);
+        });
+
+        String[][] booksTableContent = window.table("booksTable").contents();
+        assertThat(booksTableContent[0]).containsExactly(
+                theDaVinciCode.getTitle(),
+                theDaVinciCode.getAuthorId(),
+                theDaVinciCode.getNumberOfPages().toString()
+        );
     }
 
     @Test @GUITest

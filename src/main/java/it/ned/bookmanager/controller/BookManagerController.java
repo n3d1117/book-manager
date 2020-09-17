@@ -61,6 +61,7 @@ public class BookManagerController {
         LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
         try {
             authorService.delete(author.getId());
+            view.deletedAllBooksForAuthor(author);
             view.authorDeleted(author);
         } catch(AuthorNotFoundException exception) {
             view.authorNotDeletedBecauseNotFoundError(author);
