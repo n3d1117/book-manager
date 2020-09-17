@@ -25,6 +25,7 @@
         <mongo-java.version>3.12.7</mongo-java.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <testcontainers.version>1.14.3</testcontainers.version>
+        <awaitility.version>4.0.3</awaitility.version>
 
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
@@ -130,6 +131,13 @@
             <artifactId>mongodb</artifactId>
             <version>${testcontainers.version}</version>
             <scope>test</scope>
+        </dependency>
+
+        <!-- Awaitility -->
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <version>${awaitility.version}</version>
         </dependency>
 
     </dependencies>
