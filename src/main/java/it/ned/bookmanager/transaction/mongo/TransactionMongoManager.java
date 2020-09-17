@@ -1,9 +1,6 @@
 package it.ned.bookmanager.transaction.mongo;
 
-import com.mongodb.ReadConcern;
-import com.mongodb.ReadPreference;
-import com.mongodb.TransactionOptions;
-import com.mongodb.WriteConcern;
+import com.mongodb.*;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
@@ -65,8 +62,8 @@ public class TransactionMongoManager implements TransactionManager {
 
         try {
             result = clientSession.withTransaction(body, options);
-        } catch (RuntimeException e) {
-            LOGGER.debug(() -> String.format("Caught a RuntimeException: %s", e.getMessage()));
+        } catch (MongoException e) {
+            LOGGER.debug(() -> String.format("Caught a MongoException: %s", e.getMessage()));
         } finally {
             clientSession.close();
         }
