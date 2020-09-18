@@ -28,7 +28,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.testcontainers.containers.MongoDBContainer;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.assertj.swing.assertions.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
@@ -45,6 +48,8 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     private static final String DB_NAME = "bookmanager";
     private static final String DB_AUTHOR_COLLECTION = "authors";
     private static final String DB_BOOK_COLLECTION = "books";
+
+    private static final long AWAITILITY_TIMEOUT = 5;
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
@@ -88,16 +93,16 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Author georgeOrwell = new Author("2", "George Orwell");
         authorRepository.add(danBrown);
         authorRepository.add(georgeOrwell);
-        GuiActionRunner.execute(() ->
-                controller.allAuthors()
-        );
-        assertThat(window.list("authorsList").contents()).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
-        );
-        String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
-        assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
-        );
+        controller.allAuthors();
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).containsExactly(
+                    "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+            );
+            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
+                    "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+            );
+        });
     }
 
     @Test @GUITest
@@ -106,20 +111,21 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Book animalFarm = new Book("2", "Animal Farm", 93, "1");
         bookRepository.add(nineteenEightyFour);
         bookRepository.add(animalFarm);
-        GuiActionRunner.execute(() ->
-                controller.allBooks()
-        );
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
-                nineteenEightyFour.getTitle(),
-                nineteenEightyFour.getAuthorId(),
-                nineteenEightyFour.getNumberOfPages().toString()
-        );
-        assertThat(booksTableContent[1]).containsExactly(
-                animalFarm.getTitle(),
-                animalFarm.getAuthorId(),
-                animalFarm.getNumberOfPages().toString()
-        );
+        controller.allBooks();
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            String[][] booksTableContent = window.table("booksTable").contents();
+            assertThat(booksTableContent[0]).containsExactly(
+                    nineteenEightyFour.getTitle(),
+                    nineteenEightyFour.getAuthorId(),
+                    nineteenEightyFour.getNumberOfPages().toString()
+            );
+            assertThat(booksTableContent[1]).containsExactly(
+                    animalFarm.getTitle(),
+                    animalFarm.getAuthorId(),
+                    animalFarm.getNumberOfPages().toString()
+            );
+        });
     }
 
     @Test @GUITest
@@ -128,8 +134,11 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.textBox("authorNameTextField").enterText("George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
         String expected = "👤 George Orwell";
-        assertThat(window.list("authorsList").contents()).containsExactly(expected);
-        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).containsExactly(expected);
+            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
+        });
     }
 
     @Test @GUITest
@@ -138,54 +147,61 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.textBox("authorIdTextField").enterText("1");
         window.textBox("authorNameTextField").enterText("Another George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
-        assertThat(window.list("authorsList").contents()).isEmpty();
-        assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
-        window.label("authorErrorLabel").requireText("Error: Author with id 1 already exists!");
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).isEmpty();
+            assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
+            window.label("authorErrorLabel").requireText("Error: Author with id 1 already exists!");
+        });
     }
 
     @Test @GUITest
     public void testDeleteAuthorSuccess() {
-        GuiActionRunner.execute(() ->
-                controller.addAuthor(new Author("1", "George Orwell"))
-        );
+        controller.addAuthor(new Author("1", "George Orwell"));
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
-        assertThat(window.list("authorsList").contents()).isEmpty();
-        assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).isEmpty();
+            assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
+        });
     }
 
     @Test @GUITest
     public void testDeleteAuthorError() {
         Author georgeOrwell = new Author("1", "George Orwell");
+
         // Add author manually to the list & combobox, but not to the database
-        GuiActionRunner.execute(() -> {
-            view.getAuthorListModel().addElement(georgeOrwell);
-            view.getAuthorComboBoxModel().addElement(georgeOrwell);
-        });
+        view.getAuthorListModel().addElement(georgeOrwell);
+        view.getAuthorComboBoxModel().addElement(georgeOrwell);
+
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
         String expected = "👤 George Orwell";
-        assertThat(window.list("authorsList").contents()).containsExactly(expected);
-        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
-        window.label("authorErrorLabel").requireText("Error: Author with id 1 not found!");
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).containsExactly(expected);
+            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
+            window.label("authorErrorLabel").requireText("Error: Author with id 1 not found!");
+        });
     }
 
     @Test @GUITest
     public void testAddBookSuccess() {
-        GuiActionRunner.execute(() ->
-            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
-        );
+        view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText(animalFarm.getTitle());
         window.textBox("bookLengthTextField").enterText(animalFarm.getNumberOfPages().toString());
         window.comboBox("authorsCombobox").selectItem(0);
         window.button(JButtonMatcher.withName("addBookButton")).click();
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
-                animalFarm.getTitle(),
-                animalFarm.getAuthorId(),
-                animalFarm.getNumberOfPages().toString()
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                    animalFarm.getTitle(),
+                    animalFarm.getAuthorId(),
+                    animalFarm.getNumberOfPages().toString()
+            )
         );
     }
 
@@ -193,44 +209,48 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     public void testAddBookError() {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         bookRepository.add(animalFarm);
-        GuiActionRunner.execute(() ->
-            view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
-        );
+        view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText("Another Animal Farm");
         window.textBox("bookLengthTextField").enterText("189");
         window.comboBox("authorsCombobox").selectItem(0);
         window.button(JButtonMatcher.withName("addBookButton")).click();
-        assertThat(window.table("booksTable").contents()).isEmpty();
-        window.label("bookErrorLabel").requireText("Error: Book with id 1 already exists!");
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.table("booksTable").contents()).isEmpty();
+            window.label("bookErrorLabel").requireText("Error: Book with id 1 already exists!");
+        });
     }
 
     @Test @GUITest
     public void testDeleteBookSuccess() {
-        GuiActionRunner.execute(() ->
-                controller.addBook(new Book("1", "Animal Farm", 93, "1"))
-        );
+        controller.addBook(new Book("1", "Animal Farm", 93, "1"));
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
-        assertThat(window.table("booksTable").contents()).isEmpty();
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() ->
+                assertThat(window.table("booksTable").contents()).isEmpty()
+        );
     }
 
     @Test @GUITest
     public void testDeleteBookError() {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+
         // Add book manually to the table, but not to the database
-        GuiActionRunner.execute(() ->
-            view.getBookTableModel().addElement(animalFarm)
-        );
+        view.getBookTableModel().addElement(animalFarm);
+
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
-                animalFarm.getTitle(),
-                animalFarm.getAuthorId(),
-                animalFarm.getNumberOfPages().toString()
-        );
-        window.label("bookErrorLabel").requireText("Error: Book with id 1 not found!");
+
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                    animalFarm.getTitle(),
+                    animalFarm.getAuthorId(),
+                    animalFarm.getNumberOfPages().toString()
+            );
+            window.label("bookErrorLabel").requireText("Error: Book with id 1 not found!");
+        });
     }
 
     @Test @GUITest
@@ -242,26 +262,25 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Book nineteenEightyFour = new Book("2", "1984", 293, georgeOrwell.getId());
         Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, danBrown.getId());
 
-        GuiActionRunner.execute(() -> {
-            controller.addAuthor(danBrown);
-            controller.addAuthor(georgeOrwell);
-            controller.addBook(animalFarm);
-            controller.addBook(nineteenEightyFour);
-            controller.addBook(theDaVinciCode);
-        });
+        controller.addAuthor(danBrown);
+        controller.addAuthor(georgeOrwell);
+        controller.addBook(animalFarm);
+        controller.addBook(nineteenEightyFour);
+        controller.addBook(theDaVinciCode);
 
         window.list("authorsList").selectItem(1);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
         String expected = "👤 Dan Brown";
-        assertThat(window.list("authorsList").contents()).containsExactly(expected);
-        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
 
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
-                theDaVinciCode.getTitle(),
-                theDaVinciCode.getAuthorId(),
-                theDaVinciCode.getNumberOfPages().toString()
-        );
+        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents()).containsExactly(expected);
+            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
+            assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                    theDaVinciCode.getTitle(),
+                    theDaVinciCode.getAuthorId(),
+                    theDaVinciCode.getNumberOfPages().toString()
+            );
+        });
     }
 }
