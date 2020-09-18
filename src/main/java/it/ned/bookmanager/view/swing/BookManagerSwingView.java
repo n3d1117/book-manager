@@ -42,19 +42,6 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     private static final String BOOK_ALREADY_EXISTS_ERROR = "Error: Book with id %s already exists!";
     private static final String BOOK_NOT_FOUND_ERROR = "Error: Book with id %s not found!";
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            try {
-                BookManagerSwingView frame = new BookManagerSwingView();
-                frame.pack();
-                frame.setLocationRelativeTo(null); // this centers the view
-                frame.setVisible(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     public BookManagerSwingView() {
         setPreferredSize(new Dimension(700, 500));
         setTitle("Book Manager");

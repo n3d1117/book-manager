@@ -45,7 +45,6 @@
 
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
-            **/Main.*,
             **/model/*.*,
             **/view/**.*,
             **/repository/mongo/MongoRepositoryFactory.*
@@ -163,7 +162,7 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>it.ned.bookmanager.Main</mainClass>
+                                    <mainClass>it.ned.bookmanager.view.swing.app.BookManagerSwingApp</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
@@ -243,9 +242,9 @@
                     <version>${jacoco.version}</version>
                     <configuration>
                         <excludes>
-                            <exclude>**/Main.*</exclude>
                             <exclude>**/model/*.*</exclude>
                             <exclude>**/view/swing/*.*</exclude>
+                            <exclude>**/view/swing/app/*.*</exclude>
                             <exclude>**/view/swing/components/*.*</exclude>
                             <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
                         </excludes>
