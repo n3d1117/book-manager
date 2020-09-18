@@ -417,66 +417,88 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void showAllAuthors(List<Author> allAuthors) {
-        allAuthors.forEach(author -> {
-            authorListModel.addElement(author);
-            authorComboBoxModel.addElement(author);
+        SwingUtilities.invokeLater(() -> {
+            for (Author author : allAuthors) {
+                authorListModel.addElement(author);
+                authorComboBoxModel.addElement(author);
+            }
         });
     }
 
     @Override
     public void showAllBooks(List<Book> allBooks) {
-        allBooks.forEach(bookTableModel::addElement);
+        SwingUtilities.invokeLater(() ->
+            allBooks.forEach(bookTableModel::addElement)
+        );
     }
 
     @Override
     public void authorAdded(Author author) {
-        authorListModel.addElement(author);
-        authorComboBoxModel.addElement(author);
-        resetAuthorErrorLabel();
+        SwingUtilities.invokeLater(() -> {
+            authorListModel.addElement(author);
+            authorComboBoxModel.addElement(author);
+            resetAuthorErrorLabel();
+        });
     }
 
     @Override
     public void authorDeleted(Author author) {
-        authorListModel.removeElement(author);
-        authorComboBoxModel.removeElement(author);
-        resetAuthorErrorLabel();
+        SwingUtilities.invokeLater(() -> {
+            authorListModel.removeElement(author);
+            authorComboBoxModel.removeElement(author);
+            resetAuthorErrorLabel();
+        });
     }
 
     @Override
     public void bookAdded(Book book) {
-        bookTableModel.addElement(book);
-        resetBookErrorLabel();
+        SwingUtilities.invokeLater(() -> {
+            bookTableModel.addElement(book);
+            resetBookErrorLabel();
+        });
     }
 
     @Override
     public void bookDeleted(Book book) {
-        bookTableModel.removeElement(book);
-        resetBookErrorLabel();
+        SwingUtilities.invokeLater(() -> {
+            bookTableModel.removeElement(book);
+            resetBookErrorLabel();
+        });
     }
 
     @Override
     public void deletedAllBooksForAuthor(Author author) {
-        bookTableModel.removeAllBooksFromAuthorId(author.getId());
+        SwingUtilities.invokeLater(() ->
+            bookTableModel.removeAllBooksFromAuthorId(author.getId())
+        );
     }
 
     @Override
     public void authorNotAddedBecauseAlreadyExistsError(Author author) {
-        authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, author.getId()));
+        SwingUtilities.invokeLater(() ->
+            authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, author.getId()))
+        );
     }
 
     @Override
     public void authorNotDeletedBecauseNotFoundError(Author author) {
-        authorErrorLabel.setText(String.format(AUTHOR_NOT_FOUND_ERROR, author.getId()));
+        SwingUtilities.invokeLater(() ->
+            authorErrorLabel.setText(String.format(AUTHOR_NOT_FOUND_ERROR, author.getId()))
+        );
     }
 
     @Override
     public void bookNotAddedBecauseAlreadyExistsError(Book book) {
-        bookErrorLabel.setText(String.format(BOOK_ALREADY_EXISTS_ERROR, book.getId()));
+        SwingUtilities.invokeLater(() ->
+            bookErrorLabel.setText(String.format(BOOK_ALREADY_EXISTS_ERROR, book.getId()))
+        );
     }
 
     @Override
     public void bookNotDeletedBecauseNotFoundError(Book book) {
-        bookErrorLabel.setText(String.format(BOOK_NOT_FOUND_ERROR, book.getId()));
+        SwingUtilities.invokeLater(() ->
+            bookErrorLabel.setText(String.format(BOOK_NOT_FOUND_ERROR, book.getId()))
+        );
     }
 
     private void resetAuthorErrorLabel() {

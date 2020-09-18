@@ -21,8 +21,10 @@ public class SortedListModel<T extends Comparable<? super T>> extends AbstractLi
     }
 
     public void addElement(T element) {
-        if (model.add(element))
-            fireContentsChanged(this, 0, getSize());
+        SwingUtilities.invokeLater(() -> {
+            if (model.add(element))
+                fireContentsChanged(this, 0, getSize());
+        });
     }
 
     public void removeElement(T element) {
