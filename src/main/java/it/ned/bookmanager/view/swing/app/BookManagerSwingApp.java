@@ -28,16 +28,16 @@ public class BookManagerSwingApp implements Callable<Void> {
     private static final Logger LOGGER = LogManager.getLogger(BookManagerSwingApp.class);
 
     @Option(names = { "--mongo-url" }, description = "MongoDB replica set URL")
-    private static final String MONGO_URL = "mongodb://localhost:27017";
+    private String mongoUrl = "mongodb://localhost:27017";
 
     @Option(names = { "--db-name" }, description = "Database name")
-    private static final String DB_NAME = "bookmanager";
+    private String dbName = "bookmanager";
 
     @Option(names = { "--db-author-collection" }, description = "Authors collection name")
-    private static final String AUTHOR_COLLECTION = "authors";
+    private String authorCollection = "authors";
 
     @Option(names = { "--db-book-collection" }, description = "Books collection name")
-    private static final String BOOK_COLLECTION = "books";
+    private String bookCollection = "books";
 
     public static void main(String[] args) {
         LOGGER.info("App started");
@@ -50,9 +50,9 @@ public class BookManagerSwingApp implements Callable<Void> {
             try {
                 BookManagerSwingView view = new BookManagerSwingView();
 
-                MongoClient client = MongoClients.create(MONGO_URL);
-                TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME,
-                        AUTHOR_COLLECTION, BOOK_COLLECTION);
+                MongoClient client = MongoClients.create(mongoUrl);
+                TransactionManager transactionManager = new TransactionMongoManager(client, dbName,
+                        authorCollection, bookCollection);
 
                 AuthorService authorService = new AuthorTransactionalService(transactionManager);
                 BookService bookService = new BookTransactionalService(transactionManager);
