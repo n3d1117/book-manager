@@ -8,6 +8,7 @@ import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.GenericTypeMatcher;
+import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.finder.WindowFinder;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
@@ -22,8 +23,13 @@ import org.testcontainers.containers.MongoDBContainer;
 
 import javax.swing.*;
 
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.swing.launcher.ApplicationLauncher.application;
+import static org.awaitility.Awaitility.await;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
@@ -43,8 +49,14 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
     private static final Author AUTHOR_FIXTURE_1 = new Author("1", "George Orwell");
     private static final Author AUTHOR_FIXTURE_2 = new Author("2", "Dan Brown");
 
-    private static final Book BOOK_FIXTURE_1 = new Book("2", "1984", 283, "1");
-    private static final Book BOOK_FIXTURE_2 = new Book("1", "Animal Farm", 93, "1");
+    private static final Book BOOK_FIXTURE_1 = new Book("1", "1984", 283, "1");
+    private static final Book BOOK_FIXTURE_2 = new Book("2", "Animal Farm", 93, "1");
+
+    private static final long TIMEOUT_SECONDS = 5;
+    private static final CodecRegistry pojoCodecRegistry =  fromRegistries(
+            MongoClientSettings.getDefaultCodecRegistry(),
+            fromProviders(PojoCodecProvider.builder().automatic(true).build())
+    );
 
     @Override
     protected void onSetUp() {
@@ -92,27 +104,153 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
                 .anySatisfy(e -> assertThat(e).contains(BOOK_FIXTURE_2.getTitle()));
     }
 
-    private void addTestAuthorToDatabase(Author author) {
-        CodecRegistry pojoCodecRegistry = fromRegistries(
-                MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build())
+    @Test @GUITest
+    public void testAddAuthorSuccess() {
+        window.textBox("authorIdTextField").enterText("3");
+        window.textBox("authorNameTextField").enterText("James Joyce");
+        window.button(JButtonMatcher.withName("addAuthorButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertThat(window.list("authorsList").contents())
+                    .anySatisfy(e -> assertThat(e).contains("James Joyce"));
+            assertThat(window.comboBox("authorsCombobox").contents())
+                    .anySatisfy(e -> assertThat(e).contains("James Joyce"));
+        });
+    }
+
+    @Test @GUITest
+    public void testAddAuthorError() {
+        window.textBox("authorIdTextField").enterText(AUTHOR_FIXTURE_1.getId());
+        window.textBox("authorNameTextField").enterText("Duplicate author");
+        window.button(JButtonMatcher.withName("addAuthorButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.label("authorErrorLabel").text())
+                    .contains(AUTHOR_FIXTURE_1.getId())
         );
-        MongoCollection<Author>  collection = client
+    }
+
+    @Test @GUITest
+    public void testDeleteAuthorSuccess() {
+        window.list("authorsList").selectItem(
+                Pattern.compile(".*" + AUTHOR_FIXTURE_1.getName() + ".*")
+        );
+        window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.list("authorsList").contents())
+                    .noneMatch(e -> e.contains(AUTHOR_FIXTURE_1.getName()))
+        );
+    }
+
+    @Test @GUITest
+    public void testDeleteAuthorError() {
+        window.list("authorsList").selectItem(
+                Pattern.compile(".*" + AUTHOR_FIXTURE_1.getName() + ".*")
+        );
+        removeTestAuthorFromDatabase(AUTHOR_FIXTURE_1.getId());
+        window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.label("authorErrorLabel").text())
+                    .contains(AUTHOR_FIXTURE_1.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testAddBookSuccess() {
+        window.textBox("bookIdTextField").enterText("3");
+        window.textBox("bookTitleTextField").enterText("The Da Vinci Code");
+        window.textBox("bookLengthTextField").enterText("402");
+        window.comboBox("authorsCombobox").selectItem(
+                Pattern.compile(".*" + AUTHOR_FIXTURE_2.getName() + ".*")
+        );
+        window.button(JButtonMatcher.withName("addBookButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.table("booksTable").contents()[2])
+                    .anySatisfy(e -> assertThat(e).contains("The Da Vinci Code"))
+        );
+    }
+
+    @Test @GUITest
+    public void testAddBookError() {
+        window.textBox("bookIdTextField").enterText(BOOK_FIXTURE_1.getId());
+        window.textBox("bookTitleTextField").enterText("Duplicate book");
+        window.textBox("bookLengthTextField").enterText("123");
+        window.comboBox("authorsCombobox").selectItem(
+                Pattern.compile(".*" + AUTHOR_FIXTURE_1.getName() + ".*")
+        );
+        window.button(JButtonMatcher.withName("addBookButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.label("bookErrorLabel").text())
+                    .contains(BOOK_FIXTURE_1.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testDeleteBookSuccess() {
+        window.table("booksTable").selectRows(0);
+        window.button(JButtonMatcher.withName("deleteBookButton")).click();
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            for (String[] content : window.table("booksTable").contents()) {
+                assertThat(content).noneMatch(e -> e.contains(BOOK_FIXTURE_1.getTitle()));
+            }
+        });
+    }
+
+    @Test @GUITest
+    public void testDeleteBookError() {
+        window.table("booksTable").selectRows(0);
+        removeTestBookFromDatabase(BOOK_FIXTURE_1.getId());
+        window.button(JButtonMatcher.withName("deleteBookButton")).click();
+
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.label("bookErrorLabel").text())
+                    .contains(BOOK_FIXTURE_1.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testDeleteAuthorAndAssociatedBooks() {
+        window.list("authorsList").selectItem(
+                Pattern.compile(".*" + AUTHOR_FIXTURE_1.getName() + ".*")
+        );
+        window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
+        // Since both book fixtures are from the same author,
+        // deleting the author should leave the books table empty
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+            assertThat(window.table("booksTable").contents()).isEmpty()
+        );
+    }
+
+    private MongoCollection<Author> getAuthorCollection() {
+        return client
                 .getDatabase(DB_NAME)
                 .getCollection(DB_AUTHOR_COLLECTION, Author.class)
                 .withCodecRegistry(pojoCodecRegistry);
-        collection.insertOne(author);
     }
 
-    private void addTestBookToDatabase(Book book) {
-        CodecRegistry pojoCodecRegistry = fromRegistries(
-                MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build())
-        );
-        MongoCollection<Book>  collection = client
+    private MongoCollection<Book> getBookCollection() {
+        return client
                 .getDatabase(DB_NAME)
                 .getCollection(DB_BOOK_COLLECTION, Book.class)
                 .withCodecRegistry(pojoCodecRegistry);
-        collection.insertOne(book);
+    }
+
+    private void addTestAuthorToDatabase(Author author) {
+        getAuthorCollection().insertOne(author);
+    }
+
+    private void removeTestAuthorFromDatabase(String authorId) {
+        getAuthorCollection().deleteOne(eq("_id", authorId));
+    }
+
+    private void addTestBookToDatabase(Book book) {
+        getBookCollection().insertOne(book);
+    }
+
+    private void removeTestBookFromDatabase(String bookId) {
+        getBookCollection().deleteOne(eq("_id", bookId));
     }
 }
