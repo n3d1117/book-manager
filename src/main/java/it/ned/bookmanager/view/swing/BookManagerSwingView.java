@@ -19,8 +19,6 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     private transient BookManagerController controller;
 
-    private final JPanel mainPanel;
-
     private final JList<Author> authorList;
     private final SortedListModel<Author> authorListModel;
 
@@ -48,7 +46,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        mainPanel = new JPanel();
+        JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new GridBagLayout());
         setContentPane(mainPanel);
 
