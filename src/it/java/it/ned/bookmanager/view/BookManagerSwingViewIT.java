@@ -23,6 +23,7 @@ import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
+import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +50,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     private static final String DB_AUTHOR_COLLECTION = "authors";
     private static final String DB_BOOK_COLLECTION = "books";
 
-    private static final long AWAITILITY_TIMEOUT = 5;
+    private static final long TIMEOUT_SECONDS = 5;
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
@@ -82,8 +83,8 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.show();
     }
 
-    @Override
-    protected void onTearDown() {
+    @Override @After
+    public void onTearDown() {
         client.close();
     }
 
@@ -95,7 +96,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         authorRepository.add(georgeOrwell);
         controller.allAuthors();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(
                     "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
             );
@@ -113,7 +114,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         bookRepository.add(animalFarm);
         controller.allBooks();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             String[][] booksTableContent = window.table("booksTable").contents();
             assertThat(booksTableContent[0]).containsExactly(
                     nineteenEightyFour.getTitle(),
@@ -135,7 +136,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
         String expected = "👤 George Orwell";
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(expected);
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
         });
@@ -148,7 +149,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.textBox("authorNameTextField").enterText("Another George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).isEmpty();
             assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
             window.label("authorErrorLabel").requireText("Error: Author with id 1 already exists!");
@@ -161,7 +162,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).isEmpty();
             assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
         });
@@ -179,7 +180,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
         String expected = "👤 George Orwell";
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(expected);
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
             window.label("authorErrorLabel").requireText("Error: Author with id 1 not found!");
@@ -196,7 +197,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.comboBox("authorsCombobox").selectItem(0);
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() ->
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
             assertThat(window.table("booksTable").contents()[0]).containsExactly(
                     animalFarm.getTitle(),
                     animalFarm.getAuthorId(),
@@ -216,7 +217,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.comboBox("authorsCombobox").selectItem(0);
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.table("booksTable").contents()).isEmpty();
             window.label("bookErrorLabel").requireText("Error: Book with id 1 already exists!");
         });
@@ -228,7 +229,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() ->
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
                 assertThat(window.table("booksTable").contents()).isEmpty()
         );
     }
@@ -243,7 +244,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.table("booksTable").contents()[0]).containsExactly(
                     animalFarm.getTitle(),
                     animalFarm.getAuthorId(),
@@ -273,7 +274,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
         String expected = "👤 Dan Brown";
 
-        await().atMost(AWAITILITY_TIMEOUT, TimeUnit.SECONDS).untilAsserted(() -> {
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(expected);
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
             assertThat(window.table("booksTable").contents()[0]).containsExactly(

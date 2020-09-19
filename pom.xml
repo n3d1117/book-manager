@@ -26,6 +26,7 @@
         <logback-classic.version>1.2.3</logback-classic.version>
         <testcontainers.version>1.14.3</testcontainers.version>
         <awaitility.version>4.0.3</awaitility.version>
+        <picocli.version>4.5.1</picocli.version>
 
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
@@ -33,7 +34,6 @@
         <jabx-api.version>2.3.1</jabx-api.version>
         <pitest.version>1.5.2</pitest.version>
         <sonarqube.version>3.7.0.1746</sonarqube.version>
-        <exec-maven.version>3.0.0</exec-maven.version>
         <build-helper.version>3.2.0</build-helper.version>
         <maven-failsafe.version>2.22.2</maven-failsafe.version>
 
@@ -45,7 +45,6 @@
 
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
-            **/Main.*,
             **/model/*.*,
             **/view/**.*,
             **/repository/mongo/MongoRepositoryFactory.*
@@ -54,7 +53,7 @@
         <!-- Disable certain Sonar rules -->
         <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
 
-        <!-- Disable "Inheritance tree of classes should not be too deep" for Swing view -->
+        <!-- Disable "Inheritance tree of classes should not be too deep" for Swing views -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>
             java:S110
         </sonar.issue.ignore.multicriteria.e1.ruleKey>
@@ -140,6 +139,13 @@
             <version>${awaitility.version}</version>
         </dependency>
 
+        <!-- Picocli -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -163,32 +169,9 @@
                             </descriptorRefs>
                             <archive>
                                 <manifest>
-                                    <mainClass>it.ned.bookmanager.Main</mainClass>
+                                    <mainClass>it.ned.bookmanager.view.swing.app.BookManagerSwingApp</mainClass>
                                 </manifest>
                             </archive>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Exec Maven Plugin -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>${exec-maven.version}</version>
-                <executions>
-                    <execution>
-                        <id>run-jar-with-dependencies</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>java</executable>
-                            <arguments>
-                                <argument>-jar</argument>
-                                <argument>${project.build.directory}/${project.artifactId}-${project.version}-jar-with-dependencies.jar</argument>
-                            </arguments>
                         </configuration>
                     </execution>
                 </executions>
@@ -209,6 +192,7 @@
                         <configuration>
                             <sources>
                                 <source>src/it/java</source>
+                                <source>src/e2e/java</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -222,11 +206,28 @@
                 <version>${maven-failsafe.version}</version>
                 <executions>
                     <execution>
+                        <id>integration-tests</id>
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
                     </execution>
+                    <execution>
+                        <id>e2e-tests</id>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*E2E.java</include>
+                            </includes>
+                        </configuration>
+                    </execution>
+
                 </executions>
             </plugin>
 
@@ -243,9 +244,9 @@
                     <version>${jacoco.version}</version>
                     <configuration>
                         <excludes>
-                            <exclude>**/Main.*</exclude>
                             <exclude>**/model/*.*</exclude>
                             <exclude>**/view/swing/*.*</exclude>
+                            <exclude>**/view/swing/app/*.*</exclude>
                             <exclude>**/view/swing/components/*.*</exclude>
                             <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
                         </excludes>
