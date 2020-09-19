@@ -26,6 +26,7 @@
         <logback-classic.version>1.2.3</logback-classic.version>
         <testcontainers.version>1.14.3</testcontainers.version>
         <awaitility.version>4.0.3</awaitility.version>
+        <picocli.version>4.5.1</picocli.version>
 
         <!-- Plugin versions -->
         <jacoco.version>0.8.5</jacoco.version>
@@ -137,6 +138,13 @@
             <groupId>org.awaitility</groupId>
             <artifactId>awaitility</artifactId>
             <version>${awaitility.version}</version>
+        </dependency>
+
+        <!-- Picocli -->
+        <dependency>
+            <groupId>info.picocli</groupId>
+            <artifactId>picocli</artifactId>
+            <version>${picocli.version}</version>
         </dependency>
 
     </dependencies>
