@@ -374,6 +374,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
                 !bookIdTextField.getText().trim().isEmpty() &&
                         !bookTitleTextField.getText().trim().isEmpty() &&
                         !bookLengthTextField.getText().trim().isEmpty() &&
+                        isInteger(bookLengthTextField.getText().trim()) &&
                         authorComboBox.getSelectedIndex() != -1
         );
     }
@@ -464,11 +465,22 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookErrorLabel.setText(String.format(BOOK_NOT_FOUND_ERROR, book.getId()));
     }
 
+    /* Utils */
+
     private void resetAuthorErrorLabel() {
         authorErrorLabel.setText(" ");
     }
 
     private void resetBookErrorLabel() {
         bookErrorLabel.setText(" ");
+    }
+
+    private boolean isInteger(String value) {
+        try {
+            Integer.parseInt(value);
+            return true;
+        } catch(NumberFormatException e) {
+            return false;
+        }
     }
 }
