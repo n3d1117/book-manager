@@ -107,6 +107,7 @@ public class AuthorTransactionalServiceTest {
                 authorService.add(AUTHOR_FIXTURE_1)
         );
         assertTrue(e.getMessage().contains(AUTHOR_FIXTURE_1.getId()));
+        assertEquals(AUTHOR_FIXTURE_1, e.getExistingAuthor());
     }
 
     @Test
