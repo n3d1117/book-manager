@@ -21,7 +21,7 @@
         <junit.version>4.13</junit.version>
         <mockito.version>3.5.11</mockito.version>
         <log4j.version>2.13.3</log4j.version>
-        <assertj-swing.version>3.17.0</assertj-swing.version>
+        <assertj-swing.version>3.17.1</assertj-swing.version>
         <mongo-java.version>3.12.7</mongo-java.version>
         <logback-classic.version>1.2.3</logback-classic.version>
         <testcontainers.version>1.14.3</testcontainers.version>
