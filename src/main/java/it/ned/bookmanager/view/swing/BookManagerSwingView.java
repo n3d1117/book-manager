@@ -419,6 +419,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorListModel.addElement(author);
         authorComboBoxModel.addElement(author);
         resetAuthorErrorLabel();
+        authorList.clearSelection();
     }
 
     @Override
@@ -426,6 +427,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorListModel.removeElement(author);
         authorComboBoxModel.removeElement(author);
         resetAuthorErrorLabel();
+        authorList.clearSelection();
     }
 
     @Override

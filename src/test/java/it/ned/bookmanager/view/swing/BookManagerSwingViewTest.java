@@ -378,6 +378,20 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testAuthorAddedShouldAlsoClearSelection() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() ->
+                view.authorAdded(georgeOrwell)
+        );
+        window.list("authorsList").selectItem(0);
+        GuiActionRunner.execute(() ->
+                view.authorAdded(danBrown)
+        );
+        window.list("authorsList").requireNoSelection();
+    }
+
+    @Test @GUITest
     public void testAuthorDeletedShouldRemoveAuthorFromListAndComboboxAndResetErrorLabel() {
         Author georgeOrwell = new Author("1", "George Orwell");
         Author danBrown = new Author("2", "Dan Brown");
@@ -397,6 +411,22 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         assertThat(authorsListContent).containsExactly(expected);
         assertThat(authorsListComboboxContent).containsExactly(expected);
         window.label("authorErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testAuthorDeletedShouldAlsoClearSelection() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        Author danBrown = new Author("2", "Dan Brown");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorListModel().addElement(danBrown);
+
+        });
+        window.list("authorsList").selectItem(0);
+        GuiActionRunner.execute(() -> {
+            view.authorDeleted(new Author("1", "George Orwell"));
+        });
+        window.list("authorsList").requireNoSelection();
     }
 
     @Test @GUITest
