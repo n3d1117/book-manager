@@ -195,11 +195,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
-        String expected = "👤 George Orwell";
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertThat(window.list("authorsList").contents()).containsExactly(expected);
-            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
+            assertThat(window.list("authorsList").contents()).isEmpty();
+            assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
             window.label("authorErrorLabel").requireText("Error: Author with id 1 not found!");
         });
     }
@@ -270,11 +269,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertThat(window.table("booksTable").contents()[0]).containsExactly(
-                    animalFarm.getTitle(),
-                    animalFarm.getAuthorId(),
-                    animalFarm.getNumberOfPages().toString()
-            );
+            assertThat(window.table("booksTable").contents()).isEmpty();
             window.label("bookErrorLabel").requireText("Error: Book with id 1 not found!");
         });
     }
