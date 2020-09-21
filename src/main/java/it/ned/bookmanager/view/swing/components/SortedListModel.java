@@ -5,31 +5,28 @@ import java.util.*;
 
 public class SortedListModel<T extends Comparable<? super T>> extends AbstractListModel<T> {
 
-    private final transient SortedSet<T> model;
+    private final transient List<T> items;
 
     public SortedListModel() {
-        model = new TreeSet<>();
+        items = new ArrayList<>(Collections.emptyList());
     }
 
     public int getSize() {
-        return model.size();
+        return items.size();
     }
 
-    @SuppressWarnings("unchecked")
     public T getElementAt(int i) {
-        return (T) model.toArray()[i];
+        return items.get(i);
     }
 
     public void addElement(T element) {
-        SwingUtilities.invokeLater(() -> {
-            if (model.add(element))
-                fireContentsChanged(this, 0, getSize());
-        });
+        items.add(element);
+        Collections.sort(items);
+        fireContentsChanged(this, 0, items.size());
     }
 
     public void removeElement(T element) {
-        boolean removed = model.remove(element);
-        if (removed)
-            fireContentsChanged(this, 0, getSize());
+        items.remove(element);
+        fireContentsChanged(this, 0, getSize());
     }
 }

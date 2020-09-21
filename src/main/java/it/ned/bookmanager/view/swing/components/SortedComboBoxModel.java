@@ -5,17 +5,8 @@ import javax.swing.*;
 public class SortedComboBoxModel<T extends Comparable<? super T>> extends DefaultComboBoxModel<T> {
 
     @Override
-    public void setSelectedItem(Object anObject) {
-        SwingUtilities.invokeLater(() ->
-            super.setSelectedItem(anObject)
-        );
-    }
-
-    @Override
     public void addElement(T element) {
-        SwingUtilities.invokeLater(() ->
-            insertElementAt(element, 0)
-        );
+        insertElementAt(element, 0);
     }
 
     @SuppressWarnings("unchecked")

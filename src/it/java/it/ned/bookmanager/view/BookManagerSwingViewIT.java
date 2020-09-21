@@ -94,7 +94,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Author georgeOrwell = new Author("2", "George Orwell");
         authorRepository.add(danBrown);
         authorRepository.add(georgeOrwell);
-        controller.allAuthors();
+
+        GuiActionRunner.execute(() ->
+                controller.allAuthors()
+        );
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(
@@ -112,7 +115,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Book animalFarm = new Book("2", "Animal Farm", 93, "1");
         bookRepository.add(nineteenEightyFour);
         bookRepository.add(animalFarm);
-        controller.allBooks();
+
+        GuiActionRunner.execute(() ->
+                controller.allBooks()
+        );
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             String[][] booksTableContent = window.table("booksTable").contents();
@@ -158,7 +164,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testDeleteAuthorSuccess() {
-        controller.addAuthor(new Author("1", "George Orwell"));
+        GuiActionRunner.execute(() ->
+                controller.addAuthor(new Author("1", "George Orwell"))
+        );
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
@@ -173,8 +181,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Author georgeOrwell = new Author("1", "George Orwell");
 
         // Add author manually to the list & combobox, but not to the database
-        view.getAuthorListModel().addElement(georgeOrwell);
-        view.getAuthorComboBoxModel().addElement(georgeOrwell);
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+        });
 
         window.list("authorsList").selectItem(0);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
@@ -189,7 +199,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testAddBookSuccess() {
-        view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
+        GuiActionRunner.execute(() ->
+                view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
+        );
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText(animalFarm.getTitle());
@@ -198,11 +210,11 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
-            assertThat(window.table("booksTable").contents()[0]).containsExactly(
-                    animalFarm.getTitle(),
-                    animalFarm.getAuthorId(),
-                    animalFarm.getNumberOfPages().toString()
-            )
+                assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                        animalFarm.getTitle(),
+                        animalFarm.getAuthorId(),
+                        animalFarm.getNumberOfPages().toString()
+                )
         );
     }
 
@@ -210,7 +222,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     public void testAddBookError() {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
         bookRepository.add(animalFarm);
-        view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"));
+        GuiActionRunner.execute(() ->
+                view.getAuthorComboBoxModel().addElement(new Author("1", "George Orwell"))
+        );
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText("Another Animal Farm");
         window.textBox("bookLengthTextField").enterText("189");
@@ -225,7 +239,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testDeleteBookSuccess() {
-        controller.addBook(new Book("1", "Animal Farm", 93, "1"));
+        GuiActionRunner.execute(() ->
+                controller.addBook(new Book("1", "Animal Farm", 93, "1"))
+        );
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
 
@@ -239,7 +255,9 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Book animalFarm = new Book("1", "Animal Farm", 93, "1");
 
         // Add book manually to the table, but not to the database
-        view.getBookTableModel().addElement(animalFarm);
+        GuiActionRunner.execute(() ->
+                view.getBookTableModel().addElement(animalFarm)
+        );
 
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
@@ -263,11 +281,13 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         Book nineteenEightyFour = new Book("2", "1984", 293, georgeOrwell.getId());
         Book theDaVinciCode = new Book("3", "The Da Vinci Code", 402, danBrown.getId());
 
-        controller.addAuthor(danBrown);
-        controller.addAuthor(georgeOrwell);
-        controller.addBook(animalFarm);
-        controller.addBook(nineteenEightyFour);
-        controller.addBook(theDaVinciCode);
+        GuiActionRunner.execute(() -> {
+            controller.addAuthor(danBrown);
+            controller.addAuthor(georgeOrwell);
+            controller.addBook(animalFarm);
+            controller.addBook(nineteenEightyFour);
+            controller.addBook(theDaVinciCode);
+        });
 
         window.list("authorsList").selectItem(1);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();

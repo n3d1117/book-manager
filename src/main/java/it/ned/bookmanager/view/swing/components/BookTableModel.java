@@ -2,7 +2,6 @@ package it.ned.bookmanager.view.swing.components;
 
 import it.ned.bookmanager.model.Book;
 
-import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,17 +50,13 @@ public class BookTableModel extends AbstractTableModel {
     }
 
     public Book getBookAt(int bookRow) {
-        if (bookRow < 0)
-            return null;
         return books.get(bookRow);
     }
 
     public void addElement(Book bookToAdd) {
-        SwingUtilities.invokeLater(() -> {
-            books.add(bookToAdd);
-            Collections.sort(books);
-            fireTableDataChanged();
-        });
+        books.add(bookToAdd);
+        Collections.sort(books);
+        fireTableDataChanged();
     }
 
     public void removeElement(Book bookToRemove) {

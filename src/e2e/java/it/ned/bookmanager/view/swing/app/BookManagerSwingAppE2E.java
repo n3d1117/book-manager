@@ -4,6 +4,7 @@ import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import org.assertj.swing.annotation.GUITest;
@@ -32,6 +33,7 @@ import static org.assertj.swing.launcher.ApplicationLauncher.application;
 import static org.awaitility.Awaitility.await;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
@@ -166,10 +168,11 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
         );
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
-        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            assertEquals(3, window.table("booksTable").rowCount());
             assertThat(window.table("booksTable").contents()[2])
-                    .anySatisfy(e -> assertThat(e).contains("The Da Vinci Code"))
-        );
+                    .anySatisfy(e -> assertThat(e).contains("The Da Vinci Code"));
+        });
     }
 
     @Test @GUITest
