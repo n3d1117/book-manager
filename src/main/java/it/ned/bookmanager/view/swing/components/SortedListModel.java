@@ -20,9 +20,11 @@ public class SortedListModel<T extends Comparable<? super T>> extends AbstractLi
     }
 
     public void addElement(T element) {
-        items.add(element);
-        Collections.sort(items);
-        fireContentsChanged(this, 0, items.size());
+        if (!items.contains(element)) {
+            items.add(element);
+            Collections.sort(items);
+            fireContentsChanged(this, 0, items.size());
+        }
     }
 
     public void removeElement(T element) {

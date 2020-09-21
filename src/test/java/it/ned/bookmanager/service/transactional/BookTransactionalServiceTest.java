@@ -109,6 +109,7 @@ public class BookTransactionalServiceTest {
                 bookService.add(BOOK_FIXTURE_1)
         );
         assertTrue(e.getMessage().contains(BOOK_FIXTURE_1.getId()));
+        assertEquals(BOOK_FIXTURE_1, e.getExistingBook());
     }
 
     @Test

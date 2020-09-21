@@ -6,7 +6,8 @@ public class SortedComboBoxModel<T extends Comparable<? super T>> extends Defaul
 
     @Override
     public void addElement(T element) {
-        insertElementAt(element, 0);
+        if (getIndexOf(element ) == -1)
+            insertElementAt(element, 0);
     }
 
     @SuppressWarnings("unchecked")

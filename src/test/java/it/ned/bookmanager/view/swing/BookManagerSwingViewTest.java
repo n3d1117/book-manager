@@ -423,9 +423,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
         });
         window.list("authorsList").selectItem(0);
-        GuiActionRunner.execute(() -> {
-            view.authorDeleted(new Author("1", "George Orwell"));
-        });
+        GuiActionRunner.execute(() ->
+                view.authorDeleted(new Author("1", "George Orwell"))
+        );
         window.list("authorsList").requireNoSelection();
     }
 
@@ -501,6 +501,47 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testAuthorNotAddedBecauseAlreadyExistsErrorShouldAddExistingOneToTheListIfNotPresent() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorComboBoxModel().addElement(danBrown);
+        });
+        GuiActionRunner.execute(() ->
+                view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
+        );
+        assertThat(window.list("authorsList").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testAuthorNotAddedBecauseAlreadyExistsErrorShouldNotAddExistingOneToTheListIfAlreadyPresent() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorComboBoxModel().addElement(danBrown);
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+        });
+        GuiActionRunner.execute(() ->
+                view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
+        );
+        // Make sure duplicates are avoided
+        assertThat(window.list("authorsList").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
     public void testAuthorNotDeletedBecauseNotFoundErrorShouldDisplayErrorMessage() {
         Author georgeOrwell = new Author("1", "George Orwell");
         GuiActionRunner.execute(() ->
@@ -537,6 +578,53 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         window.label("bookErrorLabel").requireText(
                 String.format("Error: Book with id %s already exists!", animalFarm.getId())
+        );
+    }
+
+    @Test @GUITest
+    public void testBookNotAddedBecauseAlreadyExistsErrorShouldAddExistingOneToTheTableIfNotPresent() {
+        Book nineteenEightyFour = new Book("1", "1984", 293, "1");
+        Book animalFarm = new Book("2", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.getBookTableModel().addElement(nineteenEightyFour)
+        );
+        GuiActionRunner.execute(() ->
+                view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
+        );
+        window.table("booksTable").requireRowCount(2);
+        assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                nineteenEightyFour.getTitle(),
+                nineteenEightyFour.getAuthorId(),
+                nineteenEightyFour.getNumberOfPages().toString()
+        );
+        assertThat(window.table("booksTable").contents()[1]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
+        );
+    }
+
+    @Test @GUITest
+    public void testBookNotAddedBecauseAlreadyExistsErrorShouldNotAddExistingOneToTheTableIfAlreadyPresent() {
+        Book nineteenEightyFour = new Book("1", "1984", 293, "1");
+        Book animalFarm = new Book("2", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() -> {
+            view.getBookTableModel().addElement(nineteenEightyFour);
+            view.getBookTableModel().addElement(animalFarm);
+        });
+        GuiActionRunner.execute(() ->
+                view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
+        );
+        window.table("booksTable").requireRowCount(2);
+        assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                nineteenEightyFour.getTitle(),
+                nineteenEightyFour.getAuthorId(),
+                nineteenEightyFour.getNumberOfPages().toString()
+        );
+        assertThat(window.table("booksTable").contents()[1]).containsExactly(
+                animalFarm.getTitle(),
+                animalFarm.getAuthorId(),
+                animalFarm.getNumberOfPages().toString()
         );
     }
 

@@ -69,15 +69,15 @@ public class BookManagerControllerTest {
 
     @Test
     public void testAuthorNotAddedWhenAlreadyExisting() {
-        Author georgeOrwellClone = new Author(BOOK_FIXTURE.getId(), "George Orwell's clone");
-        doThrow(new AuthorDuplicateException("Author already exists"))
+        Author georgeOrwellClone = new Author(AUTHOR_FIXTURE.getId(), "George Orwell's clone");
+        doThrow(new AuthorDuplicateException("Author already exists", AUTHOR_FIXTURE))
                 .when(authorService).add(georgeOrwellClone);
 
         controller.addAuthor(georgeOrwellClone);
 
         InOrder inOrder = inOrder(authorService, view);
         inOrder.verify(authorService).add(georgeOrwellClone);
-        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(georgeOrwellClone);
+        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 
@@ -137,14 +137,14 @@ public class BookManagerControllerTest {
     @Test
     public void testBookNotAddedWhenAlreadyExisting() {
         Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        doThrow(new BookDuplicateException("Book already exists"))
+        doThrow(new BookDuplicateException("Book already exists", BOOK_FIXTURE))
                 .when(bookService).add(animalFarmClone);
 
         controller.addBook(animalFarmClone);
 
         InOrder inOrder = inOrder(bookService, view);
         inOrder.verify(bookService).add(animalFarmClone);
-        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(animalFarmClone);
+        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 

@@ -38,10 +38,13 @@ public class AuthorTransactionalService implements AuthorService {
         transactionManager.doInTransaction(factory -> {
             if (author != null) {
                 AuthorRepository authorRepository = factory.createAuthorRepository();
-                if (authorRepository.findById(author.getId()) != null)
+                if (authorRepository.findById(author.getId()) != null) {
+                    Author existingAuthor = authorRepository.findById(author.getId());
                     throw new AuthorDuplicateException(
-                            String.format(AUTHOR_ALREADY_IN_DB_ERROR_MESSAGE, author.getId())
+                            String.format(AUTHOR_ALREADY_IN_DB_ERROR_MESSAGE, author.getId()),
+                            existingAuthor
                     );
+                }
                 authorRepository.add(author);
             }
             return null;
