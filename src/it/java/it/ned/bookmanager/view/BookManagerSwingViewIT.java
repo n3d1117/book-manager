@@ -157,14 +157,16 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testAddAuthorError() {
-        authorRepository.add(new Author("1", "George Orwell"));
+        Author georgeOrwell = new Author("1", "George Orwell");
+        authorRepository.add(georgeOrwell);
         window.textBox("authorIdTextField").enterText("1");
         window.textBox("authorNameTextField").enterText("Another George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
 
+        String expected = "👤 " + georgeOrwell.getName();
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertThat(window.list("authorsList").contents()).isEmpty();
-            assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
+            assertThat(window.list("authorsList").contents()).containsExactly(expected);
+            assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
             window.label("authorErrorLabel").requireText("Error: Author with id 1 already exists!");
         });
     }

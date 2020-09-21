@@ -69,15 +69,15 @@ public class BookManagerControllerTest {
 
     @Test
     public void testAuthorNotAddedWhenAlreadyExisting() {
-        Author georgeOrwellClone = new Author(BOOK_FIXTURE.getId(), "George Orwell's clone");
-        doThrow(new AuthorDuplicateException("Author already exists"))
+        Author georgeOrwellClone = new Author(AUTHOR_FIXTURE.getId(), "George Orwell's clone");
+        doThrow(new AuthorDuplicateException("Author already exists", AUTHOR_FIXTURE))
                 .when(authorService).add(georgeOrwellClone);
 
         controller.addAuthor(georgeOrwellClone);
 
         InOrder inOrder = inOrder(authorService, view);
         inOrder.verify(authorService).add(georgeOrwellClone);
-        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(georgeOrwellClone);
+        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(AUTHOR_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 

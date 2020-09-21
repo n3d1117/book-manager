@@ -501,6 +501,47 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testAuthorNotAddedBecauseAlreadyExistsErrorShouldAddToListIfNotPresent() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorComboBoxModel().addElement(danBrown);
+        });
+        GuiActionRunner.execute(() ->
+                view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
+        );
+        assertThat(window.list("authorsList").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
+    public void testAuthorNotAddedBecauseAlreadyExistsErrorShouldNotAddToListIfAlreadyPresent() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(danBrown);
+            view.getAuthorComboBoxModel().addElement(danBrown);
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+        });
+        GuiActionRunner.execute(() ->
+                view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
+        );
+        // Make sure duplicates are avoided
+        assertThat(window.list("authorsList").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+        assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
+                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+        );
+    }
+
+    @Test @GUITest
     public void testAuthorNotDeletedBecauseNotFoundErrorShouldDisplayErrorMessage() {
         Author georgeOrwell = new Author("1", "George Orwell");
         GuiActionRunner.execute(() ->

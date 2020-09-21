@@ -43,7 +43,7 @@ public class BookManagerController {
             authorService.add(author);
             view.authorAdded(author);
         } catch(AuthorDuplicateException exception) {
-            view.authorNotAddedBecauseAlreadyExistsError(author);
+            view.authorNotAddedBecauseAlreadyExistsError(exception.getExistingAuthor());
         }
     }
 

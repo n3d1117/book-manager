@@ -448,8 +448,10 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     }
 
     @Override
-    public void authorNotAddedBecauseAlreadyExistsError(Author author) {
-        authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, author.getId()));
+    public void authorNotAddedBecauseAlreadyExistsError(Author existingAuthor) {
+        authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, existingAuthor.getId()));
+        authorListModel.addElement(existingAuthor);
+        authorComboBoxModel.addElement(existingAuthor);
     }
 
     @Override
