@@ -455,6 +455,8 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void authorNotDeletedBecauseNotFoundError(Author author) {
         authorErrorLabel.setText(String.format(AUTHOR_NOT_FOUND_ERROR, author.getId()));
+        authorListModel.removeElement(author);
+        authorComboBoxModel.removeElement(author);
     }
 
     @Override
@@ -465,6 +467,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void bookNotDeletedBecauseNotFoundError(Book book) {
         bookErrorLabel.setText(String.format(BOOK_NOT_FOUND_ERROR, book.getId()));
+        bookTableModel.removeElement(book);
     }
 
     /* Utils */
