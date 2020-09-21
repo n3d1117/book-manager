@@ -29,7 +29,7 @@
         <picocli.version>4.5.1</picocli.version>
 
         <!-- Plugin versions -->
-        <jacoco.version>0.8.5</jacoco.version>
+        <jacoco.version>0.8.6</jacoco.version>
         <coveralls.version>4.3.0</coveralls.version>
         <jabx-api.version>2.3.1</jabx-api.version>
         <pitest.version>1.5.2</pitest.version>
