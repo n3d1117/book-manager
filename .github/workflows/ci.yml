@@ -38,10 +38,12 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
-      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar) w/ xvfb
+      - name: Install tightvncserver
+        run: sudo apt-get install -y tightvncserver
+      - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar) w/ vnc
         run: |
-          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
-          mvn -B -f pom.xml clean verify \
+          ./execute-on-vnc.sh \
+          mvn -f pom.xml clean verify \
           $ENABLED_PROFILES $ADDITIONAL_GOALS \
           -D repoToken=$COVERALLS_TOKEN \
           -D sonar.host.url=$SONAR_URL \
@@ -84,10 +86,12 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Install tightvncserver
+        run: sudo apt-get install -y tightvncserver
       # Avoid duplicated reports to sonar and coveralls
-      - name: Run mvn clean verify (with jacoco and mutation testing) w/ xvfb
+      - name: Run mvn clean verify (with jacoco and mutation testing) w/ vnc
         run: |
-          xvfb-run --server-args="-screen 0, 1280x720x24" -a \
+          ./execute-on-vnc.sh \
           mvn -f pom.xml clean verify $ENABLED_PROFILES
         env:
           ENABLED_PROFILES: -P jacoco-check,mutation-testing

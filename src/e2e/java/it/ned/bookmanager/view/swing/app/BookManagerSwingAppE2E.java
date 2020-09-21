@@ -85,6 +85,9 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
                 return "Book Manager".equals(jFrame.getTitle()) && jFrame.isShowing();
             }
         }).using(robot());
+
+        window.show();
+        robot().waitForIdle();
     }
 
     @Override @After

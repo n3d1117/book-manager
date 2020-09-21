@@ -43,6 +43,13 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         });
         window = new FrameFixture(robot(), view);
         window.show();
+
+        robot().waitForIdle();
+
+        GuiActionRunner.execute(() -> {
+            view.requestFocus();
+            view.toFront();
+        });
     }
 
     @Test @GUITest
