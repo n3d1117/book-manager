@@ -4,7 +4,7 @@ import it.ned.bookmanager.model.Author;
 
 public class AuthorDuplicateException extends RuntimeException {
 
-    private Author existingAuthor;
+    private final Author existingAuthor;
 
     public AuthorDuplicateException(String message, Author existingAuthor) {
         super(message);

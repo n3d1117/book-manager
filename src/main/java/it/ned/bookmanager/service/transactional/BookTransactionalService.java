@@ -41,10 +41,13 @@ public class BookTransactionalService implements BookService {
         transactionManager.doInTransaction(factory -> {
             if (book != null) {
                 BookRepository bookRepository = factory.createBookRepository();
-                if (bookRepository.findById(book.getId()) != null)
+                if (bookRepository.findById(book.getId()) != null) {
+                    Book existingBook = bookRepository.findById(book.getId());
                     throw new BookDuplicateException(
-                            String.format(BOOK_ALREADY_IN_DB_ERROR_MESSAGE, book.getId())
+                            String.format(BOOK_ALREADY_IN_DB_ERROR_MESSAGE, book.getId()),
+                            existingBook
                     );
+                }
                 bookRepository.add(book);
             }
             return null;

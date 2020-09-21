@@ -137,14 +137,14 @@ public class BookManagerControllerTest {
     @Test
     public void testBookNotAddedWhenAlreadyExisting() {
         Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        doThrow(new BookDuplicateException("Book already exists"))
+        doThrow(new BookDuplicateException("Book already exists", BOOK_FIXTURE))
                 .when(bookService).add(animalFarmClone);
 
         controller.addBook(animalFarmClone);
 
         InOrder inOrder = inOrder(bookService, view);
         inOrder.verify(bookService).add(animalFarmClone);
-        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(animalFarmClone);
+        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(BOOK_FIXTURE);
         inOrder.verifyNoMoreInteractions();
     }
 

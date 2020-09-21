@@ -53,7 +53,7 @@ public class BookManagerController {
             bookService.add(book);
             view.bookAdded(book);
         } catch(BookDuplicateException exception) {
-            view.bookNotAddedBecauseAlreadyExistsError(book);
+            view.bookNotAddedBecauseAlreadyExistsError(exception.getExistingBook());
         }
     }
 

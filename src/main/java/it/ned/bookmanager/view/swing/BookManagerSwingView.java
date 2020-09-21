@@ -464,6 +464,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void bookNotAddedBecauseAlreadyExistsError(Book book) {
         bookErrorLabel.setText(String.format(BOOK_ALREADY_EXISTS_ERROR, book.getId()));
+        bookTableModel.addElement(book);
     }
 
     @Override

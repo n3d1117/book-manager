@@ -49,18 +49,20 @@ public class BookTableModel extends AbstractTableModel {
         return value;
     }
 
-    public Book getBookAt(int bookRow) {
-        return books.get(bookRow);
+    public Book getBookAt(int row) {
+        return books.get(row);
     }
 
-    public void addElement(Book bookToAdd) {
-        books.add(bookToAdd);
-        Collections.sort(books);
-        fireTableDataChanged();
+    public void addElement(Book book) {
+        if (!books.contains(book)) {
+            books.add(book);
+            Collections.sort(books);
+            fireTableDataChanged();
+        }
     }
 
-    public void removeElement(Book bookToRemove) {
-        books.remove(bookToRemove);
+    public void removeElement(Book book) {
+        books.remove(book);
         fireTableDataChanged();
     }
 

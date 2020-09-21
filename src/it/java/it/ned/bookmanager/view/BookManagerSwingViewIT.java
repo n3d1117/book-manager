@@ -240,7 +240,12 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
-            assertThat(window.table("booksTable").contents()).isEmpty();
+            window.table("booksTable").requireRowCount(1);
+            assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                    animalFarm.getTitle(),
+                    animalFarm.getAuthorId(),
+                    animalFarm.getNumberOfPages().toString()
+            );
             window.label("bookErrorLabel").requireText("Error: Book with id 1 already exists!");
         });
     }
