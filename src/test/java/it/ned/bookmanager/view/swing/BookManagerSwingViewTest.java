@@ -196,6 +196,20 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testBookLengthTextFieldShouldNotAcceptNonIntegerStrings() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().setSelectedItem(georgeOrwell);
+        });
+
+        window.textBox("bookIdTextField").enterText("1");
+        window.textBox("bookTitleTextField").enterText("Animal Farm");
+        window.textBox("bookLengthTextField").enterText("not an integer");
+        window.button(JButtonMatcher.withName("addBookButton")).requireDisabled();
+    }
+
+    @Test @GUITest
     public void testDeleteBookShouldOnlyBeEnabledWhenABookIsSelected() {
         GuiActionRunner.execute(() ->
                 view.getBookTableModel().addElement(new Book("1", "Animal Farm", 93, "1"))
