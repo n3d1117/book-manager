@@ -4,7 +4,7 @@ import it.ned.bookmanager.model.Book;
 
 public class BookDuplicateException extends RuntimeException {
 
-    private final Book existingBook;
+    private final transient Book existingBook;
 
     public BookDuplicateException(String message, Book existingBook) {
         super(message);
