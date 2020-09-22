@@ -18,6 +18,6 @@ public interface BookManagerView {
 
     void authorNotAddedBecauseAlreadyExistsError(Author existingAuthor);
     void authorNotDeletedBecauseNotFoundError(Author author);
-    void bookNotAddedBecauseAlreadyExistsError(Book book);
+    void bookNotAddedBecauseAlreadyExistsError(Book existingBook);
     void bookNotDeletedBecauseNotFoundError(Book book);
 }
