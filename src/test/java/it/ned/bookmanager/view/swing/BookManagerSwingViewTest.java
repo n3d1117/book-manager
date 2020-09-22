@@ -392,6 +392,18 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testAuthorAddedShouldAlsoClearAuthorTextFields() {
+        Author georgeOrwell = new Author("1", "George Orwell");
+        window.textBox("authorIdTextField").enterText(georgeOrwell.getId());
+        window.textBox("authorNameTextField").enterText(georgeOrwell.getName());
+        GuiActionRunner.execute(() ->
+                view.authorAdded(georgeOrwell)
+        );
+        window.textBox("authorIdTextField").requireEmpty();
+        window.textBox("authorNameTextField").requireEmpty();
+    }
+
+    @Test @GUITest
     public void testAuthorDeletedShouldRemoveAuthorFromListAndComboboxAndResetErrorLabel() {
         Author georgeOrwell = new Author("1", "George Orwell");
         Author danBrown = new Author("2", "Dan Brown");
@@ -420,7 +432,6 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() -> {
             view.getAuthorListModel().addElement(georgeOrwell);
             view.getAuthorListModel().addElement(danBrown);
-
         });
         window.list("authorsList").selectItem(0);
         GuiActionRunner.execute(() ->
@@ -466,6 +477,25 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
                 animalFarm.getNumberOfPages().toString()
         );
         window.label("bookErrorLabel").requireText(" ");
+    }
+
+    @Test @GUITest
+    public void testBookAddedShouldAlsoClearBookTextFields() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        GuiActionRunner.execute(() ->
+                view.getAuthorComboBoxModel().addElement(new Author(animalFarm.getAuthorId(), "George Orwell"))
+        );
+        window.textBox("bookIdTextField").enterText(animalFarm.getId());
+        window.textBox("bookTitleTextField").enterText(animalFarm.getTitle());
+        window.textBox("bookLengthTextField").enterText(animalFarm.getNumberOfPages().toString());
+        window.comboBox("authorsCombobox").selectItem(0);
+        GuiActionRunner.execute(() ->
+                view.bookAdded(animalFarm)
+        );
+        window.textBox("bookIdTextField").requireEmpty();
+        window.textBox("bookTitleTextField").requireEmpty();
+        window.textBox("bookLengthTextField").requireEmpty();
+        window.comboBox("authorsCombobox").requireNoSelection();
     }
 
     @Test @GUITest
