@@ -8,9 +8,9 @@ import it.ned.bookmanager.view.swing.components.*;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.util.List;
 
 import static java.awt.Font.BOLD;
@@ -21,17 +21,19 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     private final JList<Author> authorList;
     private final SortedListModel<Author> authorListModel;
+    private final JTextField authorIdTextField;
+    private final JTextField authorNameTextField;
+    private final JButton addAuthorButton;
 
+    private final JTable booksTable;
+    private final BookTableModel bookTableModel;
     private final AuthorComboBox<Author> authorComboBox;
     private final SortedComboBoxModel<Author> authorComboBoxModel;
-
     private final JTextField bookIdTextField;
     private final JTextField bookTitleTextField;
     private final JTextField bookLengthTextField;
     private final JButton addBookButton;
 
-    private final JTable booksTable;
-    private final BookTableModel bookTableModel;
     private final JLabel authorErrorLabel;
     private final JLabel bookErrorLabel;
 
@@ -134,7 +136,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addAuthorPanel.add(authorIdLabel);
 
         // Author id textfield
-        JTextField authorIdTextField = new JTextField();
+        authorIdTextField = new JTextField();
         authorIdTextField.setName("authorIdTextField");
         authorIdTextField.setHorizontalAlignment(SwingConstants.CENTER);
         authorIdTextField.setBounds(80, 10, 180, 20);
@@ -150,7 +152,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addAuthorPanel.add(authorNameLabel);
 
         // Author name textfield
-        JTextField authorNameTextField = new JTextField();
+        authorNameTextField = new JTextField();
         authorNameTextField.setName("authorNameTextField");
         authorNameTextField.setHorizontalAlignment(SwingConstants.CENTER);
         authorNameTextField.setBounds(80, 35, 180, 20);
@@ -158,7 +160,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addAuthorPanel.add(authorNameTextField);
 
         // Add author button
-        JButton addAuthorButton = new JButton("👤 Add Author");
+        addAuthorButton = new JButton("👤 Add Author");
         addAuthorButton.setName("addAuthorButton");
         addAuthorButton.setEnabled(false);
         addAuthorButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
@@ -305,35 +307,30 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
         /* Listeners */
 
-        // 'Add Author' button enabled key listener
-        KeyAdapter addAuthorButtonEnabler = new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                addAuthorButton.setEnabled(
-                        !authorIdTextField.getText().trim().isEmpty() &&
-                                !authorNameTextField.getText().trim().isEmpty()
-                );
-            }
+        // 'Add Author' button enabled document listener
+        DocumentListener addAuthorButtonEnabler = new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
+            @Override public void removeUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
+            @Override public void changedUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
         };
-        authorIdTextField.addKeyListener(addAuthorButtonEnabler);
-        authorNameTextField.addKeyListener(addAuthorButtonEnabler);
+        authorIdTextField.getDocument().addDocumentListener(addAuthorButtonEnabler);
+        authorNameTextField.getDocument().addDocumentListener(addAuthorButtonEnabler);
 
         // 'Delete Author' button selection listener
         authorList.addListSelectionListener(e ->
                 deleteAuthorButton.setEnabled(authorList.getSelectedIndex() != -1)
         );
 
-        // 'Add Book' button enabled key listener
-        KeyAdapter addBookButtonEnabler = new KeyAdapter() {
-            @Override
-            public void keyReleased(KeyEvent e) {
-                enableAddBookButton();
-            }
+        // 'Add Book' button enabled document listener
+        DocumentListener addBookButtonEnabler = new DocumentListener() {
+            @Override public void insertUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
+            @Override public void removeUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
+            @Override public void changedUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
         };
-        bookIdTextField.addKeyListener(addBookButtonEnabler);
-        bookTitleTextField.addKeyListener(addBookButtonEnabler);
-        bookLengthTextField.addKeyListener(addBookButtonEnabler);
-        authorComboBox.addActionListener(e -> enableAddBookButton());
+        bookIdTextField.getDocument().addDocumentListener(addBookButtonEnabler);
+        bookTitleTextField.getDocument().addDocumentListener(addBookButtonEnabler);
+        bookLengthTextField.getDocument().addDocumentListener(addBookButtonEnabler);
+        authorComboBox.addActionListener(e -> setAddBookButtonEnabledState());
 
         // 'Delete Book' button selection listener
         booksTable.getSelectionModel().addListSelectionListener(e ->
@@ -366,16 +363,6 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         // 'Delete Book' button action
         deleteBookButton.addActionListener(e ->
                 controller.deleteBook(bookTableModel.getBookAt(booksTable.getSelectedRow()))
-        );
-    }
-
-    private void enableAddBookButton() {
-        addBookButton.setEnabled(
-                !bookIdTextField.getText().trim().isEmpty() &&
-                        !bookTitleTextField.getText().trim().isEmpty() &&
-                        !bookLengthTextField.getText().trim().isEmpty() &&
-                        isInteger(bookLengthTextField.getText().trim()) &&
-                        authorComboBox.getSelectedIndex() != -1
         );
     }
 
@@ -419,6 +406,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorListModel.addElement(author);
         authorComboBoxModel.addElement(author);
         resetAuthorErrorLabel();
+        resetAuthorTextFields();
         authorList.clearSelection();
     }
 
@@ -433,6 +421,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void bookAdded(Book book) {
         bookTableModel.addElement(book);
+        resetBookTextFields();
         resetBookErrorLabel();
     }
 
@@ -474,6 +463,35 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     }
 
     /* Utils */
+
+    private void setAddAuthorButtonEnabledState() {
+        addAuthorButton.setEnabled(
+                !authorIdTextField.getText().trim().isEmpty() &&
+                        !authorNameTextField.getText().trim().isEmpty()
+        );
+    }
+
+    private void setAddBookButtonEnabledState() {
+        addBookButton.setEnabled(
+                !bookIdTextField.getText().trim().isEmpty() &&
+                        !bookTitleTextField.getText().trim().isEmpty() &&
+                        !bookLengthTextField.getText().trim().isEmpty() &&
+                        isInteger(bookLengthTextField.getText().trim()) &&
+                        authorComboBox.getSelectedIndex() != -1
+        );
+    }
+
+    private void resetAuthorTextFields() {
+        authorIdTextField.setText("");
+        authorNameTextField.setText("");
+    }
+
+    private void resetBookTextFields() {
+        bookIdTextField.setText("");
+        bookTitleTextField.setText("");
+        bookLengthTextField.setText("");
+        authorComboBox.setSelectedItem(null);
+    }
 
     private void resetAuthorErrorLabel() {
         authorErrorLabel.setText(" ");
