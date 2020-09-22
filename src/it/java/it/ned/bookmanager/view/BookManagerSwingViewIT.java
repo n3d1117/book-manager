@@ -150,6 +150,8 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         String expected = "👤 George Orwell";
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            window.textBox("authorIdTextField").requireEmpty();
+            window.textBox("authorNameTextField").requireEmpty();
             assertThat(window.list("authorsList").contents()).containsExactly(expected);
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
         });
@@ -217,13 +219,17 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.comboBox("authorsCombobox").selectItem(0);
         window.button(JButtonMatcher.withName("addBookButton")).click();
 
-        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() ->
-                assertThat(window.table("booksTable").contents()[0]).containsExactly(
-                        animalFarm.getTitle(),
-                        animalFarm.getAuthorId(),
-                        animalFarm.getNumberOfPages().toString()
-                )
-        );
+        await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            window.textBox("bookIdTextField").requireEmpty();
+            window.textBox("bookTitleTextField").requireEmpty();
+            window.textBox("bookLengthTextField").requireEmpty();
+            window.comboBox("authorsCombobox").requireNoSelection();
+            assertThat(window.table("booksTable").contents()[0]).containsExactly(
+                    animalFarm.getTitle(),
+                    animalFarm.getAuthorId(),
+                    animalFarm.getNumberOfPages().toString()
+            );
+        });
     }
 
     @Test @GUITest
