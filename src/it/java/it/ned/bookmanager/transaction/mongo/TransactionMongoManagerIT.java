@@ -33,8 +33,8 @@ public class TransactionMongoManagerIT {
     private MongoCollection<Book> bookCollection;
 
     private static final String DB_NAME = "bookmanager";
-    private static final String AUTHOR_COLLECTION_NAME = "authors";
-    private static final String BOOK_COLLECTION_NAME = "books";
+    private static final String AUTHOR_COLLECTION = "authors";
+    private static final String BOOK_COLLECTION = "books";
 
     private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
     private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
@@ -59,14 +59,14 @@ public class TransactionMongoManagerIT {
                 fromProviders(PojoCodecProvider.builder().automatic(true).build())
         );
         authorCollection = database
-                .getCollection(AUTHOR_COLLECTION_NAME, Author.class)
+                .getCollection(AUTHOR_COLLECTION, Author.class)
                 .withCodecRegistry(pojoCodecRegistry);
         bookCollection = database
-                .getCollection(BOOK_COLLECTION_NAME, Book.class)
+                .getCollection(BOOK_COLLECTION, Book.class)
                 .withCodecRegistry(pojoCodecRegistry);
 
         transactionManager = new TransactionMongoManager(client, DB_NAME,
-                AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+                AUTHOR_COLLECTION, BOOK_COLLECTION);
         when(client.startSession()).thenReturn(session);
     }
 
@@ -77,9 +77,9 @@ public class TransactionMongoManagerIT {
 
     @Test
     public void testInitialCollectionsAreCreatedCorrectly() {
-        transactionManager = new TransactionMongoManager(client, DB_NAME, AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+        transactionManager = new TransactionMongoManager(client, DB_NAME, AUTHOR_COLLECTION, BOOK_COLLECTION);
         assertThat(client.getDatabase(DB_NAME).listCollectionNames())
-                .containsExactly(AUTHOR_COLLECTION_NAME, BOOK_COLLECTION_NAME);
+                .containsExactly(AUTHOR_COLLECTION, BOOK_COLLECTION);
     }
 
     @Test
