@@ -203,6 +203,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            window.list("authorsList").requireNoSelection();
             assertThat(window.list("authorsList").contents()).isEmpty();
             assertThat(window.comboBox("authorsCombobox").contents()).isEmpty();
             window.label("authorErrorLabel").requireText("Error: Author with id 1 not found!");
@@ -287,6 +288,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
+            window.table("booksTable").requireNoSelection();
             assertThat(window.table("booksTable").contents()).isEmpty();
             window.label("bookErrorLabel").requireText("Error: Book with id 1 not found!");
         });

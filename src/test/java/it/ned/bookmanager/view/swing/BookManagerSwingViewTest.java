@@ -589,19 +589,21 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
-    public void testAuthorNotDeletedBecauseNotFoundErrorShouldAlsoRemoveAuthorFromList() {
-        Author georgeOrwell = new Author("1", "George Orwell");
-        Author danBrown = new Author("2", "Dan Brown");
+    public void testAuthorNotDeletedBecauseNotFoundErrorShouldAlsoRemoveAuthorFromListAndClearSelection() {
+        Author danBrown = new Author("1", "Dan Brown");
+        Author georgeOrwell = new Author("2", "George Orwell");
         GuiActionRunner.execute(() -> {
-            view.getAuthorListModel().addElement(georgeOrwell);
-            view.getAuthorComboBoxModel().addElement(georgeOrwell);
             view.getAuthorListModel().addElement(danBrown);
             view.getAuthorComboBoxModel().addElement(danBrown);
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
         });
+        window.list("authorsList").selectItem(0);
         GuiActionRunner.execute(() ->
-                view.authorNotDeletedBecauseNotFoundError(georgeOrwell)
+                view.authorNotDeletedBecauseNotFoundError(danBrown)
         );
-        String expected = "👤 " + danBrown.getName();
+        window.list("authorsList").requireNoSelection();
+        String expected = "👤 " + georgeOrwell.getName();
         assertThat(window.list("authorsList").contents()).containsExactly(expected);
         assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
     }
@@ -678,7 +680,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
-    public void testBookNotDeletedBecauseNotFoundErrorShouldAlsoRemoveBookFromTable() {
+    public void testBookNotDeletedBecauseNotFoundErrorShouldAlsoRemoveBookFromTableAndClearSelection() {
         Book nineteenEightyFour = new Book("1", "1984", 293, "1");
         Book animalFarm = new Book("2", "Animal Farm", 93, "1");
         GuiActionRunner.execute(() -> {
@@ -689,7 +691,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
                 view.bookNotDeletedBecauseNotFoundError(animalFarm)
         );
         JTableFixture booksTable = window.table("booksTable");
-        booksTable.requireRowCount(1);
+        booksTable.requireNoSelection().requireRowCount(1);
         assertThat(booksTable.contents()[0]).containsExactly(
                 nineteenEightyFour.getTitle(),
                 nineteenEightyFour.getAuthorId(),

@@ -448,6 +448,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorErrorLabel.setText(String.format(AUTHOR_NOT_FOUND_ERROR, author.getId()));
         authorListModel.removeElement(author);
         authorComboBoxModel.removeElement(author);
+        authorList.clearSelection();
     }
 
     @Override
