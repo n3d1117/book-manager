@@ -14,7 +14,7 @@ public class AuthorTransactionalService implements AuthorService {
     private final TransactionManager transactionManager;
 
     private static final String AUTHOR_NOT_FOUND_ERROR_MESSAGE = "Author with id %s not found in database.";
-    private static final String AUTHOR_ALREADY_IN_DB_ERROR_MESSAGE = "Author with id %s is already in database.";
+    private static final String AUTHOR_DUPLICATE_ERROR_MESSAGE = "Author with id %s is already in database.";
 
     public AuthorTransactionalService(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
@@ -41,7 +41,7 @@ public class AuthorTransactionalService implements AuthorService {
                 if (authorRepository.findById(author.getId()) != null) {
                     Author existingAuthor = authorRepository.findById(author.getId());
                     throw new AuthorDuplicateException(
-                            String.format(AUTHOR_ALREADY_IN_DB_ERROR_MESSAGE, author.getId()),
+                            String.format(AUTHOR_DUPLICATE_ERROR_MESSAGE, author.getId()),
                             existingAuthor
                     );
                 }

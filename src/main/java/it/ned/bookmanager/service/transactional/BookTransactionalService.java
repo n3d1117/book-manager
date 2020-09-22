@@ -15,7 +15,7 @@ public class BookTransactionalService implements BookService {
     private final TransactionManager transactionManager;
 
     private static final String BOOK_NOT_FOUND_ERROR_MESSAGE = "Book with id %s not found in database.";
-    private static final String BOOK_ALREADY_IN_DB_ERROR_MESSAGE = "Book with id %s is already in database.";
+    private static final String BOOK_DUPLICATE_ERROR_MESSAGE = "Book with id %s is already in database.";
     private static final String AUTHOR_NOT_FOUND_ERROR_MESSAGE = "Author with id %s not found in database.";
 
     public BookTransactionalService(TransactionManager transactionManager) {
@@ -44,7 +44,7 @@ public class BookTransactionalService implements BookService {
                 if (bookRepository.findById(book.getId()) != null) {
                     Book existingBook = bookRepository.findById(book.getId());
                     throw new BookDuplicateException(
-                            String.format(BOOK_ALREADY_IN_DB_ERROR_MESSAGE, book.getId()),
+                            String.format(BOOK_DUPLICATE_ERROR_MESSAGE, book.getId()),
                             existingBook
                     );
                 }
