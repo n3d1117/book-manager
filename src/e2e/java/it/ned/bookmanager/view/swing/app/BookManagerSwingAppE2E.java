@@ -103,6 +103,7 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
         assertThat(window.comboBox("authorsCombobox").contents())
                 .anySatisfy(e -> assertThat(e).contains(AUTHOR_FIXTURE_1.getName()))
                 .anySatisfy(e -> assertThat(e).contains(AUTHOR_FIXTURE_2.getName()));
+        assertEquals(2, window.table("booksTable").rowCount());
         assertThat(window.table("booksTable").contents()[0])
                 .anySatisfy(e -> assertThat(e).contains(BOOK_FIXTURE_1.getTitle()));
         assertThat(window.table("booksTable").contents()[1])

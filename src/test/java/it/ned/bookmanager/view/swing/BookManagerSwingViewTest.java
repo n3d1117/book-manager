@@ -9,6 +9,7 @@ import org.assertj.swing.core.matcher.JLabelMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
 import org.assertj.swing.fixture.FrameFixture;
 import org.assertj.swing.fixture.JButtonFixture;
+import org.assertj.swing.fixture.JTableFixture;
 import org.assertj.swing.fixture.JTextComponentFixture;
 import org.assertj.swing.junit.runner.GUITestRunner;
 import org.assertj.swing.junit.testcase.AssertJSwingJUnitTestCase;
@@ -293,13 +294,14 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.showAllBooks(Arrays.asList(nineteenEightyFour, animalFarm))
         );
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(2);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 nineteenEightyFour.getTitle(),
                 nineteenEightyFour.getAuthorId(),
                 nineteenEightyFour.getNumberOfPages().toString()
         );
-        assertThat(booksTableContent[1]).containsExactly(
+        assertThat(booksTable.contents()[1]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
@@ -314,18 +316,19 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.showAllBooks(Arrays.asList(theDaVinciCode, ulysses, animalFarm))
         );
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(3);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
         );
-        assertThat(booksTableContent[1]).containsExactly(
+        assertThat(booksTable.contents()[1]).containsExactly(
                 theDaVinciCode.getTitle(),
                 theDaVinciCode.getAuthorId(),
                 theDaVinciCode.getNumberOfPages().toString()
         );
-        assertThat(booksTableContent[2]).containsExactly(
+        assertThat(booksTable.contents()[2]).containsExactly(
                 ulysses.getTitle(),
                 ulysses.getAuthorId(),
                 ulysses.getNumberOfPages().toString()
@@ -456,8 +459,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.deletedAllBooksForAuthor(georgeOrwell);
         });
 
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(1);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 theDaVinciCode.getTitle(),
                 theDaVinciCode.getAuthorId(),
                 theDaVinciCode.getNumberOfPages().toString()
@@ -470,8 +474,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.bookAdded(animalFarm)
         );
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(1);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
@@ -509,8 +514,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.bookDeleted(new Book("2", "1984", 293, "1"));
         });
 
-        String[][] booksTableContent = window.table("booksTable").contents();
-        assertThat(booksTableContent[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(1);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
@@ -621,13 +627,14 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
         );
-        window.table("booksTable").requireRowCount(2);
-        assertThat(window.table("booksTable").contents()[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(2);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 nineteenEightyFour.getTitle(),
                 nineteenEightyFour.getAuthorId(),
                 nineteenEightyFour.getNumberOfPages().toString()
         );
-        assertThat(window.table("booksTable").contents()[1]).containsExactly(
+        assertThat(booksTable.contents()[1]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
@@ -645,13 +652,14 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
         );
-        window.table("booksTable").requireRowCount(2);
-        assertThat(window.table("booksTable").contents()[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(2);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 nineteenEightyFour.getTitle(),
                 nineteenEightyFour.getAuthorId(),
                 nineteenEightyFour.getNumberOfPages().toString()
         );
-        assertThat(window.table("booksTable").contents()[1]).containsExactly(
+        assertThat(booksTable.contents()[1]).containsExactly(
                 animalFarm.getTitle(),
                 animalFarm.getAuthorId(),
                 animalFarm.getNumberOfPages().toString()
@@ -680,8 +688,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         GuiActionRunner.execute(() ->
                 view.bookNotDeletedBecauseNotFoundError(animalFarm)
         );
-        window.table("booksTable").requireRowCount(1);
-        assertThat(window.table("booksTable").contents()[0]).containsExactly(
+        JTableFixture booksTable = window.table("booksTable");
+        booksTable.requireRowCount(1);
+        assertThat(booksTable.contents()[0]).containsExactly(
                 nineteenEightyFour.getTitle(),
                 nineteenEightyFour.getAuthorId(),
                 nineteenEightyFour.getNumberOfPages().toString()
