@@ -37,9 +37,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     private final JLabel authorErrorLabel;
     private final JLabel bookErrorLabel;
 
-    private static final String AUTHOR_ALREADY_EXISTS_ERROR = "Error: Author with id %s already exists!";
+    private static final String AUTHOR_DUPLICATE_ERROR = "Error: Author with id %s already exists!";
     private static final String AUTHOR_NOT_FOUND_ERROR = "Error: Author with id %s not found!";
-    private static final String BOOK_ALREADY_EXISTS_ERROR = "Error: Book with id %s already exists!";
+    private static final String BOOK_DUPLICATE_ERROR = "Error: Book with id %s already exists!";
     private static final String BOOK_NOT_FOUND_ERROR = "Error: Book with id %s not found!";
 
     public BookManagerSwingView() {
@@ -438,7 +438,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void authorNotAddedBecauseAlreadyExistsError(Author existingAuthor) {
-        authorErrorLabel.setText(String.format(AUTHOR_ALREADY_EXISTS_ERROR, existingAuthor.getId()));
+        authorErrorLabel.setText(String.format(AUTHOR_DUPLICATE_ERROR, existingAuthor.getId()));
         authorListModel.addElement(existingAuthor);
         authorComboBoxModel.addElement(existingAuthor);
     }
@@ -452,7 +452,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void bookNotAddedBecauseAlreadyExistsError(Book existingBook) {
-        bookErrorLabel.setText(String.format(BOOK_ALREADY_EXISTS_ERROR, existingBook.getId()));
+        bookErrorLabel.setText(String.format(BOOK_DUPLICATE_ERROR, existingBook.getId()));
         bookTableModel.addElement(existingBook);
     }
 
