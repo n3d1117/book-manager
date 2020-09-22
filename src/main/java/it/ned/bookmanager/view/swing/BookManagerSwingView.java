@@ -58,19 +58,12 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         JPanel leftSplitPanel = new JPanel();
         leftSplitPanel.setBackground(new Color(159, 181, 199));
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady = 480;
+        c.ipady = 500 - getInsets().top;
         c.weightx = 0.4;
         c.gridx = 0;
         c.gridy = 0;
         leftSplitPanel.setLayout(null);
         mainPanel.add(leftSplitPanel, c);
-
-        // Vertical separator
-        JSeparator vSeparator = new JSeparator(SwingConstants.VERTICAL);
-        vSeparator.setForeground(Color.BLACK);
-        vSeparator.setBackground(Color.BLACK);
-        vSeparator.setBounds(275, 0, 5, 480);
-        leftSplitPanel.add(vSeparator);
 
         // Authors title
         JLabel authorsLabel = new JLabel("AUTHORS");
@@ -113,16 +106,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorErrorLabel.setBounds(15, 340, 250, 40);
         leftSplitPanel.add(authorErrorLabel);
 
-        // Horizontal author separator
-        JSeparator hAuthorSeparator = new JSeparator(SwingConstants.HORIZONTAL);
-        hAuthorSeparator.setForeground(Color.BLACK);
-        hAuthorSeparator.setBackground(Color.BLACK);
-        hAuthorSeparator.setBounds(0, 377, 281, 5);
-        leftSplitPanel.add(hAuthorSeparator);
-
         // Add author panel
         JPanel addAuthorPanel = new JPanel();
-        addAuthorPanel.setBounds(0, 381, 280, 100);
+        addAuthorPanel.setBounds(0, 381, 280, 150);
         addAuthorPanel.setBackground(new Color(-9929840));
         addAuthorPanel.setLayout(null);
         leftSplitPanel.add(addAuthorPanel);
@@ -171,7 +157,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         JPanel rightSplitPanel = new JPanel();
         rightSplitPanel.setBackground(new Color(229, 175, 175));
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.ipady = 480;
+        c.ipady = 500 - getInsets().top;
         c.weightx = 0.6;
         c.gridx = 1;
         c.gridy = 0;
@@ -219,16 +205,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookErrorLabel.setBounds(15, 340, 390, 40);
         rightSplitPanel.add(bookErrorLabel);
 
-        // Horizontal book separator
-        JSeparator hBooksSeparator = new JSeparator(SwingConstants.HORIZONTAL);
-        hBooksSeparator.setForeground(Color.BLACK);
-        hBooksSeparator.setBackground(Color.BLACK);
-        hBooksSeparator.setBounds(0, 377, 420, 5);
-        rightSplitPanel.add(hBooksSeparator);
-
         // Add book panel
         JPanel addBookPanel = new JPanel();
-        addBookPanel.setBounds(0, 381, 420, 100);
+        addBookPanel.setBounds(0, 381, 420, 150);
         addBookPanel.setBackground(new Color(0xE38484));
         addBookPanel.setLayout(null);
         rightSplitPanel.add(addBookPanel);

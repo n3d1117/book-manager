@@ -86,7 +86,6 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
             }
         }).using(robot());
 
-        window.show();
         robot().waitForIdle();
     }
 
