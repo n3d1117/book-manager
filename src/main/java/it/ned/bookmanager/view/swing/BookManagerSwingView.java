@@ -377,7 +377,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void showAllBooks(List<Book> allBooks) {
-        allBooks.forEach(bookTableModel::addElement);
+        allBooks.forEach(book ->
+                bookTableModel.addElement(book, getAuthorFromId(book.getAuthorId()))
+        );
     }
 
     @Override
@@ -399,7 +401,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void bookAdded(Book book) {
-        bookTableModel.addElement(book);
+        bookTableModel.addElement(book, getAuthorFromId(book.getAuthorId()));
         resetBookTextFields();
         resetBookErrorLabel();
     }
@@ -433,7 +435,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void bookNotAddedBecauseAlreadyExistsError(Book existingBook) {
         bookErrorLabel.setText(String.format(BOOK_DUPLICATE_ERROR, existingBook.getId()));
-        bookTableModel.addElement(existingBook);
+        bookTableModel.addElement(existingBook, getAuthorFromId(existingBook.getAuthorId()));
     }
 
     @Override
@@ -443,6 +445,14 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     }
 
     /* Utils */
+
+    private Author getAuthorFromId(String authorId) {
+        return authorListModel.getItems().stream().filter(author ->
+                author.getId().equals(authorId)
+        ).findFirst().orElseThrow(() -> new IllegalArgumentException(
+                String.format("No author found with id %s", authorId)
+        ));
+    }
 
     private void setAddAuthorButtonEnabledState() {
         addAuthorButton.setEnabled(

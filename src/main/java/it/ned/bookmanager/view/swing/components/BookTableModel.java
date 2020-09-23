@@ -1,16 +1,35 @@
 package it.ned.bookmanager.view.swing.components;
 
+import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class BookTableModel extends AbstractTableModel {
 
-    private final transient List<Book> books;
-    private static final String[] columnNames = {"Title", "Author", "Number of pages"};
+    private static class BookAuthorPair {
+
+        private final Book book;
+        private final Author author;
+
+        public BookAuthorPair(Book book, Author author) {
+            this.book = book;
+            this.author = author;
+        }
+
+        public Book getBook() {
+            return book;
+        }
+
+        public Author getAuthor() {
+            return author;
+        }
+    }
+
+    private final transient List<BookAuthorPair> books;
+
+    private static final List<String> columns = Arrays.asList("Title", "Author", "Number of pages");
 
     public BookTableModel() {
         this.books = new ArrayList<>(Collections.emptyList());
@@ -28,47 +47,46 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public int getColumnCount() {
-        return 3;
+        return columns.size();
     }
 
     @Override
     public String getColumnName(int col) {
-        return columnNames[col];
+        return columns.get(col);
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Object value;
-        Book book = books.get(rowIndex);
-        if (columnIndex == 0)
-            value = book.getTitle();
-        else if (columnIndex == 1)
-            value = book.getAuthorId();
-        else
-            value = book.getNumberOfPages().toString();
-        return value;
+        BookAuthorPair bookAuthorPair = books.get(rowIndex);
+        switch (columnIndex) {
+            case 0: return bookAuthorPair.getBook().getTitle();
+            case 1: return bookAuthorPair.getAuthor().getName();
+            case 2: return bookAuthorPair.getBook().getNumberOfPages().toString();
+            default: break;
+        }
+        throw new IllegalArgumentException(String.format("Column index %s is outside range", columnIndex));
     }
 
     public Book getBookAt(int row) {
-        return books.get(row);
+        return books.get(row).getBook();
     }
 
-    public void addElement(Book book) {
-        if (!books.contains(book)) {
-            books.add(book);
-            Collections.sort(books);
+    public void addElement(Book book, Author author) {
+        if (books.stream().noneMatch(o -> o.getBook().equals(book))) {
+            books.add(new BookAuthorPair(book, author));
+            books.sort(Comparator.comparing(BookAuthorPair::getBook));
             fireTableDataChanged();
         }
     }
 
     public void removeElement(Book book) {
-        books.remove(book);
+        books.removeIf(bookAuthorPair -> bookAuthorPair.getBook().equals(book));
         fireTableDataChanged();
     }
 
     public void removeAllBooksFromAuthorId(String authorId) {
-        books.removeIf(book -> book.getAuthorId().equals(authorId));
-        Collections.sort(books);
+        books.removeIf(bookAuthorPair -> bookAuthorPair.getAuthor().getId().equals(authorId));
+        books.sort(Comparator.comparing(BookAuthorPair::getBook));
         fireTableDataChanged();
     }
 }
