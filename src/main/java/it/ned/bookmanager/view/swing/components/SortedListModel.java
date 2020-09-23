@@ -11,6 +11,10 @@ public class SortedListModel<T extends Comparable<? super T>> extends AbstractLi
         items = new ArrayList<>(Collections.emptyList());
     }
 
+    public List<T> getItems() {
+        return items;
+    }
+
     public int getSize() {
         return items.size();
     }

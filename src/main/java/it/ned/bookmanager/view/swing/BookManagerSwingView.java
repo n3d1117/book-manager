@@ -121,7 +121,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorIdLabel.setBounds(0, 10, 80, 20);
         addAuthorPanel.add(authorIdLabel);
 
-        // Author id textfield
+        // Author id textField
         authorIdTextField = new JTextField();
         authorIdTextField.setName("authorIdTextField");
         authorIdTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -137,7 +137,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorNameLabel.setBounds(0, 35, 80, 20);
         addAuthorPanel.add(authorNameLabel);
 
-        // Author name textfield
+        // Author name textField
         authorNameTextField = new JTextField();
         authorNameTextField.setName("authorNameTextField");
         authorNameTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -220,7 +220,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookIdLabel.setBounds(0, 10, 60, 20);
         addBookPanel.add(bookIdLabel);
 
-        // Book id textfield
+        // Book id textField
         bookIdTextField = new JTextField();
         bookIdTextField.setName("bookIdTextField");
         bookIdTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -236,7 +236,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookTitleLabel.setBounds(0, 35, 60, 20);
         addBookPanel.add(bookTitleLabel);
 
-        // Book title textfield
+        // Book title textField
         bookTitleTextField = new JTextField();
         bookTitleTextField.setName("bookTitleTextField");
         bookTitleTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -268,7 +268,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookLengthLabel.setBounds(210, 35, 60, 20);
         addBookPanel.add(bookLengthLabel);
 
-        // Book length textfield
+        // Book length textField
         bookLengthTextField = new JTextField();
         bookLengthTextField.setName("bookLengthTextField");
         bookLengthTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -377,7 +377,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void showAllBooks(List<Book> allBooks) {
-        allBooks.forEach(bookTableModel::addElement);
+        allBooks.forEach(book ->
+                bookTableModel.addElement(book, getAuthorFromId(book.getAuthorId()))
+        );
     }
 
     @Override
@@ -399,7 +401,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
 
     @Override
     public void bookAdded(Book book) {
-        bookTableModel.addElement(book);
+        bookTableModel.addElement(book, getAuthorFromId(book.getAuthorId()));
         resetBookTextFields();
         resetBookErrorLabel();
     }
@@ -433,7 +435,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     @Override
     public void bookNotAddedBecauseAlreadyExistsError(Book existingBook) {
         bookErrorLabel.setText(String.format(BOOK_DUPLICATE_ERROR, existingBook.getId()));
-        bookTableModel.addElement(existingBook);
+        bookTableModel.addElement(existingBook, getAuthorFromId(existingBook.getAuthorId()));
     }
 
     @Override
@@ -443,6 +445,14 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
     }
 
     /* Utils */
+
+    private Author getAuthorFromId(String authorId) {
+        return authorListModel.getItems().stream().filter(author ->
+                author.getId().equals(authorId)
+        ).findFirst().orElseThrow(() -> new IllegalArgumentException(
+                String.format("No author found with id %s", authorId)
+        ));
+    }
 
     private void setAddAuthorButtonEnabledState() {
         addAuthorButton.setEnabled(
