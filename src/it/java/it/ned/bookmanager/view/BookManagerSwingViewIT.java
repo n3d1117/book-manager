@@ -51,7 +51,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
     private static final String DB_AUTHOR_COLLECTION = "authors";
     private static final String DB_BOOK_COLLECTION = "books";
 
-    private static final long TIMEOUT_SECONDS = 5;
+    private static final long TIMEOUT_SECONDS = 3;
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);

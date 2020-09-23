@@ -121,7 +121,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorIdLabel.setBounds(0, 10, 80, 20);
         addAuthorPanel.add(authorIdLabel);
 
-        // Author id textfield
+        // Author id textField
         authorIdTextField = new JTextField();
         authorIdTextField.setName("authorIdTextField");
         authorIdTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -137,7 +137,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorNameLabel.setBounds(0, 35, 80, 20);
         addAuthorPanel.add(authorNameLabel);
 
-        // Author name textfield
+        // Author name textField
         authorNameTextField = new JTextField();
         authorNameTextField.setName("authorNameTextField");
         authorNameTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -220,7 +220,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookIdLabel.setBounds(0, 10, 60, 20);
         addBookPanel.add(bookIdLabel);
 
-        // Book id textfield
+        // Book id textField
         bookIdTextField = new JTextField();
         bookIdTextField.setName("bookIdTextField");
         bookIdTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -236,7 +236,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookTitleLabel.setBounds(0, 35, 60, 20);
         addBookPanel.add(bookTitleLabel);
 
-        // Book title textfield
+        // Book title textField
         bookTitleTextField = new JTextField();
         bookTitleTextField.setName("bookTitleTextField");
         bookTitleTextField.setHorizontalAlignment(SwingConstants.CENTER);
@@ -268,7 +268,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookLengthLabel.setBounds(210, 35, 60, 20);
         addBookPanel.add(bookLengthLabel);
 
-        // Book length textfield
+        // Book length textField
         bookLengthTextField = new JTextField();
         bookLengthTextField.setName("bookLengthTextField");
         bookLengthTextField.setHorizontalAlignment(SwingConstants.CENTER);

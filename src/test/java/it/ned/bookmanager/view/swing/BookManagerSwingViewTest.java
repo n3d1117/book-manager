@@ -32,7 +32,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Mock private BookManagerController controller;
 
-    private static final int MOCKITO_TIMEOUT = 5000;
+    private static final int MOCKITO_TIMEOUT = 3000;
 
     @Override
     protected void onSetUp() {

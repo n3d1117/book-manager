@@ -54,7 +54,7 @@ public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
     private static final Book BOOK_FIXTURE_1 = new Book("1", "1984", 283, "1");
     private static final Book BOOK_FIXTURE_2 = new Book("2", "Animal Farm", 93, "1");
 
-    private static final long TIMEOUT_SECONDS = 5;
+    private static final long TIMEOUT_SECONDS = 3;
     private static final CodecRegistry pojoCodecRegistry =  fromRegistries(
             MongoClientSettings.getDefaultCodecRegistry(),
             fromProviders(PojoCodecProvider.builder().automatic(true).build())
