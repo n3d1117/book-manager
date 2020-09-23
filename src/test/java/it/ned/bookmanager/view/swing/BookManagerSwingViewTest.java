@@ -22,6 +22,8 @@ import org.mockito.MockitoAnnotations;
 import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 
 @RunWith(GUITestRunner.class)
@@ -356,6 +358,20 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     }
 
     @Test @GUITest
+    public void testShowAllBooksShouldThrowWhenAtLeastOneOneCorrespondingAuthorIsMissing() {
+        Author jamesJoyce = new Author("2", "James Joyce");
+        GuiActionRunner.execute(() ->
+            view.getAuthorListModel().addElement(jamesJoyce)
+        );
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        Book ulysses = new Book("2", "Ulysses", 1341, jamesJoyce.getId());
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
+                GuiActionRunner.execute(() -> view.showAllBooks(Arrays.asList(animalFarm, ulysses)))
+        );
+        assertTrue(e.getMessage().contains(animalFarm.getAuthorId()));
+    }
+
+    @Test @GUITest
     public void testAuthorAddedShouldAddAuthorToListAndComboboxAndResetErrorLabel() {
         Author georgeOrwell = new Author("1", "George Orwell");
         GuiActionRunner.execute(() ->
@@ -512,10 +528,11 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
     @Test @GUITest
     public void testBookAddedShouldAlsoClearBookTextFields() {
         Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
+            view.getAuthorComboBoxModel().addElement(georgeOrwell);
+        });
         Book animalFarm = new Book("1", "Animal Farm", 93, georgeOrwell.getId());
-        GuiActionRunner.execute(() ->
-                view.getAuthorComboBoxModel().addElement(georgeOrwell)
-        );
         window.textBox("bookIdTextField").enterText(animalFarm.getId());
         window.textBox("bookTitleTextField").enterText(animalFarm.getTitle());
         window.textBox("bookLengthTextField").enterText(animalFarm.getNumberOfPages().toString());
@@ -527,6 +544,15 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         window.textBox("bookTitleTextField").requireEmpty();
         window.textBox("bookLengthTextField").requireEmpty();
         window.comboBox("authorsCombobox").requireNoSelection();
+    }
+
+    @Test @GUITest
+    public void testBookAddedWithNoCorrespondingAuthorShouldThrow() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
+                GuiActionRunner.execute(() -> view.bookAdded(animalFarm))
+        );
+        assertTrue(e.getMessage().contains(animalFarm.getAuthorId()));
     }
 
     @Test @GUITest
@@ -638,7 +664,11 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testBookNotAddedBecauseAlreadyExistsErrorShouldDisplayErrorMessage() {
-        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        Author georgeOrwell = new Author("1", "George Orwell");
+        GuiActionRunner.execute(() ->
+                view.getAuthorListModel().addElement(georgeOrwell)
+        );
+        Book animalFarm = new Book("1", "Animal Farm", 93, georgeOrwell.getId());
         GuiActionRunner.execute(() ->
                 view.bookNotAddedBecauseAlreadyExistsError(animalFarm)
         );
@@ -679,6 +709,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         Book nineteenEightyFour = new Book("1", "1984", 293, georgeOrwell.getId());
         Book animalFarm = new Book("2", "Animal Farm", 93, georgeOrwell.getId());
         GuiActionRunner.execute(() -> {
+            view.getAuthorListModel().addElement(georgeOrwell);
             view.getBookTableModel().addElement(nineteenEightyFour, georgeOrwell);
             view.getBookTableModel().addElement(animalFarm, georgeOrwell);
         });
@@ -697,6 +728,15 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
                 georgeOrwell.getName(),
                 animalFarm.getNumberOfPages().toString()
         );
+    }
+
+    @Test @GUITest
+    public void testBookNotAddedShouldThrowWhenThereIsNoCorrespondingAuthor() {
+        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
+                GuiActionRunner.execute(() -> view.bookNotAddedBecauseAlreadyExistsError(animalFarm))
+        );
+        assertTrue(e.getMessage().contains(animalFarm.getAuthorId()));
     }
 
     @Test @GUITest

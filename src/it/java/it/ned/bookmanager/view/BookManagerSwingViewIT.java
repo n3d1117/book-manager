@@ -274,8 +274,12 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     @Test @GUITest
     public void testDeleteBookSuccess() {
+        Author georgeOrwell = new Author("1", "George Orwell");
         GuiActionRunner.execute(() ->
-                controller.addBook(new Book("1", "Animal Farm", 93, "1"))
+                view.getAuthorListModel().addElement(georgeOrwell)
+        );
+        GuiActionRunner.execute(() ->
+                controller.addBook(new Book("1", "Animal Farm", 93, georgeOrwell.getId()))
         );
         window.table("booksTable").selectRows(0);
         window.button(JButtonMatcher.withName("deleteBookButton")).click();
