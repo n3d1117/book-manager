@@ -36,7 +36,7 @@ import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(GUITestRunner.class)
-public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
+public class BookManagerSwingAppE2ETest extends AssertJSwingJUnitTestCase {
 
     @ClassRule
     public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
