@@ -74,11 +74,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         leftSplitPanel.add(authorsLabel);
 
         // Delete selected author button
-        JButton deleteAuthorButton = new JButton("🗑 Delete selected");
+        JButton deleteAuthorButton = new JButton("Delete selected");
         deleteAuthorButton.setName("deleteAuthorButton");
         deleteAuthorButton.setEnabled(false);
         deleteAuthorButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        deleteAuthorButton.setBounds(120, 10, 150, 30);
+        deleteAuthorButton.setBounds(140, 10, 130, 30);
         leftSplitPanel.add(deleteAuthorButton);
 
         // Authors Scroll Panel
@@ -146,11 +146,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addAuthorPanel.add(authorNameTextField);
 
         // Add author button
-        addAuthorButton = new JButton("👤 Add Author");
+        addAuthorButton = new JButton("Add Author");
         addAuthorButton.setName("addAuthorButton");
         addAuthorButton.setEnabled(false);
         addAuthorButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        addAuthorButton.setBounds(50, 65, 180, 30);
+        addAuthorButton.setBounds(65, 65, 150, 30);
         addAuthorPanel.add(addAuthorButton);
 
         // Right panel
@@ -173,11 +173,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         rightSplitPanel.add(booksLabel);
 
         // Delete selected book button
-        JButton deleteBookButton = new JButton("🗑 Delete selected");
+        JButton deleteBookButton = new JButton("Delete selected");
         deleteBookButton.setName("deleteBookButton");
         deleteBookButton.setEnabled(false);
         deleteBookButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        deleteBookButton.setBounds(260, 10, 150, 30);
+        deleteBookButton.setBounds(280, 10, 130, 30);
         rightSplitPanel.add(deleteBookButton);
 
         // Books Scroll Panel
@@ -277,11 +277,11 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         addBookPanel.add(bookLengthTextField);
 
         // Add book button
-        addBookButton = new JButton("📖 Add Book");
+        addBookButton = new JButton("Add Book");
         addBookButton.setName("addBookButton");
         addBookButton.setEnabled(false);
         addBookButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        addBookButton.setBounds(120, 65, 180, 30);
+        addBookButton.setBounds(135, 65, 150, 30);
         addBookPanel.add(addBookButton);
 
         /* Listeners */

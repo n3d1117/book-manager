@@ -109,10 +109,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(
-                    "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                    danBrown.getName(), georgeOrwell.getName()
             );
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
-                    "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                    danBrown.getName(), georgeOrwell.getName()
             );
         });
     }
@@ -153,7 +153,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.textBox("authorIdTextField").enterText("1");
         window.textBox("authorNameTextField").enterText("George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
-        String expected = "👤 George Orwell";
+        String expected = "George Orwell";
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             window.textBox("authorIdTextField").requireEmpty();
@@ -171,7 +171,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.textBox("authorNameTextField").enterText("Another George Orwell");
         window.button(JButtonMatcher.withName("addAuthorButton")).click();
 
-        String expected = "👤 " + georgeOrwell.getName();
+        String expected = georgeOrwell.getName();
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(expected);
             assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
@@ -329,7 +329,7 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
         window.list("authorsList").selectItem(1);
         window.button(JButtonMatcher.withName("deleteAuthorButton")).click();
 
-        String expected = "👤 Dan Brown";
+        String expected = "Dan Brown";
 
         await().atMost(TIMEOUT_SECONDS, TimeUnit.SECONDS).untilAsserted(() -> {
             assertThat(window.list("authorsList").contents()).containsExactly(expected);

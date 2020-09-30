@@ -246,7 +246,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         String[] authorsListContent = window.list("authorsList").contents();
         assertThat(authorsListContent).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
     }
 
@@ -260,9 +260,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         String[] authorsListContent = window.list("authorsList").contents();
         assertThat(authorsListContent).containsExactly(
-                "👤 " + danBrown.getName(),
-                "👤 " + georgeOrwell.getName(),
-                "👤 " + jamesJoyce.getName()
+                danBrown.getName(),
+                georgeOrwell.getName(),
+                jamesJoyce.getName()
         );
     }
 
@@ -275,7 +275,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
         assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
     }
 
@@ -289,9 +289,9 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
         assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + danBrown.getName(),
-                "👤 " + georgeOrwell.getName(),
-                "👤 " + jamesJoyce.getName()
+                danBrown.getName(),
+                georgeOrwell.getName(),
+                jamesJoyce.getName()
         );
     }
 
@@ -380,8 +380,8 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         String[] authorsListContent = window.list("authorsList").contents();
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
 
-        assertThat(authorsListContent).containsExactly("👤 " + georgeOrwell.getName());
-        assertThat(authorsListComboboxContent).containsExactly("👤 " + georgeOrwell.getName());
+        assertThat(authorsListContent).containsExactly(georgeOrwell.getName());
+        assertThat(authorsListComboboxContent).containsExactly(georgeOrwell.getName());
 
         window.label("authorErrorLabel").requireText(" ");
     }
@@ -396,8 +396,8 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         });
         String[] authorsListContent = window.list("authorsList").contents();
         assertThat(authorsListContent).containsExactly(
-                "👤 " + georgeOrwell.getName(),
-                "👤 " + jamesJoyce.getName()
+                georgeOrwell.getName(),
+                jamesJoyce.getName()
         );
     }
 
@@ -411,8 +411,8 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         });
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
         assertThat(authorsListComboboxContent).containsExactly(
-                "👤 " + georgeOrwell.getName(),
-                "👤 " + jamesJoyce.getName()
+                georgeOrwell.getName(),
+                jamesJoyce.getName()
         );
     }
 
@@ -455,7 +455,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
             view.authorDeleted(new Author("1", "Dan Brown"));
         });
 
-        String expected = "👤 " + georgeOrwell.getName();
+        String expected = georgeOrwell.getName();
         String[] authorsListContent = window.list("authorsList").contents();
         String[] authorsListComboboxContent = window.comboBox("authorsCombobox").contents();
 
@@ -602,10 +602,10 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
                 view.authorNotAddedBecauseAlreadyExistsError(georgeOrwell)
         );
         assertThat(window.list("authorsList").contents()).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
         assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
     }
 
@@ -624,10 +624,10 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
         );
         // Make sure duplicates are avoided
         assertThat(window.list("authorsList").contents()).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
         assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(
-                "👤 " + danBrown.getName(), "👤 " + georgeOrwell.getName()
+                danBrown.getName(), georgeOrwell.getName()
         );
     }
 
@@ -657,7 +657,7 @@ public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {
                 view.authorNotDeletedBecauseNotFoundError(danBrown)
         );
         window.list("authorsList").requireNoSelection();
-        String expected = "👤 " + georgeOrwell.getName();
+        String expected = georgeOrwell.getName();
         assertThat(window.list("authorsList").contents()).containsExactly(expected);
         assertThat(window.comboBox("authorsCombobox").contents()).containsExactly(expected);
     }
