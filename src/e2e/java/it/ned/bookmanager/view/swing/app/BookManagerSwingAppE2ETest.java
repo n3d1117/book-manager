@@ -72,7 +72,7 @@ public class BookManagerSwingAppE2ETest extends AssertJSwingJUnitTestCase {
 
         application("it.ned.bookmanager.view.swing.app.BookManagerSwingApp")
                 .withArgs(
-                        "--mongo-url=" + container.getReplicaSetUrl(),
+                        "--mongo-replica-set-url=" + container.getReplicaSetUrl(),
                         "--db-name=" + DB_NAME,
                         "--db-author-collection=" + DB_AUTHOR_COLLECTION,
                         "--db-book-collection=" + DB_BOOK_COLLECTION

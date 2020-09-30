@@ -27,7 +27,7 @@ public class BookManagerSwingApp implements Callable<Void> {
 
     private static final Logger LOGGER = LogManager.getLogger(BookManagerSwingApp.class);
 
-    @Option(names = { "--mongo-url" }, description = "MongoDB replica set URL")
+    @Option(names = { "--mongo-replica-set-url" }, description = "MongoDB replica set URL")
     private String mongoUrl = "mongodb://localhost:27017";
 
     @Option(names = { "--db-name" }, description = "Database name")
