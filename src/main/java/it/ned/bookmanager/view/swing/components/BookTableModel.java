@@ -37,6 +37,9 @@ public class BookTableModel extends AbstractTableModel {
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
+        if (columnIndex == 2) {
+            return Integer.class;
+        }
         return String.class;
     }
 
@@ -61,7 +64,7 @@ public class BookTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0: return bookAuthorPair.getBook().getTitle();
             case 1: return bookAuthorPair.getAuthor().getName();
-            case 2: return bookAuthorPair.getBook().getNumberOfPages().toString();
+            case 2: return bookAuthorPair.getBook().getNumberOfPages();
             default: break;
         }
         throw new IllegalArgumentException(String.format("Column index %s is outside range", columnIndex));

@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import java.awt.*;
 import java.util.List;
 
@@ -190,10 +191,13 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         bookTableModel = new BookTableModel();
         booksTable = new JTable(bookTableModel);
         booksTable.setName("booksTable");
+        booksTable.setAutoCreateRowSorter(true);
         booksTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         booksTable.setBackground(Color.WHITE);
         booksTable.setRowHeight(25);
-        booksTable.setDefaultRenderer(String.class, new BookTableCellRenderer());
+        DefaultTableCellRenderer renderer = new BookTableCellRenderer();
+        booksTable.setDefaultRenderer(String.class, renderer);
+        booksTable.setDefaultRenderer(Integer.class, renderer);
         scrollPaneBooks.setViewportView(booksTable);
 
         // Book error label
