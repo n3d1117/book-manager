@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.Collections;
 
@@ -25,8 +26,10 @@ import static org.mockito.Mockito.*;
 
 public class BookManagerControllerIT {
 
+    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+
     @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
+    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
     @Mock private BookManagerView view;
     private AuthorService authorService;

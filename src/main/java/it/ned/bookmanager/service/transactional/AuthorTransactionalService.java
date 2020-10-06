@@ -34,6 +34,7 @@ public class AuthorTransactionalService implements AuthorService {
         );
     }
 
+    @Override
     public void add(Author author) {
         transactionManager.doInTransaction(factory -> {
             if (author != null) {

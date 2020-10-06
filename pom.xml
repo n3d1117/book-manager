@@ -24,7 +24,7 @@
         <assertj-swing.version>3.17.1</assertj-swing.version>
         <mongo-java.version>3.12.7</mongo-java.version>
         <logback-classic.version>1.2.3</logback-classic.version>
-        <testcontainers.version>1.14.3</testcontainers.version>
+        <testcontainers.version>1.15.0-rc2</testcontainers.version>
         <awaitility.version>4.0.3</awaitility.version>
         <picocli.version>4.5.1</picocli.version>
 

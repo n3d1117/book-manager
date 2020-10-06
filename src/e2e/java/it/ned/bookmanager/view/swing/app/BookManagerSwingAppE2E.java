@@ -21,6 +21,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import javax.swing.*;
 
@@ -38,8 +39,10 @@ import static org.junit.Assert.assertEquals;
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {
 
+    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+
     @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
+    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
     private MongoClient client;
     private FrameFixture window;

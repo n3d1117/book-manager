@@ -29,6 +29,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.concurrent.TimeUnit;
 
@@ -53,8 +54,10 @@ public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
 
     private static final long TIMEOUT_SECONDS = 3;
 
+    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+
     @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
+    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
     @Override
     protected void onSetUp() {

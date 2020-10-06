@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
@@ -20,8 +21,10 @@ import static org.junit.Assert.assertNull;
 
 public class BookServiceMongoRepositoryIT {
 
+    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+
     @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
+    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
     private BookService service;
     private BookRepository repository;

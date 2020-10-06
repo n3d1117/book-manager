@@ -15,6 +15,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.junit.*;
 
 import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,8 +28,10 @@ import static org.junit.Assert.assertEquals;
 
 public class BookMongoRepositoryIT {
 
+    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+
     @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer().withExposedPorts(27017);
+    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
     private MongoClient client;
     private BookMongoRepository repository;
