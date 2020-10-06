@@ -51,7 +51,7 @@
         </sonar.coverage.exclusions>
 
         <!-- Disable certain Sonar rules -->
-        <sonar.issue.ignore.multicriteria>e1,e2</sonar.issue.ignore.multicriteria>
+        <sonar.issue.ignore.multicriteria>e1,e2,e3</sonar.issue.ignore.multicriteria>
 
         <!-- Disable "Inheritance tree of classes should not be too deep" for Swing views -->
         <sonar.issue.ignore.multicriteria.e1.ruleKey>
@@ -68,6 +68,14 @@
         <sonar.issue.ignore.multicriteria.e2.resourceKey>
             **/BookManagerSwingViewTest.java
         </sonar.issue.ignore.multicriteria.e2.resourceKey>
+
+        <!-- Disable "Test classes should comply with a naming convention" because we use *E2E.java -->
+        <sonar.issue.ignore.multicriteria.e3.ruleKey>
+            java:S3577
+        </sonar.issue.ignore.multicriteria.e3.ruleKey>
+        <sonar.issue.ignore.multicriteria.e3.resourceKey>
+            **/BookManagerSwingAppE2E.java
+        </sonar.issue.ignore.multicriteria.e3.resourceKey>
 
     </properties>
 
@@ -223,7 +231,7 @@
                                 <exclude>**/*IT.java</exclude>
                             </excludes>
                             <includes>
-                                <include>**/*E2ETest.java</include>
+                                <include>**/*E2E.java</include>
                             </includes>
                         </configuration>
                     </execution>
