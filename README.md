@@ -81,6 +81,7 @@ To test the project locally with [SonarQube](https://www.sonarqube.org), a Docke
 ```bash
 $ cd sonarqube
 $ docker-compose up
+$ cd ..
 $ mvn clean verify sonar:sonar
 ```
 See [sonarqube folder](sonarqube) for more information.
