@@ -79,7 +79,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         deleteAuthorButton.setName("deleteAuthorButton");
         deleteAuthorButton.setEnabled(false);
         deleteAuthorButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        deleteAuthorButton.setBounds(140, 10, 130, 30);
+        deleteAuthorButton.setBounds(120, 10, 150, 30);
         leftSplitPanel.add(deleteAuthorButton);
 
         // Authors Scroll Panel
@@ -102,7 +102,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         authorErrorLabel = new JLabel(" ");
         authorErrorLabel.setName("authorErrorLabel");
         authorErrorLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        authorErrorLabel.setFont(new Font(new JLabel().getFont().getFontName(), BOLD, 12));
+        authorErrorLabel.setFont(new Font(new JLabel().getFont().getFontName(), BOLD, 11));
         authorErrorLabel.setForeground(new Color(0xFA4343));
         authorErrorLabel.setBounds(15, 340, 250, 40);
         leftSplitPanel.add(authorErrorLabel);
@@ -178,7 +178,7 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         deleteBookButton.setName("deleteBookButton");
         deleteBookButton.setEnabled(false);
         deleteBookButton.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        deleteBookButton.setBounds(280, 10, 130, 30);
+        deleteBookButton.setBounds(260, 10, 150, 30);
         rightSplitPanel.add(deleteBookButton);
 
         // Books Scroll Panel
