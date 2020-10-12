@@ -46,7 +46,7 @@
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
             **/model/*.*,
-            **/view/**.*,
+            **/view/swing/**.*,
             **/repository/mongo/MongoRepositoryFactory.*
         </sonar.coverage.exclusions>
 
@@ -299,7 +299,7 @@
                             <param>it.ned.bookmanager.transaction.mongo.TransactionMongoManagerIT</param>
                         </targetTests>
                         <excludedTestClasses>
-                            <param>it.ned.bookmanager.view.swing.*</param>
+                            <param>it.ned.bookmanager.view.swing.BookManagerSwingViewTest</param>
                         </excludedTestClasses>
                         <mutators>
                             <mutator>STRONGER</mutator>
