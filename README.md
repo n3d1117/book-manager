@@ -98,4 +98,7 @@ mvn clean verify sonar:sonar \
 
 ## Continuous Integration
 This repository uses [Github Actions](https://github.com/features/actions) to build, test, and deploy the app right from GitHub. Check out the `.github/workflows` folder for more information.
-To increase reliability, all tests on CI servers are executed on a secondary desktop with [TightVNC](https://www.tightvnc.com), using the `execute-on-vnc.sh` script included in this project, as recommended in the [official AssertJ Swing documentation](https://joel-costigliola.github.io/assertj/assertj-swing-running.html). 
+To increase reliability, all tests on CI servers are executed on a secondary desktop with [TightVNC](https://www.tightvnc.com), using the `execute-on-vnc.sh` script included in this project, as recommended in the [official AssertJ Swing documentation](https://joel-costigliola.github.io/assertj/assertj-swing-running.html).
+
+## Project Report
+Full project report is available [here](project-report.md).  
