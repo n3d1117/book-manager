@@ -42,8 +42,8 @@ import static org.mockito.Mockito.*;
 
 public class BookManagerControllerRaceConditionIT {
 
-    @Mock
-    private BookManagerView view;
+    @Mock private BookManagerView view;
+
     private AuthorRepository authorRepository;
     private BookRepository bookRepository;
     private BookManagerController controller;

@@ -9,8 +9,8 @@ jobs:
 
   # First job: build and test on Java 8
   build:
-    # Skip build if commit message contains '[ci skip]' or if it's a tag push
-    if: "!contains(github.event.head_commit.message, '[ci skip]') && !startsWith(github.ref, 'refs/tags/v')"
+    # Skip build if it's a tag push
+    if: "!startsWith(github.ref, 'refs/tags/v')"
 
     runs-on: ubuntu-18.04
     name: Build and test on Java 8
@@ -43,7 +43,7 @@ jobs:
       - name: Run mvn clean verify (with jacoco, mutation testing, coveralls and sonar) w/ vnc
         run: |
           ./execute-on-vnc.sh \
-          mvn -f pom.xml clean verify \
+          mvn clean verify \
           $ENABLED_PROFILES $ADDITIONAL_GOALS \
           -D repoToken=$COVERALLS_TOKEN \
           -D sonar.host.url=$SONAR_URL \
@@ -92,6 +92,6 @@ jobs:
       - name: Run mvn clean verify (with jacoco and mutation testing) w/ vnc
         run: |
           ./execute-on-vnc.sh \
-          mvn -f pom.xml clean verify $ENABLED_PROFILES
+          mvn clean verify $ENABLED_PROFILES
         env:
           ENABLED_PROFILES: -P jacoco-check,mutation-testing

@@ -22,7 +22,7 @@ jobs:
         with:
           java-version: 8
       - name: Package .jar (mvn clean package) skipping tests
-        run: mvn -B -f pom.xml -DskipTests=true clean package
+        run: mvn clean package -DskipTests=true
       - name: Create Github release with tag and upload fatjar as asset
         uses: softprops/action-gh-release@v1
         with:
