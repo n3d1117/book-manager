@@ -45,140 +45,126 @@ import it.ned.bookmanager.view.BookManagerView;
 
 public class BookManagerControllerRaceConditionIT {
 
-    @Mock private BookManagerView view;
+	@Mock
+	private BookManagerView view;
 
-    private AuthorRepository authorRepository;
-    private BookRepository bookRepository;
-    private BookManagerController controller;
+	private AuthorRepository authorRepository;
+	private BookRepository bookRepository;
+	private BookManagerController controller;
 
-    private MongoClient client;
+	private MongoClient client;
 
-    private static final String DB_NAME = "bookmanager";
-    private static final String DB_AUTHOR_COLLECTION = "authors";
-    private static final String DB_BOOK_COLLECTION = "books";
+	private static final String DB_NAME = "bookmanager";
+	private static final String DB_AUTHOR_COLLECTION = "authors";
+	private static final String DB_BOOK_COLLECTION = "books";
 
-    @Mock private TransactionManager transactionManager;
-    @Mock private RepositoryFactory repositoryFactory;
+	@Mock
+	private TransactionManager transactionManager;
+	@Mock
+	private RepositoryFactory repositoryFactory;
 
-    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+	private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
 
-    @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
+	@ClassRule
+	public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
+	@Before
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
 
-        client = MongoClients.create(container.getReplicaSetUrl());
-        client.getDatabase(DB_NAME).drop();
-        ClientSession session = client.startSession();
+		client = MongoClients.create(container.getReplicaSetUrl());
+		client.getDatabase(DB_NAME).drop();
+		ClientSession session = client.startSession();
 
-        authorRepository = spy(new AuthorMongoRepository(client, session, DB_NAME, DB_AUTHOR_COLLECTION));
-        bookRepository = spy(new BookMongoRepository(client, session, DB_NAME, DB_BOOK_COLLECTION));
+		authorRepository = spy(new AuthorMongoRepository(client, session, DB_NAME, DB_AUTHOR_COLLECTION));
+		bookRepository = spy(new BookMongoRepository(client, session, DB_NAME, DB_BOOK_COLLECTION));
 
-        when(repositoryFactory.createAuthorRepository()).thenReturn(authorRepository);
-        when(repositoryFactory.createBookRepository()).thenReturn(bookRepository);
+		when(repositoryFactory.createAuthorRepository()).thenReturn(authorRepository);
+		when(repositoryFactory.createBookRepository()).thenReturn(bookRepository);
 
-        when(transactionManager.doInTransaction(any()))
-                .thenAnswer(answer((TransactionCode<?> code) -> code.apply(repositoryFactory)));
+		when(transactionManager.doInTransaction(any()))
+				.thenAnswer(answer((TransactionCode<?> code) -> code.apply(repositoryFactory)));
 
-        AuthorService authorService = new AuthorTransactionalService(transactionManager);
-        BookService bookService = new BookTransactionalService(transactionManager);
+		AuthorService authorService = new AuthorTransactionalService(transactionManager);
+		BookService bookService = new BookTransactionalService(transactionManager);
 
-        controller = new BookManagerController(authorService, bookService, view);
-    }
+		controller = new BookManagerController(authorService, bookService, view);
+	}
 
-    @After
-    public void tearDown() {
-        client.close();
-    }
+	@After
+	public void tearDown() {
+		client.close();
+	}
 
-    @Test
-    public void testNewAuthorConcurrently() {
-        List<Author> authors = new ArrayList<>();
-        Author georgeOrwell = new Author("1", "George Orwell");
+	@Test
+	public void testNewAuthorConcurrently() {
+		List<Author> authors = new ArrayList<>();
+		Author georgeOrwell = new Author("1", "George Orwell");
 
-        when(authorRepository.findById(anyString())).thenAnswer(invocation ->
-                authors.stream().findFirst().orElse(null)
-        );
-        doAnswer(invocation -> {
-            authors.add(georgeOrwell);
-            return null;
-        }).when(authorRepository).add(any(Author.class));
+		when(authorRepository.findById(anyString()))
+				.thenAnswer(invocation -> authors.stream().findFirst().orElse(null));
+		doAnswer(invocation -> {
+			authors.add(georgeOrwell);
+			return null;
+		}).when(authorRepository).add(any(Author.class));
 
-        List<Thread> threads = IntStream.range(0, 10)
-                .mapToObj(i -> new Thread(() -> controller.addAuthor(georgeOrwell)))
-                .peek(Thread::start)
-                .collect(Collectors.toList());
-        await().atMost(10, SECONDS)
-                .until(() -> threads.stream().noneMatch(Thread::isAlive));
-        assertThat(authors).containsExactly(georgeOrwell);
-    }
+		List<Thread> threads = IntStream.range(0, 10)
+				.mapToObj(i -> new Thread(() -> controller.addAuthor(georgeOrwell))).peek(Thread::start)
+				.collect(Collectors.toList());
+		await().atMost(10, SECONDS).until(() -> threads.stream().noneMatch(Thread::isAlive));
+		assertThat(authors).containsExactly(georgeOrwell);
+	}
 
-    @Test
-    public void testDeleteAuthorConcurrently() {
-        List<Author> authors = new ArrayList<>();
-        Author georgeOrwell = new Author("1", "George Orwell");
+	@Test
+	public void testDeleteAuthorConcurrently() {
+		List<Author> authors = new ArrayList<>();
+		Author georgeOrwell = new Author("1", "George Orwell");
 
-        when(authorRepository.findById(anyString())).thenAnswer(invocation ->
-                authors.isEmpty() ? georgeOrwell : null
-        );
-        doAnswer(invocation -> {
-            authors.add(georgeOrwell);
-            return null;
-        }).when(authorRepository).delete(anyString());
+		when(authorRepository.findById(anyString())).thenAnswer(invocation -> authors.isEmpty() ? georgeOrwell : null);
+		doAnswer(invocation -> {
+			authors.add(georgeOrwell);
+			return null;
+		}).when(authorRepository).delete(anyString());
 
-        List<Thread> threads = IntStream.range(0, 10)
-                .mapToObj(i -> new Thread(() -> controller.deleteAuthor(georgeOrwell)))
-                .peek(Thread::start)
-                .collect(Collectors.toList());
-        await().atMost(10, SECONDS)
-                .until(() -> threads.stream().noneMatch(Thread::isAlive));
-        assertThat(authors).containsExactly(georgeOrwell);
-    }
+		List<Thread> threads = IntStream.range(0, 10)
+				.mapToObj(i -> new Thread(() -> controller.deleteAuthor(georgeOrwell))).peek(Thread::start)
+				.collect(Collectors.toList());
+		await().atMost(10, SECONDS).until(() -> threads.stream().noneMatch(Thread::isAlive));
+		assertThat(authors).containsExactly(georgeOrwell);
+	}
 
-    @Test
-    public void testNewBookConcurrently() {
-        List<Book> books = new ArrayList<>();
-        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+	@Test
+	public void testNewBookConcurrently() {
+		List<Book> books = new ArrayList<>();
+		Book animalFarm = new Book("1", "Animal Farm", 93, "1");
 
-        when(bookRepository.findById(anyString())).thenAnswer(invocation ->
-                books.stream().findFirst().orElse(null)
-        );
-        doAnswer(invocation -> {
-            books.add(animalFarm);
-            return null;
-        }).when(bookRepository).add(any(Book.class));
+		when(bookRepository.findById(anyString())).thenAnswer(invocation -> books.stream().findFirst().orElse(null));
+		doAnswer(invocation -> {
+			books.add(animalFarm);
+			return null;
+		}).when(bookRepository).add(any(Book.class));
 
-        List<Thread> threads = IntStream.range(0, 10)
-                .mapToObj(i -> new Thread(() -> controller.addBook(animalFarm)))
-                .peek(Thread::start)
-                .collect(Collectors.toList());
-        await().atMost(10, SECONDS)
-                .until(() -> threads.stream().noneMatch(Thread::isAlive));
-        assertThat(books).containsExactly(animalFarm);
-    }
+		List<Thread> threads = IntStream.range(0, 10).mapToObj(i -> new Thread(() -> controller.addBook(animalFarm)))
+				.peek(Thread::start).collect(Collectors.toList());
+		await().atMost(10, SECONDS).until(() -> threads.stream().noneMatch(Thread::isAlive));
+		assertThat(books).containsExactly(animalFarm);
+	}
 
-    @Test
-    public void testDeleteBookConcurrently() {
-        List<Book> books = new ArrayList<>();
-        Book animalFarm = new Book("1", "Animal Farm", 93, "1");
+	@Test
+	public void testDeleteBookConcurrently() {
+		List<Book> books = new ArrayList<>();
+		Book animalFarm = new Book("1", "Animal Farm", 93, "1");
 
-        when(bookRepository.findById(anyString())).thenAnswer(invocation ->
-                books.isEmpty() ? animalFarm : null
-        );
-        doAnswer(invocation -> {
-            books.add(animalFarm);
-            return null;
-        }).when(bookRepository).delete(anyString());
+		when(bookRepository.findById(anyString())).thenAnswer(invocation -> books.isEmpty() ? animalFarm : null);
+		doAnswer(invocation -> {
+			books.add(animalFarm);
+			return null;
+		}).when(bookRepository).delete(anyString());
 
-        List<Thread> threads = IntStream.range(0, 10)
-                .mapToObj(i -> new Thread(() -> controller.deleteBook(animalFarm)))
-                .peek(Thread::start)
-                .collect(Collectors.toList());
-        await().atMost(10, SECONDS)
-                .until(() -> threads.stream().noneMatch(Thread::isAlive));
-        assertThat(books).containsExactly(animalFarm);
-    }
+		List<Thread> threads = IntStream.range(0, 10).mapToObj(i -> new Thread(() -> controller.deleteBook(animalFarm)))
+				.peek(Thread::start).collect(Collectors.toList());
+		await().atMost(10, SECONDS).until(() -> threads.stream().noneMatch(Thread::isAlive));
+		assertThat(books).containsExactly(animalFarm);
+	}
 
 }

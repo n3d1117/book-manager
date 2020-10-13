@@ -28,86 +28,80 @@ import it.ned.bookmanager.model.Author;
 
 public class AuthorMongoRepositoryIT {
 
-    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+	private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
 
-    @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
+	@ClassRule
+	public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
-    private MongoClient client;
-    private MongoCollection<Author> collection;
-    private AuthorMongoRepository repository;
+	private MongoClient client;
+	private MongoCollection<Author> collection;
+	private AuthorMongoRepository repository;
 
-    private static final String DB_NAME = "bookmanager";
-    private static final String DB_AUTHOR_COLLECTION = "authors";
+	private static final String DB_NAME = "bookmanager";
+	private static final String DB_AUTHOR_COLLECTION = "authors";
 
-    private static final Author AUTHOR_FIXTURE_1 = new Author("1", "George Orwell");
-    private static final Author AUTHOR_FIXTURE_2 = new Author("2", "Dan Brown");
+	private static final Author AUTHOR_FIXTURE_1 = new Author("1", "George Orwell");
+	private static final Author AUTHOR_FIXTURE_2 = new Author("2", "Dan Brown");
 
-    @Before
-    public void setup() {
-        client = MongoClients.create(container.getReplicaSetUrl());
-        repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, DB_AUTHOR_COLLECTION);
+	@Before
+	public void setup() {
+		client = MongoClients.create(container.getReplicaSetUrl());
+		repository = new AuthorMongoRepository(client, client.startSession(), DB_NAME, DB_AUTHOR_COLLECTION);
 
-        MongoDatabase database = client.getDatabase(DB_NAME);
+		MongoDatabase database = client.getDatabase(DB_NAME);
 
-        // Always start with a clean database
-        database.drop();
+		// Always start with a clean database
+		database.drop();
 
-        CodecRegistry pojoCodecRegistry = fromRegistries(
-                MongoClientSettings.getDefaultCodecRegistry(),
-                fromProviders(PojoCodecProvider.builder().automatic(true).build())
-        );
-        collection = database
-                .getCollection(DB_AUTHOR_COLLECTION, Author.class)
-                .withCodecRegistry(pojoCodecRegistry);
-    }
+		CodecRegistry pojoCodecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
+				fromProviders(PojoCodecProvider.builder().automatic(true).build()));
+		collection = database.getCollection(DB_AUTHOR_COLLECTION, Author.class).withCodecRegistry(pojoCodecRegistry);
+	}
 
-    @After
-    public void tearDown() {
-        client.close();
-    }
+	@After
+	public void tearDown() {
+		client.close();
+	}
 
-    @Test
-    public void testFindAllAuthorsWhenDatabaseIsEmpty() {
-        assertThat(repository.findAll()).isEmpty();
-    }
+	@Test
+	public void testFindAllAuthorsWhenDatabaseIsEmpty() {
+		assertThat(repository.findAll()).isEmpty();
+	}
 
-    @Test
-    public void testFindAllAuthorsWhenThereAreMany() {
-        collection.insertOne(AUTHOR_FIXTURE_1);
-        collection.insertOne(AUTHOR_FIXTURE_2);
-        assertThat(repository.findAll()).containsExactly(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
-    }
+	@Test
+	public void testFindAllAuthorsWhenThereAreMany() {
+		collection.insertOne(AUTHOR_FIXTURE_1);
+		collection.insertOne(AUTHOR_FIXTURE_2);
+		assertThat(repository.findAll()).containsExactly(AUTHOR_FIXTURE_1, AUTHOR_FIXTURE_2);
+	}
 
-    @Test
-    public void testFindAuthorByIdNotFound() {
-        assertThat(repository.findById("1")).isNull();
-    }
+	@Test
+	public void testFindAuthorByIdNotFound() {
+		assertThat(repository.findById("1")).isNull();
+	}
 
-    @Test
-    public void testFindAuthorByIdFound() {
-        collection.insertOne(AUTHOR_FIXTURE_1);
-        collection.insertOne(AUTHOR_FIXTURE_2);
-        assertEquals(AUTHOR_FIXTURE_2, repository.findById(AUTHOR_FIXTURE_2.getId()));
-    }
+	@Test
+	public void testFindAuthorByIdFound() {
+		collection.insertOne(AUTHOR_FIXTURE_1);
+		collection.insertOne(AUTHOR_FIXTURE_2);
+		assertEquals(AUTHOR_FIXTURE_2, repository.findById(AUTHOR_FIXTURE_2.getId()));
+	}
 
-    @Test
-    public void testAddAuthor() {
-        repository.add(AUTHOR_FIXTURE_1);
-        assertThat(allAuthorsInDatabase()).containsExactly(AUTHOR_FIXTURE_1);
-    }
+	@Test
+	public void testAddAuthor() {
+		repository.add(AUTHOR_FIXTURE_1);
+		assertThat(allAuthorsInDatabase()).containsExactly(AUTHOR_FIXTURE_1);
+	}
 
-    @Test
-    public void testDeleteAuthor() {
-        collection.insertOne(AUTHOR_FIXTURE_1);
-        repository.delete(AUTHOR_FIXTURE_1.getId());
-        assertThat(allAuthorsInDatabase()).isEmpty();
-    }
+	@Test
+	public void testDeleteAuthor() {
+		collection.insertOne(AUTHOR_FIXTURE_1);
+		repository.delete(AUTHOR_FIXTURE_1.getId());
+		assertThat(allAuthorsInDatabase()).isEmpty();
+	}
 
-    private List<Author> allAuthorsInDatabase() {
-        return StreamSupport
-                .stream(collection.find().spliterator(), false)
-                .collect(Collectors.toList());
-    }
+	private List<Author> allAuthorsInDatabase() {
+		return StreamSupport.stream(collection.find().spliterator(), false).collect(Collectors.toList());
+	}
 
 }

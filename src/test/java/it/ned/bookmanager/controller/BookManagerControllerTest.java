@@ -29,151 +29,152 @@ import it.ned.bookmanager.view.BookManagerView;
 
 public class BookManagerControllerTest {
 
-    @Mock private BookManagerView view;
-    @Mock private AuthorService authorService;
-    @Mock private BookService bookService;
+	@Mock
+	private BookManagerView view;
+	@Mock
+	private AuthorService authorService;
+	@Mock
+	private BookService bookService;
 
-    @InjectMocks private BookManagerController controller;
+	@InjectMocks
+	private BookManagerController controller;
 
-    private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
-    private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
+	private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
+	private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
 
-    @Before
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+	@Before
+	public void setUp() {
+		MockitoAnnotations.openMocks(this);
+	}
 
-    /* Authors */
+	/* Authors */
 
-    @Test
-    public void testAllAuthorsRetrieval() {
-        List<Author> authors = Collections.singletonList(AUTHOR_FIXTURE);
-        when(authorService.findAll()).thenReturn(authors);
+	@Test
+	public void testAllAuthorsRetrieval() {
+		List<Author> authors = Collections.singletonList(AUTHOR_FIXTURE);
+		when(authorService.findAll()).thenReturn(authors);
 
-        controller.allAuthors();
+		controller.allAuthors();
 
-        verify(view).showAllAuthors(authors);
-        verifyNoMoreInteractions(ignoreStubs(authorService));
-    }
+		verify(view).showAllAuthors(authors);
+		verifyNoMoreInteractions(ignoreStubs(authorService));
+	}
 
-    /* Add author */
+	/* Add author */
 
-    @Test
-    public void testAuthorAddedSuccessfully() {
-        when(authorService.findById(AUTHOR_FIXTURE.getId())).thenReturn(null);
+	@Test
+	public void testAuthorAddedSuccessfully() {
+		when(authorService.findById(AUTHOR_FIXTURE.getId())).thenReturn(null);
 
-        controller.addAuthor(AUTHOR_FIXTURE);
+		controller.addAuthor(AUTHOR_FIXTURE);
 
-        InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).add(AUTHOR_FIXTURE);
-        inOrder.verify(view).authorAdded(AUTHOR_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(authorService, view);
+		inOrder.verify(authorService).add(AUTHOR_FIXTURE);
+		inOrder.verify(view).authorAdded(AUTHOR_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    public void testAuthorNotAddedWhenAlreadyExisting() {
-        Author georgeOrwellClone = new Author(AUTHOR_FIXTURE.getId(), "George Orwell's clone");
-        doThrow(new AuthorDuplicateException("Author already exists", AUTHOR_FIXTURE))
-                .when(authorService).add(georgeOrwellClone);
+	@Test
+	public void testAuthorNotAddedWhenAlreadyExisting() {
+		Author georgeOrwellClone = new Author(AUTHOR_FIXTURE.getId(), "George Orwell's clone");
+		doThrow(new AuthorDuplicateException("Author already exists", AUTHOR_FIXTURE)).when(authorService)
+				.add(georgeOrwellClone);
 
-        controller.addAuthor(georgeOrwellClone);
+		controller.addAuthor(georgeOrwellClone);
 
-        InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).add(georgeOrwellClone);
-        inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(AUTHOR_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(authorService, view);
+		inOrder.verify(authorService).add(georgeOrwellClone);
+		inOrder.verify(view).authorNotAddedBecauseAlreadyExistsError(AUTHOR_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    /* Delete author */
+	/* Delete author */
 
-    @Test
-    public void testAuthorDeletedSuccessfully() {
-        controller.deleteAuthor(AUTHOR_FIXTURE);
+	@Test
+	public void testAuthorDeletedSuccessfully() {
+		controller.deleteAuthor(AUTHOR_FIXTURE);
 
-        InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
-        inOrder.verify(view).deletedAllBooksForAuthor(AUTHOR_FIXTURE);
-        inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(authorService, view);
+		inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
+		inOrder.verify(view).deletedAllBooksForAuthor(AUTHOR_FIXTURE);
+		inOrder.verify(view).authorDeleted(AUTHOR_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    public void testAuthorDeletionFailureWhenItDoesNotExist() {
-        doThrow(new AuthorNotFoundException("Author not found"))
-                .when(authorService).delete(AUTHOR_FIXTURE.getId());
+	@Test
+	public void testAuthorDeletionFailureWhenItDoesNotExist() {
+		doThrow(new AuthorNotFoundException("Author not found")).when(authorService).delete(AUTHOR_FIXTURE.getId());
 
-        controller.deleteAuthor(AUTHOR_FIXTURE);
+		controller.deleteAuthor(AUTHOR_FIXTURE);
 
-        InOrder inOrder = inOrder(authorService, view);
-        inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
-        inOrder.verify(view).authorNotDeletedBecauseNotFoundError(AUTHOR_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(authorService, view);
+		inOrder.verify(authorService).delete(AUTHOR_FIXTURE.getId());
+		inOrder.verify(view).authorNotDeletedBecauseNotFoundError(AUTHOR_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    /* Books */
+	/* Books */
 
-    @Test
-    public void testAllBooksRetrieval() {
-        List<Book> books = Collections.singletonList(BOOK_FIXTURE);
-        when(bookService.findAll()).thenReturn(books);
+	@Test
+	public void testAllBooksRetrieval() {
+		List<Book> books = Collections.singletonList(BOOK_FIXTURE);
+		when(bookService.findAll()).thenReturn(books);
 
-        controller.allBooks();
+		controller.allBooks();
 
-        verify(view).showAllBooks(books);
-        verifyNoMoreInteractions(ignoreStubs(bookService));
-    }
+		verify(view).showAllBooks(books);
+		verifyNoMoreInteractions(ignoreStubs(bookService));
+	}
 
-    /* Add book */
+	/* Add book */
 
-    @Test
-    public void testBookAddedSuccessfully() {
-        when(bookService.findById(BOOK_FIXTURE.getId())).thenReturn(null);
+	@Test
+	public void testBookAddedSuccessfully() {
+		when(bookService.findById(BOOK_FIXTURE.getId())).thenReturn(null);
 
-        controller.addBook(BOOK_FIXTURE);
+		controller.addBook(BOOK_FIXTURE);
 
-        InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).add(BOOK_FIXTURE);
-        inOrder.verify(view).bookAdded(BOOK_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(bookService, view);
+		inOrder.verify(bookService).add(BOOK_FIXTURE);
+		inOrder.verify(view).bookAdded(BOOK_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    public void testBookNotAddedWhenAlreadyExisting() {
-        Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
-        doThrow(new BookDuplicateException("Book already exists", BOOK_FIXTURE))
-                .when(bookService).add(animalFarmClone);
+	@Test
+	public void testBookNotAddedWhenAlreadyExisting() {
+		Book animalFarmClone = new Book(BOOK_FIXTURE.getId(), "Animal Farm, a clone", 93, "1");
+		doThrow(new BookDuplicateException("Book already exists", BOOK_FIXTURE)).when(bookService).add(animalFarmClone);
 
-        controller.addBook(animalFarmClone);
+		controller.addBook(animalFarmClone);
 
-        InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).add(animalFarmClone);
-        inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(BOOK_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(bookService, view);
+		inOrder.verify(bookService).add(animalFarmClone);
+		inOrder.verify(view).bookNotAddedBecauseAlreadyExistsError(BOOK_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    /* Delete book */
+	/* Delete book */
 
-    @Test
-    public void testBookDeletedSuccessfully() {
-        controller.deleteBook(BOOK_FIXTURE);
+	@Test
+	public void testBookDeletedSuccessfully() {
+		controller.deleteBook(BOOK_FIXTURE);
 
-        InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
-        inOrder.verify(view).bookDeleted(BOOK_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(bookService, view);
+		inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
+		inOrder.verify(view).bookDeleted(BOOK_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
-    @Test
-    public void testBookDeletionFailureWhenItDoesNotExist() {
-        doThrow(new BookNotFoundException("Author not found"))
-                .when(bookService).delete(BOOK_FIXTURE.getId());
+	@Test
+	public void testBookDeletionFailureWhenItDoesNotExist() {
+		doThrow(new BookNotFoundException("Author not found")).when(bookService).delete(BOOK_FIXTURE.getId());
 
-        controller.deleteBook(BOOK_FIXTURE);
+		controller.deleteBook(BOOK_FIXTURE);
 
-        InOrder inOrder = inOrder(bookService, view);
-        inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
-        inOrder.verify(view).bookNotDeletedBecauseNotFoundError(BOOK_FIXTURE);
-        inOrder.verifyNoMoreInteractions();
-    }
+		InOrder inOrder = inOrder(bookService, view);
+		inOrder.verify(bookService).delete(BOOK_FIXTURE.getId());
+		inOrder.verify(view).bookNotDeletedBecauseNotFoundError(BOOK_FIXTURE);
+		inOrder.verifyNoMoreInteractions();
+	}
 
 }

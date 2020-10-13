@@ -23,73 +23,73 @@ import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 
 public class BookServiceMongoRepositoryIT {
 
-    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+	private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
 
-    @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
+	@ClassRule
+	public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
-    private BookService service;
-    private BookRepository repository;
-    private MongoClient client;
+	private BookService service;
+	private BookRepository repository;
+	private MongoClient client;
 
-    private static final String DB_NAME = "bookmanager";
-    private static final String DB_BOOK_COLLECTION = "books";
-    private static final String DB_AUTHOR_COLLECTION = "authors";
+	private static final String DB_NAME = "bookmanager";
+	private static final String DB_BOOK_COLLECTION = "books";
+	private static final String DB_AUTHOR_COLLECTION = "authors";
 
-    private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
+	private static final Book BOOK_FIXTURE = new Book("1", "Animal Farm", 93, "1");
 
-    @Before
-    public void setup() {
-        client = MongoClients.create(container.getReplicaSetUrl());
-        client.getDatabase(DB_NAME).drop();
+	@Before
+	public void setup() {
+		client = MongoClients.create(container.getReplicaSetUrl());
+		client.getDatabase(DB_NAME).drop();
 
-        TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME,
-                DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
-        service = new BookTransactionalService(transactionManager);
+		TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME, DB_AUTHOR_COLLECTION,
+				DB_BOOK_COLLECTION);
+		service = new BookTransactionalService(transactionManager);
 
-        MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(client, client.startSession(),
-                DB_NAME, DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
-        repository = repositoryFactory.createBookRepository();
+		MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(client, client.startSession(), DB_NAME,
+				DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
+		repository = repositoryFactory.createBookRepository();
 
-        for (Book book: repository.findAll())
-            repository.delete(book.getId());
-    }
+		for (Book book : repository.findAll())
+			repository.delete(book.getId());
+	}
 
-    @After
-    public void tearDown() {
-        client.close();
-    }
+	@After
+	public void tearDown() {
+		client.close();
+	}
 
-    @Test
-    public void testFindAllBooks() {
-        repository.add(BOOK_FIXTURE);
-        assertThat(service.findAll()).containsExactly(BOOK_FIXTURE);
-    }
+	@Test
+	public void testFindAllBooks() {
+		repository.add(BOOK_FIXTURE);
+		assertThat(service.findAll()).containsExactly(BOOK_FIXTURE);
+	}
 
-    @Test
-    public void testBookFoundWhenAdded() {
-        repository.add(BOOK_FIXTURE);
-        assertEquals(BOOK_FIXTURE, service.findById(BOOK_FIXTURE.getId()));
-    }
+	@Test
+	public void testBookFoundWhenAdded() {
+		repository.add(BOOK_FIXTURE);
+		assertEquals(BOOK_FIXTURE, service.findById(BOOK_FIXTURE.getId()));
+	}
 
-    @Test
-    public void testBookNotFoundWhenDeleted() {
-        repository.add(BOOK_FIXTURE);
-        repository.delete(BOOK_FIXTURE.getId());
-        assertNull(service.findById(BOOK_FIXTURE.getId()));
-    }
+	@Test
+	public void testBookNotFoundWhenDeleted() {
+		repository.add(BOOK_FIXTURE);
+		repository.delete(BOOK_FIXTURE.getId());
+		assertNull(service.findById(BOOK_FIXTURE.getId()));
+	}
 
-    @Test
-    public void testDeleteAllBooksFromAuthor() {
-        Book nineteenEightyFour = new Book("2", "1984", 283, "1");
-        Book ulysses = new Book("3", "Ulysses", 1341, "2");
-        repository.add(BOOK_FIXTURE);
-        repository.add(nineteenEightyFour);
-        repository.add(ulysses);
+	@Test
+	public void testDeleteAllBooksFromAuthor() {
+		Book nineteenEightyFour = new Book("2", "1984", 283, "1");
+		Book ulysses = new Book("3", "Ulysses", 1341, "2");
+		repository.add(BOOK_FIXTURE);
+		repository.add(nineteenEightyFour);
+		repository.add(ulysses);
 
-        repository.deleteAllBooksForAuthorId("1");
+		repository.deleteAllBooksForAuthorId("1");
 
-        assertThat(service.findAll()).containsExactly(ulysses);
-    }
+		assertThat(service.findAll()).containsExactly(ulysses);
+	}
 
 }

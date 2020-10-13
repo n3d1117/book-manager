@@ -23,59 +23,59 @@ import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 
 public class AuthorServiceMongoRepositoryIT {
 
-    private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
+	private static final DockerImageName mongoImage = DockerImageName.parse("mongo").withTag("4.0.10");
 
-    @ClassRule
-    public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
+	@ClassRule
+	public static final MongoDBContainer container = new MongoDBContainer(mongoImage).withExposedPorts(27017);
 
-    private AuthorService service;
-    private AuthorRepository repository;
-    private MongoClient client;
+	private AuthorService service;
+	private AuthorRepository repository;
+	private MongoClient client;
 
-    private static final String DB_NAME = "bookmanager";
-    private static final String DB_AUTHOR_COLLECTION = "authors";
-    private static final String DB_BOOK_COLLECTION = "books";
+	private static final String DB_NAME = "bookmanager";
+	private static final String DB_AUTHOR_COLLECTION = "authors";
+	private static final String DB_BOOK_COLLECTION = "books";
 
-    private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
+	private static final Author AUTHOR_FIXTURE = new Author("1", "George Orwell");
 
-    @Before
-    public void setup() {
-        client = MongoClients.create(container.getReplicaSetUrl());
-        client.getDatabase(DB_NAME).drop();
+	@Before
+	public void setup() {
+		client = MongoClients.create(container.getReplicaSetUrl());
+		client.getDatabase(DB_NAME).drop();
 
-        TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME,
-                DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
-        service = new AuthorTransactionalService(transactionManager);
+		TransactionManager transactionManager = new TransactionMongoManager(client, DB_NAME, DB_AUTHOR_COLLECTION,
+				DB_BOOK_COLLECTION);
+		service = new AuthorTransactionalService(transactionManager);
 
-        MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(client, client.startSession(),
-                DB_NAME, DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
-        repository = repositoryFactory.createAuthorRepository();
+		MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(client, client.startSession(), DB_NAME,
+				DB_AUTHOR_COLLECTION, DB_BOOK_COLLECTION);
+		repository = repositoryFactory.createAuthorRepository();
 
-        for (Author author: repository.findAll())
-            repository.delete(author.getId());
-    }
+		for (Author author : repository.findAll())
+			repository.delete(author.getId());
+	}
 
-    @After
-    public void tearDown() {
-        client.close();
-    }
+	@After
+	public void tearDown() {
+		client.close();
+	}
 
-    @Test
-    public void testFindAllAuthors() {
-        repository.add(AUTHOR_FIXTURE);
-        assertThat(service.findAll()).containsExactly(AUTHOR_FIXTURE);
-    }
+	@Test
+	public void testFindAllAuthors() {
+		repository.add(AUTHOR_FIXTURE);
+		assertThat(service.findAll()).containsExactly(AUTHOR_FIXTURE);
+	}
 
-    @Test
-    public void testFindAuthorById() {
-        repository.add(AUTHOR_FIXTURE);
-        assertEquals(AUTHOR_FIXTURE, service.findById(AUTHOR_FIXTURE.getId()));
-    }
+	@Test
+	public void testFindAuthorById() {
+		repository.add(AUTHOR_FIXTURE);
+		assertEquals(AUTHOR_FIXTURE, service.findById(AUTHOR_FIXTURE.getId()));
+	}
 
-    @Test
-    public void testAuthorNotFoundWhenDeleted() {
-        repository.add(AUTHOR_FIXTURE);
-        repository.delete(AUTHOR_FIXTURE.getId());
-        assertNull(service.findById(AUTHOR_FIXTURE.getId()));
-    }
+	@Test
+	public void testAuthorNotFoundWhenDeleted() {
+		repository.add(AUTHOR_FIXTURE);
+		repository.delete(AUTHOR_FIXTURE.getId());
+		assertNull(service.findById(AUTHOR_FIXTURE.getId()));
+	}
 }

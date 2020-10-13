@@ -1,6 +1,7 @@
 package it.ned.bookmanager.repository;
 
 public interface RepositoryFactory {
-    AuthorRepository createAuthorRepository();
-    BookRepository createBookRepository();
+	AuthorRepository createAuthorRepository();
+
+	BookRepository createBookRepository();
 }

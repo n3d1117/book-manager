@@ -11,11 +11,10 @@ import it.ned.bookmanager.repository.AuthorRepository;
 
 public class AuthorMongoRepository extends MongoRepository<Author> implements AuthorRepository {
 
-    private static final Logger authorRepoLogger = LogManager.getLogger(AuthorMongoRepository.class);
+	private static final Logger authorRepoLogger = LogManager.getLogger(AuthorMongoRepository.class);
 
-    public AuthorMongoRepository(MongoClient mongoClient, ClientSession session, String dbName,
-                                 String collectionName) {
-        super(mongoClient, session, collectionName, dbName, Author.class, authorRepoLogger);
-    }
+	public AuthorMongoRepository(MongoClient mongoClient, ClientSession session, String dbName, String collectionName) {
+		super(mongoClient, session, collectionName, dbName, Author.class, authorRepoLogger);
+	}
 
 }

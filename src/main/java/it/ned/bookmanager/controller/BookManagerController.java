@@ -13,70 +13,69 @@ import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
 
-
 public class BookManagerController {
 
-    private final AuthorService authorService;
-    private final BookService bookService;
-    private final BookManagerView view;
+	private final AuthorService authorService;
+	private final BookService bookService;
+	private final BookManagerView view;
 
-    private static final Logger LOGGER = LogManager.getLogger(BookManagerController.class);
+	private static final Logger LOGGER = LogManager.getLogger(BookManagerController.class);
 
-    public BookManagerController(AuthorService authorService, BookService bookService, BookManagerView view) {
-        this.authorService = authorService;
-        this.bookService = bookService;
-        this.view = view;
-    }
+	public BookManagerController(AuthorService authorService, BookService bookService, BookManagerView view) {
+		this.authorService = authorService;
+		this.bookService = bookService;
+		this.view = view;
+	}
 
-    public void allBooks() {
-        LOGGER.debug(() -> "Showing all books");
-        view.showAllBooks(bookService.findAll());
-    }
+	public void allBooks() {
+		LOGGER.debug(() -> "Showing all books");
+		view.showAllBooks(bookService.findAll());
+	}
 
-    public void allAuthors() {
-        LOGGER.debug(() -> "Showing all authors");
-        view.showAllAuthors(authorService.findAll());
-    }
+	public void allAuthors() {
+		LOGGER.debug(() -> "Showing all authors");
+		view.showAllAuthors(authorService.findAll());
+	}
 
-    public synchronized void addAuthor(Author author) {
-        LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
-        try {
-            authorService.add(author);
-            view.authorAdded(author);
-        } catch(AuthorDuplicateException exception) {
-            view.authorNotAddedBecauseAlreadyExistsError(exception.getExistingAuthor());
-        }
-    }
+	public synchronized void addAuthor(Author author) {
+		LOGGER.debug(() -> String.format("Adding author %s", author.toString()));
+		try {
+			authorService.add(author);
+			view.authorAdded(author);
+		} catch (AuthorDuplicateException exception) {
+			view.authorNotAddedBecauseAlreadyExistsError(exception.getExistingAuthor());
+		}
+	}
 
-    public synchronized void addBook(Book book) {
-        LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
-        try {
-            bookService.add(book);
-            view.bookAdded(book);
-        } catch(BookDuplicateException exception) {
-            view.bookNotAddedBecauseAlreadyExistsError(exception.getExistingBook());
-        }
-    }
+	public synchronized void addBook(Book book) {
+		LOGGER.debug(() -> String.format("Adding book %s", book.toString()));
+		try {
+			bookService.add(book);
+			view.bookAdded(book);
+		} catch (BookDuplicateException exception) {
+			view.bookNotAddedBecauseAlreadyExistsError(exception.getExistingBook());
+		}
+	}
 
-    public synchronized void deleteAuthor(Author author) {
-        LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
-        try {
-            authorService.delete(author.getId());
-            view.deletedAllBooksForAuthor(author);
-            view.authorDeleted(author);
-        } catch(AuthorNotFoundException exception) {
-            view.authorNotDeletedBecauseNotFoundError(author);
-        }
-    }
+	public synchronized void deleteAuthor(Author author) {
+		LOGGER.debug(() -> String.format("Deleting author %s", author.toString()));
+		try {
+			authorService.delete(author.getId());
+			view.deletedAllBooksForAuthor(author);
+			view.authorDeleted(author);
+		} catch (AuthorNotFoundException exception) {
+			view.authorNotDeletedBecauseNotFoundError(author);
+		}
+	}
 
-    public synchronized void deleteBook(Book book) {
-        LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
-        try {
-            bookService.delete(book.getId());
-            view.bookDeleted(book);
-        } catch(BookNotFoundException exception) {
-            view.bookNotDeletedBecauseNotFoundError(book);
-        }
-    }
+	public synchronized void deleteBook(Book book) {
+		LOGGER.debug(() -> String.format("Deleting book %s", book.toString()));
+		try {
+			bookService.delete(book.getId());
+			view.bookDeleted(book);
+		} catch (BookNotFoundException exception) {
+			view.bookNotDeletedBecauseNotFoundError(book);
+		}
+	}
 
 }

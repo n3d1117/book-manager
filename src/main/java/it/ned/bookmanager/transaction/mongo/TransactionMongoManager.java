@@ -23,57 +23,56 @@ import it.ned.bookmanager.transaction.TransactionManager;
 
 public class TransactionMongoManager implements TransactionManager {
 
-    private final MongoClient mongoClient;
-    private final String databaseName;
-    private final String authorsCollectionName;
-    private final String booksCollectionName;
+	private final MongoClient mongoClient;
+	private final String databaseName;
+	private final String authorsCollectionName;
+	private final String booksCollectionName;
 
-    private static final Logger LOGGER = LogManager.getLogger(TransactionMongoManager.class);
+	private static final Logger LOGGER = LogManager.getLogger(TransactionMongoManager.class);
 
-    public TransactionMongoManager(MongoClient mongoClient, String databaseName, String authorsCollectionName,
-                                   String booksCollectionName) {
-        this.mongoClient = mongoClient;
-        this.databaseName = databaseName;
-        this.authorsCollectionName = authorsCollectionName;
-        this.booksCollectionName = booksCollectionName;
+	public TransactionMongoManager(MongoClient mongoClient, String databaseName, String authorsCollectionName,
+			String booksCollectionName) {
+		this.mongoClient = mongoClient;
+		this.databaseName = databaseName;
+		this.authorsCollectionName = authorsCollectionName;
+		this.booksCollectionName = booksCollectionName;
 
-        // In MongoDB 4.2 and earlier, when dealing with multi-document transactions you must
-        // create the collection (if it does not already exist) *before* the transaction happens.
-        // See also: https://docs.mongodb.com/manual/core/transactions/
-        MongoDatabase database = mongoClient.getDatabase(this.databaseName);
-        for (String collectionName: asList(authorsCollectionName, booksCollectionName)) {
-            if (!database.listCollectionNames().into(new ArrayList<>()).contains(collectionName)) {
-                LOGGER.debug(() -> String.format("Creating collection %s", collectionName));
-                database.createCollection(collectionName);
-            }
-        }
-    }
+		// In MongoDB 4.2 and earlier, when dealing with multi-document transactions you
+		// must
+		// create the collection (if it does not already exist) *before* the transaction
+		// happens.
+		// See also: https://docs.mongodb.com/manual/core/transactions/
+		MongoDatabase database = mongoClient.getDatabase(this.databaseName);
+		for (String collectionName : asList(authorsCollectionName, booksCollectionName)) {
+			if (!database.listCollectionNames().into(new ArrayList<>()).contains(collectionName)) {
+				LOGGER.debug(() -> String.format("Creating collection %s", collectionName));
+				database.createCollection(collectionName);
+			}
+		}
+	}
 
-    @Override
-    public <T> T doInTransaction(TransactionCode<T> code) {
-        T result = null;
+	@Override
+	public <T> T doInTransaction(TransactionCode<T> code) {
+		T result = null;
 
-        ClientSession clientSession = mongoClient.startSession();
+		ClientSession clientSession = mongoClient.startSession();
 
-        // See also: https://docs.mongodb.com/manual/core/transactions/
-        TransactionOptions options = TransactionOptions.builder()
-                .readPreference(ReadPreference.primary())
-                .readConcern(ReadConcern.LOCAL)
-                .writeConcern(WriteConcern.MAJORITY)
-                .build();
+		// See also: https://docs.mongodb.com/manual/core/transactions/
+		TransactionOptions options = TransactionOptions.builder().readPreference(ReadPreference.primary())
+				.readConcern(ReadConcern.LOCAL).writeConcern(WriteConcern.MAJORITY).build();
 
-        MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoClient, clientSession,
-                databaseName, authorsCollectionName, booksCollectionName);
-        TransactionBody<T> body = (() -> code.apply(repositoryFactory));
+		MongoRepositoryFactory repositoryFactory = new MongoRepositoryFactory(mongoClient, clientSession, databaseName,
+				authorsCollectionName, booksCollectionName);
+		TransactionBody<T> body = (() -> code.apply(repositoryFactory));
 
-        try {
-            result = clientSession.withTransaction(body, options);
-        } catch (MongoException e) {
-            LOGGER.debug(() -> String.format("Caught a MongoException: %s", e.getMessage()));
-        } finally {
-            clientSession.close();
-        }
+		try {
+			result = clientSession.withTransaction(body, options);
+		} catch (MongoException e) {
+			LOGGER.debug(() -> String.format("Caught a MongoException: %s", e.getMessage()));
+		} finally {
+			clientSession.close();
+		}
 
-        return result;
-    }
+		return result;
+	}
 }

@@ -63,6 +63,6 @@ public class AuthorTransactionalService implements AuthorService {
             factory.createBookRepository().deleteAllBooksForAuthorId(authorId);
             authorRepository.delete(authorId);
             return null;
-        });
-    }
+		});
+	}
 }
