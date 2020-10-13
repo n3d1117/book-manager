@@ -1,13 +1,19 @@
 package it.ned.bookmanager.view.swing.components;
 
-import it.ned.bookmanager.model.Author;
+import java.awt.Color;
+import java.awt.Component;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JList;
+
+import it.ned.bookmanager.model.Author;
 
 public class AuthorCellRenderer extends DefaultListCellRenderer {
 
-    @Override
+	private static final long serialVersionUID = 3763727730210493273L;
+
+	@Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                   boolean isSelected, boolean cellHasFocus) {
         if (value instanceof Author) {

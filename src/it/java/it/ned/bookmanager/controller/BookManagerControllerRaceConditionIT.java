@@ -1,23 +1,20 @@
 package it.ned.bookmanager.controller;
 
-import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.AuthorRepository;
-import it.ned.bookmanager.repository.BookRepository;
-import it.ned.bookmanager.repository.RepositoryFactory;
-import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
-import it.ned.bookmanager.repository.mongo.BookMongoRepository;
-import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
-import it.ned.bookmanager.service.AuthorService;
-import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
-import it.ned.bookmanager.service.transactional.BookTransactionalService;
-import it.ned.bookmanager.transaction.TransactionCode;
-import it.ned.bookmanager.transaction.TransactionManager;
-import it.ned.bookmanager.view.BookManagerView;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.mockito.AdditionalAnswers.answer;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -27,18 +24,24 @@ import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
-import static org.mockito.AdditionalAnswers.answer;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.AuthorRepository;
+import it.ned.bookmanager.repository.BookRepository;
+import it.ned.bookmanager.repository.RepositoryFactory;
+import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
+import it.ned.bookmanager.repository.mongo.BookMongoRepository;
+import it.ned.bookmanager.service.AuthorService;
+import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
+import it.ned.bookmanager.service.transactional.BookTransactionalService;
+import it.ned.bookmanager.transaction.TransactionCode;
+import it.ned.bookmanager.transaction.TransactionManager;
+import it.ned.bookmanager.view.BookManagerView;
 
 public class BookManagerControllerRaceConditionIT {
 

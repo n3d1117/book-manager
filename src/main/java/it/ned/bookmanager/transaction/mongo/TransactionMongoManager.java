@@ -1,19 +1,25 @@
 package it.ned.bookmanager.transaction.mongo;
 
-import com.mongodb.*;
+import static java.util.Arrays.asList;
+
+import java.util.ArrayList;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.mongodb.MongoException;
+import com.mongodb.ReadConcern;
+import com.mongodb.ReadPreference;
+import com.mongodb.TransactionOptions;
+import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.TransactionBody;
+
 import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
 import it.ned.bookmanager.transaction.TransactionCode;
 import it.ned.bookmanager.transaction.TransactionManager;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.ArrayList;
-
-import static java.util.Arrays.asList;
 
 public class TransactionMongoManager implements TransactionManager {
 

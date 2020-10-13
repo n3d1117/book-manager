@@ -1,7 +1,26 @@
 package it.ned.bookmanager.service.transactional;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.AdditionalAnswers.answer;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Arrays;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
@@ -13,18 +32,6 @@ import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.transaction.TransactionCode;
 import it.ned.bookmanager.transaction.TransactionManager;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-
-import static org.junit.Assert.*;
-import static org.mockito.AdditionalAnswers.answer;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 public class BookTransactionalServiceTest {
 

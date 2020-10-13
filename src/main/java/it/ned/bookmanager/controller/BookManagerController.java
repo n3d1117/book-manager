@@ -1,5 +1,8 @@
 package it.ned.bookmanager.controller;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.service.AuthorService;
@@ -9,8 +12,6 @@ import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 
 public class BookManagerController {

@@ -1,11 +1,16 @@
 package it.ned.bookmanager.view.swing.components;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-public class SortedListModel<T extends Comparable<? super T>> extends AbstractListModel<T> {
+import javax.swing.AbstractListModel;
 
-    private final transient List<T> items;
+public class SortedListModel<T extends Comparable<T>> extends AbstractListModel<T> {
+
+	private static final long serialVersionUID = -5369997753780397039L;
+	
+	private final transient List<T> items;
 
     public SortedListModel() {
         items = new ArrayList<>(Collections.emptyList());
@@ -15,10 +20,12 @@ public class SortedListModel<T extends Comparable<? super T>> extends AbstractLi
         return items;
     }
 
+    @Override
     public int getSize() {
         return items.size();
     }
 
+    @Override
     public T getElementAt(int i) {
         return items.get(i);
     }
@@ -27,7 +34,7 @@ public class SortedListModel<T extends Comparable<? super T>> extends AbstractLi
         if (!items.contains(element)) {
             items.add(element);
             Collections.sort(items);
-            fireContentsChanged(this, 0, items.size());
+            fireContentsChanged(this, 0, getSize());
         }
     }
 

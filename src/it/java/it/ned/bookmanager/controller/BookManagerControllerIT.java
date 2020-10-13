@@ -1,16 +1,9 @@
 package it.ned.bookmanager.controller;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.service.AuthorService;
-import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
-import it.ned.bookmanager.service.transactional.BookTransactionalService;
-import it.ned.bookmanager.transaction.TransactionManager;
-import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
-import it.ned.bookmanager.view.BookManagerView;
+import static org.mockito.Mockito.verify;
+
+import java.util.Collections;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -20,9 +13,18 @@ import org.mockito.MockitoAnnotations;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.Collections;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
-import static org.mockito.Mockito.*;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.service.AuthorService;
+import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
+import it.ned.bookmanager.service.transactional.BookTransactionalService;
+import it.ned.bookmanager.transaction.TransactionManager;
+import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
+import it.ned.bookmanager.view.BookManagerView;
 
 public class BookManagerControllerIT {
 

@@ -1,12 +1,18 @@
 package it.ned.bookmanager.view.swing.app;
 
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
+import static com.mongodb.client.model.Filters.eq;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.swing.launcher.ApplicationLauncher.application;
+import static org.awaitility.Awaitility.await;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.junit.Assert.assertEquals;
 
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import javax.swing.JFrame;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.GenericTypeMatcher;
 import org.assertj.swing.core.matcher.JButtonMatcher;
@@ -23,18 +29,13 @@ import org.junit.runner.RunWith;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import javax.swing.*;
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
 
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-
-import static com.mongodb.client.model.Filters.eq;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.swing.launcher.ApplicationLauncher.application;
-import static org.awaitility.Awaitility.await;
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static org.junit.Assert.assertEquals;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingAppE2E extends AssertJSwingJUnitTestCase {

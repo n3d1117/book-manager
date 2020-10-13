@@ -1,14 +1,21 @@
 package it.ned.bookmanager.view.swing.components;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import javax.swing.table.AbstractTableModel;
+
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 
-import javax.swing.table.AbstractTableModel;
-import java.util.*;
-
 public class BookTableModel extends AbstractTableModel {
 
-    private static class BookAuthorPair {
+	private static final long serialVersionUID = -762364697884733353L;
+
+	private static class BookAuthorPair {
 
         private final Book book;
         private final Author author;

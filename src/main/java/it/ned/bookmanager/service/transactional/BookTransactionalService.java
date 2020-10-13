@@ -1,5 +1,7 @@
 package it.ned.bookmanager.service.transactional;
 
+import java.util.List;
+
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.service.BookService;
@@ -7,8 +9,6 @@ import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.transaction.TransactionManager;
-
-import java.util.List;
 
 public class BookTransactionalService implements BookService {
 

@@ -1,13 +1,15 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.ClientSession;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.BookRepository;
+import static com.mongodb.client.model.Filters.eq;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import static com.mongodb.client.model.Filters.eq;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.BookRepository;
 
 public class BookMongoRepository extends MongoRepository<Book> implements BookRepository {
 

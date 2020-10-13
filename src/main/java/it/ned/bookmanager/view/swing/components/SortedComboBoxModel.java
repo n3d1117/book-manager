@@ -1,23 +1,22 @@
 package it.ned.bookmanager.view.swing.components;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
 
-public class SortedComboBoxModel<T extends Comparable<? super T>> extends DefaultComboBoxModel<T> {
+public class SortedComboBoxModel<T extends Comparable<T>> extends DefaultComboBoxModel<T> {
 
-    @Override
+	private static final long serialVersionUID = 7307191885025372346L;
+
+	@Override
     public void addElement(T element) {
-        if (getIndexOf(element ) == -1)
+        if (getIndexOf(element) == -1)
             insertElementAt(element, 0);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void insertElementAt(T element, int index) {
-        int size = getSize();
         int i;
-        for (i = 0; i<size; i++) {
-            Comparable<T> c = (Comparable<T>)getElementAt(i);
-            if (c.compareTo(element) > 0)
+        for (i=0; i<getSize(); i++) {
+            if (getElementAt(i).compareTo(element) > 0)
                 break;
         }
         super.insertElementAt(element, i);
