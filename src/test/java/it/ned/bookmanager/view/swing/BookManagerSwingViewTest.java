@@ -1,8 +1,12 @@
 package it.ned.bookmanager.view.swing;
 
-import it.ned.bookmanager.controller.BookManagerController;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.verify;
+
+import java.util.Arrays;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.core.matcher.JLabelMatcher;
@@ -19,12 +23,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Arrays;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.verify;
+import it.ned.bookmanager.controller.BookManagerController;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingViewTest extends AssertJSwingJUnitTestCase {

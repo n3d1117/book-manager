@@ -1,8 +1,11 @@
 package it.ned.bookmanager.view.swing.components;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+
+import javax.swing.BorderFactory;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
 
 public class BookTableCellRenderer extends DefaultTableCellRenderer {
 

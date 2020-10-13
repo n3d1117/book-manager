@@ -1,11 +1,13 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.ClientSession;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.repository.AuthorRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.repository.AuthorRepository;
 
 public class AuthorMongoRepository extends MongoRepository<Author> implements AuthorRepository {
 

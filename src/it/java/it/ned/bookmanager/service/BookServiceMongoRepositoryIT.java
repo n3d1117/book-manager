@@ -1,13 +1,9 @@
 package it.ned.bookmanager.service;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.BookRepository;
-import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
-import it.ned.bookmanager.service.transactional.BookTransactionalService;
-import it.ned.bookmanager.transaction.TransactionManager;
-import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -15,9 +11,15 @@ import org.junit.Test;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.BookRepository;
+import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
+import it.ned.bookmanager.service.transactional.BookTransactionalService;
+import it.ned.bookmanager.transaction.TransactionManager;
+import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 
 public class BookServiceMongoRepositoryIT {
 

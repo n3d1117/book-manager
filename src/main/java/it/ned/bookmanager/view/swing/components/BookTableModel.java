@@ -1,10 +1,15 @@
 package it.ned.bookmanager.view.swing.components;
 
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
-import java.util.*;
+
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
 
 public class BookTableModel extends AbstractTableModel {
 

@@ -1,20 +1,41 @@
 package it.ned.bookmanager.view.swing;
 
-import it.ned.bookmanager.controller.BookManagerController;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.view.BookManagerView;
-import it.ned.bookmanager.view.swing.components.*;
+import static java.awt.Font.BOLD;
 
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.SwingConstants;
+import javax.swing.WindowConstants;
 import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
-import java.awt.*;
-import java.util.List;
 
-import static java.awt.Font.BOLD;
+import it.ned.bookmanager.controller.BookManagerController;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.view.BookManagerView;
+import it.ned.bookmanager.view.swing.components.AuthorCellRenderer;
+import it.ned.bookmanager.view.swing.components.AuthorComboBox;
+import it.ned.bookmanager.view.swing.components.BookTableCellRenderer;
+import it.ned.bookmanager.view.swing.components.BookTableModel;
+import it.ned.bookmanager.view.swing.components.SortedComboBoxModel;
+import it.ned.bookmanager.view.swing.components.SortedListModel;
 
 public class BookManagerSwingView extends JFrame implements BookManagerView {
 

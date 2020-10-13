@@ -1,7 +1,10 @@
 package it.ned.bookmanager.view.swing.components;
 
-import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import javax.swing.AbstractListModel;
 
 public class SortedListModel<T extends Comparable<T>> extends AbstractListModel<T> {
 

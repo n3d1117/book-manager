@@ -1,8 +1,8 @@
 package it.ned.bookmanager.transaction;
 
-import it.ned.bookmanager.repository.RepositoryFactory;
-
 import java.util.function.Function;
+
+import it.ned.bookmanager.repository.RepositoryFactory;
 
 @FunctionalInterface
 public interface TransactionCode<T> extends Function<RepositoryFactory, T> {

@@ -1,7 +1,21 @@
 package it.ned.bookmanager.controller;
 
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.ignoreStubs;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.InOrder;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
@@ -12,17 +26,6 @@ import it.ned.bookmanager.service.exception.AuthorNotFoundException;
 import it.ned.bookmanager.service.exception.BookDuplicateException;
 import it.ned.bookmanager.service.exception.BookNotFoundException;
 import it.ned.bookmanager.view.BookManagerView;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import org.mockito.InOrder;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import static org.mockito.Mockito.when;
-
-import static org.mockito.Mockito.*;
 
 public class BookManagerControllerTest {
 

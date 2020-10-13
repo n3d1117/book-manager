@@ -1,5 +1,11 @@
 package it.ned.bookmanager.view.swing.app;
 
+import java.awt.EventQueue;
+import java.util.concurrent.Callable;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
@@ -11,16 +17,9 @@ import it.ned.bookmanager.service.transactional.BookTransactionalService;
 import it.ned.bookmanager.transaction.TransactionManager;
 import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
 import it.ned.bookmanager.view.swing.BookManagerSwingView;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.awt.*;
-import java.util.concurrent.Callable;
 
 @Command(mixinStandardHelpOptions=true)
 public class BookManagerSwingApp implements Callable<Void> {

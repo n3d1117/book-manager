@@ -1,9 +1,9 @@
 package it.ned.bookmanager.view;
 
+import java.util.List;
+
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
-
-import java.util.List;
 
 public interface BookManagerView {
     void showAllAuthors(List<Author> allAuthors);

@@ -1,21 +1,23 @@
 package it.ned.bookmanager.repository.mongo;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.MongoClientSettings;
-import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoCollection;
-import it.ned.bookmanager.repository.Repository;
-import org.apache.logging.log4j.Logger;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
+import static com.mongodb.client.model.Filters.eq;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static com.mongodb.client.model.Filters.eq;
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import org.apache.logging.log4j.Logger;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
+
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+
+import it.ned.bookmanager.repository.Repository;
 
 //
 // A generic repository using MongoDB APIs that provides basic operations on any java object,

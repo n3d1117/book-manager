@@ -1,6 +1,6 @@
 package it.ned.bookmanager.view.swing.components;
 
-import javax.swing.*;
+import javax.swing.DefaultComboBoxModel;
 
 public class SortedComboBoxModel<T extends Comparable<T>> extends DefaultComboBoxModel<T> {
 

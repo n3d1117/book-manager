@@ -1,9 +1,13 @@
 package it.ned.bookmanager.view.swing.components;
 
-import it.ned.bookmanager.model.Author;
+import java.awt.Component;
 
-import javax.swing.*;
-import java.awt.*;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.JComboBox;
+import javax.swing.JList;
+
+import it.ned.bookmanager.model.Author;
 
 public class AuthorComboBox<T> extends JComboBox<T> {
 

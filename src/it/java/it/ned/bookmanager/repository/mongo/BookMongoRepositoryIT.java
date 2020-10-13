@@ -1,30 +1,31 @@
 package it.ned.bookmanager.repository.mongo;
 
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
-import com.mongodb.MongoClientSettings;
-
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
-
-import org.junit.*;
-
-import org.testcontainers.containers.MongoDBContainer;
-import org.testcontainers.utility.DockerImageName;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
-import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
-import static org.junit.Assert.assertEquals;
+import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.pojo.PojoCodecProvider;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.testcontainers.containers.MongoDBContainer;
+import org.testcontainers.utility.DockerImageName;
+
+import com.mongodb.MongoClientSettings;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
 
 public class BookMongoRepositoryIT {
 

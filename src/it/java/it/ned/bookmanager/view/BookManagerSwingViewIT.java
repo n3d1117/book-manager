@@ -1,22 +1,10 @@
 package it.ned.bookmanager.view;
 
-import com.mongodb.client.ClientSession;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import it.ned.bookmanager.controller.BookManagerController;
-import it.ned.bookmanager.model.Author;
-import it.ned.bookmanager.model.Book;
-import it.ned.bookmanager.repository.AuthorRepository;
-import it.ned.bookmanager.repository.BookRepository;
-import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
-import it.ned.bookmanager.repository.mongo.BookMongoRepository;
-import it.ned.bookmanager.service.AuthorService;
-import it.ned.bookmanager.service.BookService;
-import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
-import it.ned.bookmanager.service.transactional.BookTransactionalService;
-import it.ned.bookmanager.transaction.TransactionManager;
-import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
-import it.ned.bookmanager.view.swing.BookManagerSwingView;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.assertj.swing.annotation.GUITest;
 import org.assertj.swing.core.matcher.JButtonMatcher;
 import org.assertj.swing.edt.GuiActionRunner;
@@ -31,10 +19,24 @@ import org.junit.runner.RunWith;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
 
-import java.util.concurrent.TimeUnit;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 
-import static org.assertj.swing.assertions.Assertions.assertThat;
-import static org.awaitility.Awaitility.await;
+import it.ned.bookmanager.controller.BookManagerController;
+import it.ned.bookmanager.model.Author;
+import it.ned.bookmanager.model.Book;
+import it.ned.bookmanager.repository.AuthorRepository;
+import it.ned.bookmanager.repository.BookRepository;
+import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
+import it.ned.bookmanager.repository.mongo.BookMongoRepository;
+import it.ned.bookmanager.service.AuthorService;
+import it.ned.bookmanager.service.BookService;
+import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
+import it.ned.bookmanager.service.transactional.BookTransactionalService;
+import it.ned.bookmanager.transaction.TransactionManager;
+import it.ned.bookmanager.transaction.mongo.TransactionMongoManager;
+import it.ned.bookmanager.view.swing.BookManagerSwingView;
 
 @RunWith(GUITestRunner.class)
 public class BookManagerSwingViewIT extends AssertJSwingJUnitTestCase {
