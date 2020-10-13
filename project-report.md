@@ -297,8 +297,8 @@ With end-to-end tests, the following situations were tested:
 By using TDD, code coverage requirements of 100% (using [JaCoCo](https://www.eclemma.org/jacoco/)) have been met successfully. The following classes have been excluded from calculations:
 
 * Domain model classes (`Book` and `Author`), because they have no logic inside them (and methods such as `equals`, `hashCode` and `toString` have been generated automatically by the IDE)
-* All Swing classes
-* `MongoRepositoryFactory` because it's just a concrete factory implementation, with no logic inside
+* `TextFieldDocumentListener`, a custom Swing component, because it contains a method that is required by the `DocumentListener` interface but is never actually called throughout the app
+* `BookManagerSwingApp` because it's the main class that contains the method to run the application
 
 100% code coverage checks are disabled by default when testing the project, and can be enabled by adding the `jacoco-check` profile to the Maven `verify` command:
 
@@ -307,7 +307,13 @@ mvn clean verify -P jacoco-check
 ```
 
 ### Mutation Testing
-Mutation testing with [PIT](https://pitest.org) has also been used in the project, taking advantage of the **STRONGER** mutators group and a treshold of 100% (all mutants must be killed for the build to pass). The same classes that were excluded from code coverage have been excluded as well from mutation testing, for the same reasons. However, those *hybrid* tests that were considered integration tests (for the repositories and transaction manager) were included in mutation testing as well.
+Mutation testing with [PIT](https://pitest.org) has also been used in the project, taking advantage of the **STRONGER** mutators group and a treshold of 100% (all mutants must be killed for the build to pass). The following classes have been excluded from mutation testing:
+
+* Domain model classes
+* All Swing and UI related classes, as they are not meant to be tested with PIT
+* `MongoRepositoryFactory`, a concrete factory implementation with no logic in it
+ 
+However, those *hybrid* tests that were considered integration tests (for the repositories and transaction manager) were included in mutation testing as well.
 
 Mutation testing is disabled by default, and can be enabled by adding the `mutation-testing` profile to the Maven `verify` command:
 ```bash
