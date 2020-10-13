@@ -8,7 +8,7 @@ public class SortedComboBoxModel<T extends Comparable<T>> extends DefaultComboBo
 
 	@Override
     public void addElement(T element) {
-        if (getIndexOf(element ) == -1)
+        if (getIndexOf(element) == -1)
             insertElementAt(element, 0);
     }
 
