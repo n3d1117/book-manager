@@ -46,8 +46,8 @@
         <!-- Exclude classes from Sonar Code Coverage -->
         <sonar.coverage.exclusions>
             **/model/*.*,
-            **/view/swing/**.*,
-            **/repository/mongo/MongoRepositoryFactory.*
+            **/view/swing/app/BookManagerSwingApp.java,
+            **/view/swing/components/TextFieldDocumentListener.java
         </sonar.coverage.exclusions>
 
         <!-- Disable certain Sonar rules -->
@@ -253,10 +253,8 @@
                     <configuration>
                         <excludes>
                             <exclude>**/model/*.*</exclude>
-                            <exclude>**/view/swing/*.*</exclude>
-                            <exclude>**/view/swing/app/*.*</exclude>
-                            <exclude>**/view/swing/components/*.*</exclude>
-                            <exclude>**/repository/mongo/MongoRepositoryFactory.*</exclude>
+                            <exclude>**/view/swing/app/BookManagerSwingApp.*</exclude>
+                            <exclude>**/view/swing/components/TextFieldDocumentListener.*</exclude>
                         </excludes>
                     </configuration>
                 </plugin>
@@ -286,7 +284,6 @@
                     <configuration>
                         <excludedClasses>
                             <param>it.ned.bookmanager.model.*</param>
-                            <param>it.ned.bookmanager.view.*</param>
                             <param>it.ned.bookmanager.view.swing.*</param>
                             <param>it.ned.bookmanager.view.swing.components.*</param>
                             <param>it.ned.bookmanager.repository.mongo.MongoRepositoryFactory</param>

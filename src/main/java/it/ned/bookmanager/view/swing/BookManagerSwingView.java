@@ -30,12 +30,7 @@ import it.ned.bookmanager.controller.BookManagerController;
 import it.ned.bookmanager.model.Author;
 import it.ned.bookmanager.model.Book;
 import it.ned.bookmanager.view.BookManagerView;
-import it.ned.bookmanager.view.swing.components.AuthorCellRenderer;
-import it.ned.bookmanager.view.swing.components.AuthorComboBox;
-import it.ned.bookmanager.view.swing.components.BookTableCellRenderer;
-import it.ned.bookmanager.view.swing.components.BookTableModel;
-import it.ned.bookmanager.view.swing.components.SortedComboBoxModel;
-import it.ned.bookmanager.view.swing.components.SortedListModel;
+import it.ned.bookmanager.view.swing.components.*;
 
 public class BookManagerSwingView extends JFrame implements BookManagerView {
 
@@ -314,10 +309,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         /* Listeners */
 
         // 'Add Author' button enabled document listener
-        DocumentListener addAuthorButtonEnabler = new DocumentListener() {
+        DocumentListener addAuthorButtonEnabler = new TextFieldDocumentListener() {
             @Override public void insertUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
             @Override public void removeUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
-            @Override public void changedUpdate(DocumentEvent documentEvent) { setAddAuthorButtonEnabledState(); }
         };
         authorIdTextField.getDocument().addDocumentListener(addAuthorButtonEnabler);
         authorNameTextField.getDocument().addDocumentListener(addAuthorButtonEnabler);
@@ -328,10 +322,9 @@ public class BookManagerSwingView extends JFrame implements BookManagerView {
         );
 
         // 'Add Book' button enabled document listener
-        DocumentListener addBookButtonEnabler = new DocumentListener() {
+        DocumentListener addBookButtonEnabler = new TextFieldDocumentListener() {
             @Override public void insertUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
             @Override public void removeUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
-            @Override public void changedUpdate(DocumentEvent documentEvent) { setAddBookButtonEnabledState(); }
         };
         bookIdTextField.getDocument().addDocumentListener(addBookButtonEnabler);
         bookTitleTextField.getDocument().addDocumentListener(addBookButtonEnabler);
