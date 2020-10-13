@@ -18,7 +18,9 @@ import static java.awt.Font.BOLD;
 
 public class BookManagerSwingView extends JFrame implements BookManagerView {
 
-    private transient BookManagerController controller;
+	private static final long serialVersionUID = -6346620798146088173L;
+
+	private transient BookManagerController controller;
 
     private final JList<Author> authorList;
     private final SortedListModel<Author> authorListModel;

@@ -6,7 +6,9 @@ import java.awt.*;
 
 public class BookTableCellRenderer extends DefaultTableCellRenderer {
 
-    @Override
+	private static final long serialVersionUID = -8723816840181481973L;
+
+	@Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
         setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));

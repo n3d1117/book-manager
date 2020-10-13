@@ -8,7 +8,9 @@ import java.util.*;
 
 public class BookTableModel extends AbstractTableModel {
 
-    private static class BookAuthorPair {
+	private static final long serialVersionUID = -762364697884733353L;
+
+	private static class BookAuthorPair {
 
         private final Book book;
         private final Author author;

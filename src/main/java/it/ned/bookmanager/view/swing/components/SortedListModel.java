@@ -5,7 +5,9 @@ import java.util.*;
 
 public class SortedListModel<T extends Comparable<? super T>> extends AbstractListModel<T> {
 
-    private final transient List<T> items;
+	private static final long serialVersionUID = -5369997753780397039L;
+	
+	private final transient List<T> items;
 
     public SortedListModel() {
         items = new ArrayList<>(Collections.emptyList());

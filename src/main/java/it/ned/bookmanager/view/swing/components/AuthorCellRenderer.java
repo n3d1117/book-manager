@@ -7,7 +7,9 @@ import java.awt.*;
 
 public class AuthorCellRenderer extends DefaultListCellRenderer {
 
-    @Override
+	private static final long serialVersionUID = 3763727730210493273L;
+
+	@Override
     public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                   boolean isSelected, boolean cellHasFocus) {
         if (value instanceof Author) {

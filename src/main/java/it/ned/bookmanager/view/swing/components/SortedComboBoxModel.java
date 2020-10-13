@@ -4,7 +4,9 @@ import javax.swing.*;
 
 public class SortedComboBoxModel<T extends Comparable<? super T>> extends DefaultComboBoxModel<T> {
 
-    @Override
+	private static final long serialVersionUID = 7307191885025372346L;
+
+	@Override
     public void addElement(T element) {
         if (getIndexOf(element ) == -1)
             insertElementAt(element, 0);

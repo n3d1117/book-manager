@@ -7,13 +7,18 @@ import java.awt.*;
 
 public class AuthorComboBox<T> extends JComboBox<T> {
 
-    public AuthorComboBox(DefaultComboBoxModel<T> authors) {
+	private static final long serialVersionUID = -2441908901802016061L;
+
+	public AuthorComboBox(DefaultComboBoxModel<T> authors) {
         super(authors);
         setRenderer(new AuthorRenderer());
     }
 
     class AuthorRenderer extends DefaultListCellRenderer {
-        @Override
+
+		private static final long serialVersionUID = -5572726167934009611L;
+
+		@Override
         public Component getListCellRendererComponent(JList<?> list, Object value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
             if (value instanceof Author) {

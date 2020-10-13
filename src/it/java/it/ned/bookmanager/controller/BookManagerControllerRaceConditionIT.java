@@ -10,7 +10,6 @@ import it.ned.bookmanager.repository.BookRepository;
 import it.ned.bookmanager.repository.RepositoryFactory;
 import it.ned.bookmanager.repository.mongo.AuthorMongoRepository;
 import it.ned.bookmanager.repository.mongo.BookMongoRepository;
-import it.ned.bookmanager.repository.mongo.MongoRepositoryFactory;
 import it.ned.bookmanager.service.AuthorService;
 import it.ned.bookmanager.service.BookService;
 import it.ned.bookmanager.service.transactional.AuthorTransactionalService;
