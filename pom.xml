@@ -19,7 +19,7 @@
 
         <!-- Dependencies versions -->
         <junit.version>4.13.1</junit.version>
-        <mockito.version>3.5.13</mockito.version>
+        <mockito.version>3.6.0</mockito.version>
         <log4j.version>2.13.3</log4j.version>
         <assertj-swing.version>3.17.1</assertj-swing.version>
         <mongo-java.version>3.12.7</mongo-java.version>
